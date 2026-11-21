@@ -9,13 +9,16 @@ import { useBlogSlugs, useLang, useT, useWa } from "@/components/lang"
 
 type NavLink = { name: string; id: string; href: string }
 
+/** Path without the language prefix ("/en/blog" → "/blog"). Indonesian pages are served
+ *  through an internal /id rewrite, so that prefix is stripped too. */
+const barePath = (pathname: string | null) => (pathname ?? "/").replace(/^\/(id|en)(?=\/|$)/, "") || "/"
+
 /** Section links (scroll on the home page, navigate elsewhere) plus Blog. */
 export function useNavLinks(): { links: NavLink[]; isHome: boolean } {
   const t = useT()
   const lang = useLang()
-  const pathname = usePathname() ?? "/"
   const home = homePath(lang)
-  const isHome = pathname === home
+  const isHome = barePath(usePathname()) === "/"
   const section = (name: string, id: string) => ({ name, id, href: isHome ? `#${id}` : `${home}#${id}` })
   return {
     isHome,
@@ -47,10 +50,9 @@ export function Logo({ className = "" }: { className?: string }) {
 
 /** The same page in another language (blog posts map to their translation by slug). */
 function useLangHref() {
-  const pathname = usePathname() ?? "/"
+  const path = barePath(usePathname())
   const slugs = useBlogSlugs()
   return (l: Lang) => {
-    const path = pathname.replace(/^\/en(?=\/|$)/, "") || "/"
     const post = path.match(/^\/blog\/([^/]+)/)
     if (post) return slugs[l].includes(post[1]) ? blogPath(l, post[1]) : blogPath(l)
     if (path.startsWith("/blog")) return blogPath(l)
@@ -84,7 +86,7 @@ export function LangSwitch({ className = "" }: { className?: string }) {
 export default function Header() {
   const t = useT()
   const wa = useWa()
-  const pathname = usePathname() ?? "/"
+  const pathname = barePath(usePathname())
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [active, setActive] = useState("")
@@ -96,7 +98,7 @@ export default function Header() {
     const ids = ["work", "services", "reviews", "pricing", "faq"]
     const onScroll = () => {
       setIsScrolled(window.scrollY > 40)
-      if (!isHome) return setActive(/\/blog(\/|$)/.test(pathname) ? "blog" : "")
+      if (!isHome) return setActive(pathname.startsWith("/blog") ? "blog" : "")
       const current = ids.find((id) => {
         const rect = document.getElementById(id)?.getBoundingClientRect()
         return rect ? rect.top <= 160 && rect.bottom >= 160 : false

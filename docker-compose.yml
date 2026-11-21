@@ -1,9 +1,38 @@
-# Production stack for ymsstudio.id.
+# Production stack for ymsstudio.id: app (Next.js + Payload CMS) and PostgreSQL 16.
 # The app listens on 127.0.0.1:${APP_PORT} only; the VPS's nginx proxies the domain to it.
+# Secrets (POSTGRES_PASSWORD, PAYLOAD_SECRET, ADMIN_*) live in .env next to this file;
+# the deploy workflow creates them on the first deploy.
 services:
   app:
     image: ${APP_IMAGE:-ghcr.io/yaumulmajid/practice-ymsstudio-web-with-ai:latest}
     restart: unless-stopped
     env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-ymsstudio}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ymsstudio}
+      MEDIA_DIR: /data/media
+    volumes:
+      - media:/data/media
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
       - '127.0.0.1:${APP_PORT:-3000}:3000'
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ymsstudio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ymsstudio}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-ymsstudio} -d ${POSTGRES_DB:-ymsstudio}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  media:
+  pgdata:

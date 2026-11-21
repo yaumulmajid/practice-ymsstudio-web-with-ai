@@ -4,10 +4,12 @@
 # Repository secrets (Settings → Secrets and variables → Actions):
 #   VPS_HOST, VPS_USER, VPS_SSH_KEY   (deploy step is skipped until VPS_HOST is set)
 #   VPS_PORT (optional, default 22)
-# CMS (Keystatic, /keystatic) — see docs/CMS.md:
-#   secrets: KEYSTATIC_GITHUB_CLIENT_ID, KEYSTATIC_GITHUB_CLIENT_SECRET, KEYSTATIC_SECRET
-#   variable: KEYSTATIC_GITHUB_APP_SLUG
-# Saving in the CMS commits to main, so every edit redeploys through this workflow.
+#   CMS_ADMIN_EMAIL (optional) — login email of the first CMS admin (default admin@ymsstudio.id)
+#
+# The CMS (Payload, /admin) and PostgreSQL run next to the app (docker-compose.yml).
+# On the first deploy this workflow generates POSTGRES_PASSWORD, PAYLOAD_SECRET and the
+# first admin password (ADMIN_PASSWORD) into /var/www/ymsstudio/.env. Existing values are
+# never changed. See docs/CMS.md.
 name: Deploy
 
 on:
@@ -48,8 +50,6 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:latest
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
-          build-args: |
-            NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=${{ vars.KEYSTATIC_GITHUB_APP_SLUG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -75,11 +75,9 @@ jobs:
         if: env.VPS_HOST != ''
         uses: appleboy/ssh-action@v1
         env:
-          KEYSTATIC_GITHUB_CLIENT_ID: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_ID }}
-          KEYSTATIC_GITHUB_CLIENT_SECRET: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_SECRET }}
-          KEYSTATIC_SECRET: ${{ secrets.KEYSTATIC_SECRET }}
+          CMS_ADMIN_EMAIL: ${{ secrets.CMS_ADMIN_EMAIL }}
         with:
-          envs: KEYSTATIC_GITHUB_CLIENT_ID,KEYSTATIC_GITHUB_CLIENT_SECRET,KEYSTATIC_SECRET
+          envs: CMS_ADMIN_EMAIL
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
@@ -88,27 +86,31 @@ jobs:
             set -e
             cd ${{ env.APP_DIR }}
             touch .env
+            chmod 600 .env 2>/dev/null || true
+            # Create a value once; an existing one is never overwritten (the database
+            # password must stay the one the volume was created with).
+            rand() { openssl rand -hex "$1" 2>/dev/null || head -c "$1" /dev/urandom | od -An -tx1 | tr -d ' \n'; }
+            ensure_env() {
+              if grep -q "^$1=." .env; then return 0; fi
+              grep -v "^$1=" .env > .env.tmp || true
+              printf '%s=%s\n' "$1" "$2" >> .env.tmp
+              mv .env.tmp .env
+              echo "Created $1 in .env"
+            }
+            ensure_env POSTGRES_PASSWORD "$(rand 24)"
+            ensure_env PAYLOAD_SECRET "$(rand 32)"
+            ensure_env ADMIN_EMAIL "${CMS_ADMIN_EMAIL:-admin@ymsstudio.id}"
+            ensure_env ADMIN_PASSWORD "$(rand 12)"
             # Short-lived token from this run lets the VPS pull the private image.
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
             export APP_IMAGE="${{ needs.build.outputs.image }}:${{ github.sha }}"
-            docker compose pull app
+            docker compose pull
             # Remember the deployed image so manual `docker compose ...` on the VPS uses it.
             if grep -q '^APP_IMAGE=' .env; then
               sed -i "s#^APP_IMAGE=.*#APP_IMAGE=$APP_IMAGE#" .env
             else
               echo "APP_IMAGE=$APP_IMAGE" >> .env
             fi
-            # CMS credentials: written to .env (read by docker compose) when set as secrets.
-            set_env() {
-              [ -n "$2" ] || return 0
-              grep -v "^$1=" .env > .env.tmp || true
-              printf '%s=%s\n' "$1" "$2" >> .env.tmp
-              mv .env.tmp .env
-            }
-            set_env KEYSTATIC_GITHUB_CLIENT_ID "$KEYSTATIC_GITHUB_CLIENT_ID"
-            set_env KEYSTATIC_GITHUB_CLIENT_SECRET "$KEYSTATIC_GITHUB_CLIENT_SECRET"
-            set_env KEYSTATIC_SECRET "$KEYSTATIC_SECRET"
-            chmod 600 .env 2>/dev/null || true
             # One-time migration: the old setup ran the site with pm2 on port 3000,
             # possibly as root. Stop it for both users (sudo -n never prompts).
             if command -v pm2 >/dev/null 2>&1 && pm2 describe ymsstudio >/dev/null 2>&1; then
@@ -128,12 +130,16 @@ jobs:
             docker compose up -d --remove-orphans
             docker logout ghcr.io
             docker image prune -f
-            # Wait until the site answers.
-            for i in $(seq 1 20); do
-              if curl -fsS -o /dev/null http://127.0.0.1:3000; then echo "✅ Site is up"; exit 0; fi
+            # Wait until the site answers. The first request of a new release also applies
+            # database migrations (on the very first deploy: schema + initial content).
+            for i in $(seq 1 40); do
+              if curl -fsS -o /dev/null http://127.0.0.1:3000; then
+                echo "✅ Site is up. CMS: https://ymsstudio.id/admin (login: ADMIN_EMAIL / ADMIN_PASSWORD in ${{ env.APP_DIR }}/.env)"
+                exit 0
+              fi
               sleep 3
             done
-            echo "❌ Site did not respond on 127.0.0.1:3000"; docker compose logs --tail=50 app; exit 1
+            echo "❌ Site did not respond on 127.0.0.1:3000"; docker compose logs --tail=80 app; exit 1
       - name: Deploy skipped
         if: env.VPS_HOST == ''
         run: echo "::notice::VPS_HOST secret is not set yet. The image was pushed to GHCR but not deployed."

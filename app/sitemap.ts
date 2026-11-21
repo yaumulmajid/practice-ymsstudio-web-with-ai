@@ -1,10 +1,12 @@
-// /sitemap.xml — generated from the CMS content at build time.
+// /sitemap.xml — generated from the CMS on each request (no database at build time).
 import type { MetadataRoute } from "next"
 import { getPosts } from "@/lib/content"
 import { blogPath, homePath } from "@/lib/i18n"
 import { SITE } from "@/lib/seo"
 
 const abs = (path: string) => `${SITE}${path === "/" ? "" : path}`
+
+export const dynamic = "force-dynamic"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [id, en] = await Promise.all([getPosts("id"), getPosts("en")])

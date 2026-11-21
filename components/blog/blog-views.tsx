@@ -1,9 +1,10 @@
 // Blog index + article views (server components). Content comes from the CMS
-// collections postsId / postsEn (content/blog/<lang>/*.mdoc).
+// (Payload collection "posts"; English uses the *En fields).
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import Markdoc from "@markdoc/markdoc"
+import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
+import { RichText } from "@payloadcms/richtext-lexical/react"
 import { ArrowLeft, ArrowUpRight, Clock } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -171,7 +172,6 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
   const post = await getPost(lang, slug)
   if (!post) return null
   const others = (await getPosts(lang)).filter((p) => p.slug !== slug).slice(0, 2)
-  const body = Markdoc.renderers.react(Markdoc.transform(post.node), React)
   const url = `${SITE}${blogPath(lang, slug)}`
 
   const jsonLd = [
@@ -227,7 +227,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
 
         {/* Plain fade-in on load: a scroll reveal never fires on long articles on small screens. */}
         <div className="fade-up prose-yms mt-12 border-t border-ink/[0.07] pt-12" style={{ ["--d" as string]: "300ms" }}>
-          {body}
+          <RichText data={post.content as SerializedEditorState} disableContainer />
         </div>
 
         <BlogCta title={t.ctaTitle} text={t.ctaText} button={t.ctaButton} />

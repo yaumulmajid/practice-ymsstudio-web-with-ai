@@ -1,87 +1,83 @@
-# CMS (Keystatic)
+# CMS (Payload)
 
-Semua konten website — hero, portfolio, layanan, harga, FAQ, review, footer, pesan WhatsApp, SEO, dan **blog** — bisa diedit lewat panel admin di:
+Semua konten website dikelola lewat panel admin dengan login **email + password** (sama seperti website Woodnest):
 
-- Production: **https://ymsstudio.id/keystatic**
-- Lokal: `npm run dev` → http://127.0.0.1:3000/keystatic
+- Production: **https://ymsstudio.id/admin**
+- Lokal: `npm run dev` → http://localhost:3000/admin
 
-Konten disimpan sebagai file di folder [`/content`](../content) dan gambar di `public/images/`. Tidak ada database.
+Konten yang bisa diedit: Halaman Utama (hero, karya, layanan, review, harga, FAQ, CTA, footer), Portfolio, Review Klien, Blog, Media, serta Pengaturan Situs (kontak, sosial media, pesan WhatsApp, SEO). Setiap teks punya kolom **ID** dan **EN** berdampingan. Kolom EN boleh dikosongkan, dan website akan memakai teks Indonesia.
 
-## Cara kerja
+Perubahan langsung tampil di website setelah klik **Save**, tanpa deploy ulang.
 
-| Lingkungan | Saat klik **Save** |
+## Login pertama (production)
+
+Saat deploy pertama, workflow membuat akun admin otomatis. Email dan passwordnya tersimpan di VPS:
+
+```bash
+grep ADMIN_ /var/www/ymsstudio/.env
+```
+
+- `ADMIN_EMAIL`: default `admin@ymsstudio.id`. Bisa diganti sebelum deploy pertama lewat GitHub secret `CMS_ADMIN_EMAIL`.
+- `ADMIN_PASSWORD`: dibuat acak.
+
+Setelah login, ganti email dan password lewat menu **Pengguna → akun Anda**. Variabel `ADMIN_*` hanya dipakai saat database belum punya pengguna, jadi mengganti password di admin aman.
+
+Tambah pengguna lain lewat **Pengguna → Create New**:
+
+- **Admin**: akses penuh.
+- **Editor**: semua konten, kecuali mengelola pengguna.
+
+## Cara kerja di production
+
+| Komponen | Keterangan |
 |---|---|
-| Lokal (`npm run dev`) | File di `/content` langsung berubah. Commit & push seperti biasa. |
-| Production | Keystatic membuat commit ke branch `main` di GitHub → workflow **Deploy** berjalan → website terupdate **±2–3 menit** kemudian. |
+| `app` | Next.js + Payload (image dari GHCR), port `127.0.0.1:3000` di belakang nginx |
+| `postgres` | PostgreSQL 16, data di volume `pgdata` |
+| Upload gambar | Volume `media` (`/data/media` di container) |
+| Secrets | `/var/www/ymsstudio/.env`: `POSTGRES_PASSWORD`, `PAYLOAD_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (dibuat otomatis saat deploy pertama, tidak pernah ditimpa) |
 
-Hanya akun GitHub yang punya akses tulis ke repo ini yang bisa login ke CMS production.
+- Halaman dirender saat pertama diakses lalu di-cache. Klik Save di CMS memperbarui cache.
+- Migrasi database berjalan otomatis saat container start. Pada deploy pertama, migrasi juga mengisi konten awal: teks halaman, 6 project, dan 3 artikel blog.
 
-## Setup sekali saja: GitHub App untuk CMS production
+### Batas upload nginx
 
-Sebelum setup ini selesai, `/keystatic` di production menampilkan "CMS belum dikonfigurasi". Website tetap berjalan normal.
+Nginx default menolak upload di atas 1 MB. Supaya upload gambar dari admin tidak gagal ("413 Request Entity Too Large"), tambahkan baris ini di blok `server { ... }` ymsstudio.id (misalnya di `/etc/nginx/sites-available/ymsstudio`), lalu reload nginx:
 
-### 1. Buat GitHub App
+```nginx
+client_max_body_size 10M;   # upload gambar di /admin
+```
 
-GitHub → **Settings → Developer settings → GitHub Apps → New GitHub App**
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
 
-- **GitHub App name**: mis. `ymsstudio-cms` (ini jadi *slug* app)
-- **Homepage URL**: `https://ymsstudio.id`
-- **Callback URL** (tambahkan keduanya):
-  - `https://ymsstudio.id/api/keystatic/github/oauth/callback`
-  - `http://127.0.0.1:3000/api/keystatic/github/oauth/callback`
-- ✅ **Expire user authorization tokens**
-- ⬜ Request user authorization (OAuth) during installation — biarkan kosong
-- **Webhook**: matikan (hapus centang *Active*)
-- **Repository permissions**:
-  - Contents: **Read and write**
-  - Metadata: **Read-only**
-  - Pull requests: **Read and write**
-- **Where can this GitHub App be installed?** Only on this account
+### Backup
 
-Klik **Create GitHub App**, lalu:
+```bash
+cd /var/www/ymsstudio
+docker compose exec -T postgres pg_dump -U ymsstudio ymsstudio | gzip > backup-$(date +%F).sql.gz
+docker run --rm -v ymsstudio_media:/m -v "$PWD":/b alpine tar czf /b/media-$(date +%F).tgz -C /m .
+```
 
-1. Catat **Client ID**.
-2. Klik **Generate a new client secret** dan catat secret-nya.
-3. Menu **Install App** → install ke repo `practice-ymsstudio-web-with-ai`.
+## Development lokal
 
-### 2. Isi GitHub Secrets & Variables
+1. Siapkan PostgreSQL, lalu buat `.env.local`:
+   ```
+   DATABASE_URL=postgres://user:pass@127.0.0.1:5432/ymsstudio
+   PAYLOAD_SECRET=string-acak-panjang
+   ADMIN_EMAIL=admin@example.com
+   ADMIN_PASSWORD=password-minimal-10
+   ```
+2. `npm run dev` → buka http://localhost:3000/admin.
 
-Repo → **Settings → Secrets and variables → Actions**
+## Mengubah skema (developer)
 
-**Secrets** (tab *Secrets*):
+Setelah menambah atau mengubah field di `payload/collections`, `payload/globals`, atau `payload.config.ts`:
 
-| Nama | Isi |
-|---|---|
-| `KEYSTATIC_GITHUB_CLIENT_ID` | Client ID dari langkah 1 |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | Client secret dari langkah 1 |
-| `KEYSTATIC_SECRET` | String acak panjang, buat dengan `openssl rand -hex 32` |
+```bash
+npm run migrate:create -- nama-perubahan   # buat file migrasi di /migrations
+npm run generate:types                     # perbarui payload-types.ts
+npm run generate:importmap                 # bila menambah komponen admin
+```
 
-**Variables** (tab *Variables*):
-
-| Nama | Isi |
-|---|---|
-| `KEYSTATIC_GITHUB_APP_SLUG` | Slug app, mis. `ymsstudio-cms` (lihat URL halaman app: `github.com/apps/<slug>`) |
-
-### 3. Deploy ulang
-
-**Actions → Deploy → Run workflow**. Workflow akan:
-
-- memasukkan slug app ke build image, dan
-- menulis tiga secret di atas ke `/var/www/ymsstudio/.env` di VPS (dibaca oleh `docker compose`).
-
-Setelah selesai, buka https://ymsstudio.id/keystatic → **Log in with GitHub**.
-
-## Tips mengedit
-
-- **Portfolio**: centang *Tampilkan di Hero* untuk project yang ingin muncul di showcase paling atas. *Urutan* menentukan posisi.
-- **Review klien**: hanya review asli dengan izin klien. Section Review otomatis muncul begitu ada minimal satu review. Urutan 1 = kartu besar.
-- **Blog**: buat artikel di *Blog — Indonesia* dan *Blog — English* dengan **slug yang sama** agar tombol ID/EN saling terhubung. Centang *Draft* untuk menyembunyikan artikel.
-- **Pesan WhatsApp paket**: gunakan `{paket}` dan `{harga}`, mis. `Saya tertarik paket {paket} (mulai Rp {harga})`.
-- Label kecil antarmuka (menu, "Baca artikel", dll.) ada di `lib/i18n.ts`, bukan di CMS.
-
-## Catatan teknis
-
-- Skema CMS: [`keystatic.config.ts`](../keystatic.config.ts). Loader konten: [`lib/content.ts`](../lib/content.ts).
-- Semua halaman dibuat statis saat build. Perubahan konten selalu lewat build + deploy baru, sehingga website tetap cepat.
-- Route API (`app/api/keystatic`) memaksa URL publik `https://ymsstudio.id` untuk callback OAuth karena app berjalan di belakang nginx. Ganti lewat env `SITE_URL` bila domain berubah.
-- Untuk mencoba mode GitHub di lokal: `NEXT_PUBLIC_KEYSTATIC_MODE=github npm run dev` (butuh variabel di `.env.local`).
+Commit file migrasinya. Production menjalankannya otomatis saat deploy.

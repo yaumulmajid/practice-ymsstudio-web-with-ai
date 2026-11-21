@@ -1,6 +1,6 @@
 // Languages + fixed interface labels (menu, buttons, aria labels).
 // Everything else — page copy, projects, reviews, pricing, FAQ, blog — is edited
-// in the CMS (/keystatic) and stored in /content. See lib/content.ts.
+// in the CMS (Payload, /admin). See lib/content.ts.
 
 export type Lang = "id" | "en"
 export const LANGS: Lang[] = ["id", "en"]

@@ -1,4 +1,4 @@
-// Metadata + static params for the blog routes (shared by /blog and /en/blog).
+// Metadata for the blog routes (/blog, /blog/[slug] and their /en twins).
 import type { Metadata } from "next"
 import { getPost, getPosts } from "@/lib/content"
 import { blogPath, ui, type Lang } from "@/lib/i18n"
@@ -49,8 +49,4 @@ export async function blogPostMetadata(lang: Lang, slug: string): Promise<Metada
     },
     twitter: { card: "summary_large_image", title: post.title, description: post.excerpt, images: [image] },
   }
-}
-
-export async function blogStaticParams(lang: Lang) {
-  return (await getPosts(lang)).map((p) => ({ slug: p.slug }))
 }
