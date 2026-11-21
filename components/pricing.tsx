@@ -39,8 +39,8 @@ export default function Pricing() {
                 <div
                   className={`relative flex h-full flex-col overflow-hidden rounded-[28px] p-8 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 ${
                     dark
-                      ? "bg-ink text-white shadow-[0_40px_80px_-30px_rgba(14,17,19,0.6)]"
-                      : "border border-ink/[0.07] bg-white text-ink hover:shadow-[0_30px_60px_-30px_rgba(14,17,19,0.18)]"
+                      ? "bg-ink text-white shadow-[0_40px_80px_-30px_rgba(11,18,32,0.6)]"
+                      : "border border-ink/[0.07] bg-white text-ink hover:shadow-[0_30px_60px_-30px_rgba(11,18,32,0.18)]"
                   }`}
                 >
                   {dark && (

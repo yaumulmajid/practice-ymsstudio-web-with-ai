@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, type CSSProperties, type ElementType, type MouseEvent, type ReactNode } from "react"
+import { useEffect, useRef, useState, type CSSProperties, type ElementType, type MouseEvent, type ReactNode } from "react"
 
 export { WA_NUMBER, waLink } from "@/lib/site-data"
 
@@ -16,6 +16,8 @@ type RevealProps = {
 /** Fades, lifts and un-blurs its children the first time they scroll into view. */
 export function Reveal({ children, as: Tag = "div", delay = 0, className = "", style, ...rest }: RevealProps) {
   const ref = useRef<HTMLElement>(null)
+  // Kept in React state (not classList) so re-renders never drop the visible state.
+  const [inView, setInView] = useState(false)
 
   useEffect(() => {
     const el = ref.current
@@ -23,7 +25,7 @@ export function Reveal({ children, as: Tag = "div", delay = 0, className = "", s
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add("is-in")
+          setInView(true)
           observer.disconnect()
         }
       },
@@ -36,7 +38,7 @@ export function Reveal({ children, as: Tag = "div", delay = 0, className = "", s
   return (
     <Tag
       ref={ref}
-      className={`reveal ${className}`}
+      className={`reveal ${inView ? "is-in" : ""} ${className}`}
       style={{ ...style, ["--reveal-delay" as string]: `${delay}ms` }}
       {...rest}
     >

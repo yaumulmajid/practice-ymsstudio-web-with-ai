@@ -7,38 +7,38 @@
    one teal accent. Motion is soft and slow.
    ───────────────────────────────────────────── */
 :root {
-  --background: #fafaf8;
-  --foreground: #0e1113;
+  --background: #f7f9fb;
+  --foreground: #0b1220;
   --card: #ffffff;
-  --card-foreground: #0e1113;
+  --card-foreground: #0b1220;
   --popover: #ffffff;
-  --popover-foreground: #0e1113;
+  --popover-foreground: #0b1220;
   --primary: #2a8e9e;
   --primary-foreground: #ffffff;
   --secondary: #eef5f6;
-  --secondary-foreground: #0e1113;
+  --secondary-foreground: #0b1220;
   --muted: #f2f2ef;
-  --muted-foreground: rgba(14, 17, 19, 0.6);
-  --accent: #0e1113;
+  --muted-foreground: rgba(11, 18, 32, 0.6);
+  --accent: #0b1220;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: rgba(14, 17, 19, 0.08);
-  --input: rgba(14, 17, 19, 0.12);
+  --border: rgba(11, 18, 32, 0.08);
+  --input: rgba(11, 18, 32, 0.12);
   --ring: #2a8e9e;
   --chart-1: #2a8e9e;
-  --chart-2: #0e1113;
+  --chart-2: #0b1220;
   --chart-3: #eef5f6;
   --chart-4: rgba(42, 142, 158, 0.6);
-  --chart-5: rgba(14, 17, 19, 0.6);
+  --chart-5: rgba(11, 18, 32, 0.6);
   --radius: 0.75rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0e1113;
+  --sidebar-foreground: #0b1220;
   --sidebar-primary: #2a8e9e;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #eef5f6;
-  --sidebar-accent-foreground: #0e1113;
-  --sidebar-border: rgba(14, 17, 19, 0.08);
+  --sidebar-accent-foreground: #0b1220;
+  --sidebar-border: rgba(11, 18, 32, 0.08);
   --sidebar-ring: #2a8e9e;
 
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
@@ -49,11 +49,11 @@
   --font-serif: var(--font-serif-display), ui-serif, Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-ink: #0e1113;
+  --color-ink: #0b1220;
   --color-brand: #2a8e9e;
   --color-brand-deep: #1f6f7b;
   --color-brand-soft: #eef5f6;
-  --color-canvas: #fafaf8;
+  --color-canvas: #f7f9fb;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -108,7 +108,7 @@
   }
   ::selection {
     background: rgba(42, 142, 158, 0.18);
-    color: #0e1113;
+    color: #0b1220;
   }
 }
 
@@ -229,13 +229,13 @@
 
 @keyframes waGlow {
   0% {
-    box-shadow: 0 0 0 0 rgba(42, 142, 158, 0.45);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.45);
   }
   70% {
-    box-shadow: 0 0 0 14px rgba(42, 142, 158, 0);
+    box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(42, 142, 158, 0);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
   }
 }
 
@@ -265,8 +265,8 @@
 /* Subtle dotted grid background */
 .bg-grid {
   background-image:
-    linear-gradient(to right, rgba(14, 17, 19, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(14, 17, 19, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(11, 18, 32, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 18, 32, 0.05) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
 }
@@ -317,6 +317,13 @@
 .word-rotator > span.is-active { transform: none; opacity: 1; }
 .word-rotator > span.is-leaving { transform: translate3d(0, -105%, 0); opacity: 0; }
 
+/* Hero showcase tab progress (drives auto-advance via animationend) */
+@keyframes hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hero-progress { animation: hero-progress 5s linear forwards; }
+
 /* FAQ accordion */
 .faq-body {
   display: grid;
@@ -327,6 +334,10 @@
 .faq-item.is-open .faq-icon { transform: rotate(45deg); }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-progress {
+    animation: none !important;
+    transform: scaleX(1);
+  }
   html {
     scroll-behavior: auto;
   }

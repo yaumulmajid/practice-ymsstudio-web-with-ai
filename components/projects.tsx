@@ -34,7 +34,7 @@ export default function Projects() {
             return (
               <li key={p.url} className="sticky" style={{ top: `${88 + i * 18}px` }}>
                 <article
-                  className={`group grid overflow-hidden rounded-[32px] shadow-[0_-20px_60px_-30px_rgba(14,17,19,0.25)] md:min-h-[480px] md:grid-cols-[0.9fr_1.1fr] ${t.card}`}
+                  className={`group grid overflow-hidden rounded-[32px] shadow-[0_-20px_60px_-30px_rgba(11,18,32,0.25)] md:min-h-[480px] md:grid-cols-[0.9fr_1.1fr] ${t.card}`}
                 >
                   <div className="flex flex-col p-7 sm:p-10">
                     <div className={`flex items-center justify-between text-xs ${t.sub}`}>

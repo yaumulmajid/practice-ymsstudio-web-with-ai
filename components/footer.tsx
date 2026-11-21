@@ -109,7 +109,7 @@ export default function Footer() {
       {/* Oversized wordmark */}
       <div
         aria-hidden="true"
-        className="pointer-events-none select-none text-center font-semibold leading-[0.75] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(14,17,19,0.08)] [font-size:clamp(5rem,22vw,20rem)]"
+        className="pointer-events-none select-none text-center font-semibold leading-[0.75] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(11,18,32,0.08)] [font-size:clamp(5rem,22vw,20rem)]"
       >
         YMS<span className="font-serif font-normal italic">studio</span>
       </div>

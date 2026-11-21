@@ -57,15 +57,15 @@ export default function Header() {
   }
 
   const solid = isScrolled || isOpen
-  const light = !solid
+  const light = false
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
       <nav
         className={`mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pl-5 pr-2 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:pl-6 ${
           solid
-            ? "border border-ink/[0.06] bg-white/80 shadow-[0_8px_30px_-12px_rgba(14,17,19,0.15)] backdrop-blur-xl"
-            : "border border-white/[0.08] bg-white/[0.03] backdrop-blur-md"
+            ? "border border-ink/[0.06] bg-white/80 shadow-[0_8px_30px_-12px_rgba(11,18,32,0.15)] backdrop-blur-xl"
+            : "border border-transparent bg-transparent"
         }`}
         aria-label="Navigasi utama"
       >

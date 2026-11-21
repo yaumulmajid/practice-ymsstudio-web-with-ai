@@ -89,7 +89,7 @@ export default function Services() {
               <Reveal key={s.title} delay={(i % 3) * 100} className={s.big ? "md:col-span-2 md:row-span-2" : ""}>
                 <article
                   onMouseMove={trackSpotlight}
-                  className={`spotlight group flex h-full flex-col overflow-hidden rounded-[28px] border border-ink/[0.07] bg-canvas p-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(14,17,19,0.2)] ${
+                  className={`spotlight group flex h-full flex-col overflow-hidden rounded-[28px] border border-ink/[0.07] bg-canvas p-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(11,18,32,0.2)] ${
                     s.big ? "pb-0 sm:p-10 sm:pb-0" : ""
                   }`}
                 >
