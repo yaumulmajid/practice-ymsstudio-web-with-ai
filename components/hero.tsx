@@ -32,9 +32,12 @@ function WordRotator() {
   )
 }
 
+/** Projects shown in the hero showcase (in this order of the projects list). */
+const HERO_DOMAINS = ["sarasa.id", "ikk.lan.go.id", "loopnet.com"]
+
 function Showcase() {
   const t = useT()
-  const projects = useProjects()
+  const projects = useProjects().filter((p) => HERO_DOMAINS.some((d) => p.url.includes(d)))
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const current = projects[active]
@@ -107,7 +110,7 @@ function Showcase() {
 
       {/* Tabs */}
       <div className="scrollbar-hide -mx-5 mt-5 overflow-x-auto px-5">
-        <div className="flex min-w-max gap-2 sm:grid sm:min-w-0 sm:grid-cols-6">
+        <div className="grid grid-cols-3 gap-2">
           {projects.map((p, i) => {
             const on = i === active
             return (
