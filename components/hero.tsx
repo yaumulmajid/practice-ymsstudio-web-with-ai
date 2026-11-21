@@ -1,223 +1,202 @@
 "use client"
 
-import { useRef, type CSSProperties, type MouseEvent } from "react"
+import { useEffect, useState, type CSSProperties } from "react"
 import Image from "next/image"
-import { ArrowRight, Star, Zap } from "lucide-react"
-import { waLink } from "@/components/motion"
+import { ArrowRight, ArrowUpRight, Star } from "lucide-react"
+import { projects, waLink, type Project } from "@/lib/site-data"
 
-const HERO_WA = waLink(
-  "Halo Yaumul, saya pelaku UMKM mau konsultasi pembuatan website untuk usaha saya. Bisa bantu?",
-)
-
-const highlights = [
-  { title: "Selesai 3 Hari", text: "Kerja cepat dan efisien" },
-  { title: "Garansi 100%", text: "Uang kembali" },
-  { title: "20+ UMKM Puas", text: "Rating 4.9 dari 5" },
-  { title: "Support 24/7", text: "Via WhatsApp" },
-]
-
-const marqueeItems = [
-  "Fashion & F&B",
-  "Toko Online",
-  "Company Profile",
-  "Jasa & Konsultan",
-  "Produk Lokal",
-  "Landing Page",
-  "WordPress",
-  "WooCommerce",
-  "SEO Ready",
-]
+const words = ["dipercaya.", "ditemukan.", "dipilih.", "laris."]
 
 const d = (ms: number) => ({ ["--d" as string]: `${ms}ms` }) as CSSProperties
+const domain = (url: string) => url.replace(/^https?:\/\//, "")
+
+function WordRotator() {
+  const [index, setIndex] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setIndex((i) => (i + 1) % words.length), 2600)
+    return () => clearInterval(t)
+  }, [])
+  const prev = (index - 1 + words.length) % words.length
+  return (
+    <span className="word-rotator text-brand" aria-label={words.join(" ")}>
+      {words.map((w, i) => (
+        <span
+          key={w}
+          aria-hidden="true"
+          className={`font-serif font-normal italic tracking-[-0.02em] ${
+            i === index ? "is-active" : i === prev ? "is-leaving" : ""
+          }`}
+        >
+          {w}
+        </span>
+      ))}
+    </span>
+  )
+}
+
+function ProjectCard({ p, className = "", eager = false }: { p: Project; className?: string; eager?: boolean }) {
+  return (
+    <a
+      href={p.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group relative block shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-1.5 transition-colors duration-500 hover:border-white/30 ${className}`}
+      aria-label={`Kunjungi ${domain(p.url)}`}
+    >
+      <div className="relative aspect-[10/7] overflow-hidden rounded-xl">
+        <Image
+          src={p.image}
+          alt={p.title}
+          fill
+          sizes="(max-width: 1024px) 70vw, 300px"
+          className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.06]"
+          priority={eager}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        <span className="absolute bottom-3 left-3 right-3 flex translate-y-2 items-center justify-between text-xs font-medium text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+          Kunjungi website
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-white text-ink">
+            <ArrowUpRight size={14} />
+          </span>
+        </span>
+      </div>
+      <div className="flex items-center justify-between px-2 pb-1 pt-2.5">
+        <span className="truncate text-[12px] font-medium text-white/80">{domain(p.url)}</span>
+        <span className="text-[10px] uppercase tracking-wider text-white/35">{p.category}</span>
+      </div>
+    </a>
+  )
+}
 
 export default function Hero() {
-  const stageRef = useRef<HTMLDivElement>(null)
-
-  const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    const el = stageRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width - 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5
-    el.style.setProperty("--rx", `${(-y * 6).toFixed(2)}deg`)
-    el.style.setProperty("--ry", `${(x * 8).toFixed(2)}deg`)
-    el.style.setProperty("--tx", `${(x * 14).toFixed(1)}px`)
-    el.style.setProperty("--ty", `${(y * 14).toFixed(1)}px`)
-  }
-  const onLeave = () => {
-    const el = stageRef.current
-    if (!el) return
-    ;["--rx", "--ry", "--tx", "--ty"].forEach((p) => el.style.setProperty(p, "0"))
-  }
+  const colA = projects
+  const colB = [...projects].reverse()
 
   return (
-    <section id="home" className="relative overflow-hidden pt-32 sm:pt-36 lg:pt-40" aria-labelledby="hero-heading">
+    <section
+      id="home"
+      className="relative overflow-hidden bg-ink pb-16 pt-28 text-white sm:pt-32 lg:min-h-[min(100svh,960px)] lg:pb-0 lg:pt-0"
+      aria-labelledby="hero-heading"
+    >
       <a
         href="#pricing"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink"
       >
         Langsung ke Paket & Harga
       </a>
 
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-        <div className="bg-grid absolute inset-0" />
-        <div className="animate-drift absolute -top-40 left-1/2 h-[560px] w-[860px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.16),transparent)] blur-2xl" />
+      {/* Atmosphere */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="animate-drift absolute -left-40 top-1/3 h-[620px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.35),transparent)] blur-2xl" />
+        <div className="noise absolute inset-0 opacity-[0.06] mix-blend-overlay" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="mx-auto max-w-5xl text-center">
-          {/* Promo badge */}
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 sm:px-8 lg:min-h-[min(100svh,960px)] lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+        {/* Copy */}
+        <div className="lg:py-32">
           <div
-            className="fade-up inline-flex items-center gap-2.5 rounded-full border border-ink/[0.07] bg-white/70 py-1.5 pl-2 pr-4 text-xs font-medium text-ink/70 shadow-sm backdrop-blur"
+            className="fade-up inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1.5 pl-2 pr-4 text-xs font-medium text-white/70 backdrop-blur"
             style={d(0)}
-            role="status"
           >
-            <span className="relative grid h-5 w-5 place-items-center rounded-full bg-brand/10">
-              <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-brand" />
-              <span className="relative h-2 w-2 rounded-full bg-brand" />
+            <span className="relative grid h-5 w-5 place-items-center rounded-full bg-emerald-400/15">
+              <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            <span className="hidden sm:inline">Promo: Diskon 30% + Gratis Domain & Hosting</span>
-            <span className="sm:hidden">Diskon 30% + Gratis Domain</span>
+            Menerima proyek baru
           </div>
 
           <h1
             id="hero-heading"
-            className="mt-7 text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-6xl lg:text-[4.75rem]"
+            className="mt-7 text-[2.75rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-[4.1rem]"
           >
             <span className="line-mask">
-              <span style={d(120)}>Jasa Website UMKM</span>
+              <span style={d(100)}>Jasa website UMKM</span>
             </span>
             <span className="line-mask">
-              <span style={d(240)}>
-                Profesional,{" "}
-                <em className="font-serif font-normal italic tracking-[-0.02em] text-brand">harga terjangkau.</em>
+              <span style={d(200)}>yang bikin bisnis</span>
+            </span>
+            <span className="line-mask">
+              <span style={d(300)}>
+                Anda <WordRotator />
               </span>
             </span>
           </h1>
 
-          <p
-            className="fade-up mx-auto mt-7 max-w-xl text-base leading-relaxed text-ink/60 sm:text-lg"
-            style={d(450)}
-          >
-            Website cepat dan mobile-friendly untuk UMKM. Dari landing page hingga toko online dengan WordPress atau
-            Custom Development. Selesai 3 hari, bergaransi.
+          <p className="fade-up mt-7 max-w-md text-base leading-relaxed text-white/55 sm:text-lg" style={d(480)}>
+            Studio desain & pengembangan web untuk UMKM dan brand yang ingin tampil profesional, cepat, dan mudah
+            ditemukan di Google.
           </p>
 
-          <nav
-            aria-label="Aksi utama"
-            className="fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
-            style={d(580)}
-          >
+          <div className="fade-up mt-9 flex flex-col gap-3 sm:flex-row" style={d(600)}>
             <a
-              href={HERO_WA}
+              href={waLink("Halo YMS Studio, saya ingin konsultasi pembuatan website untuk bisnis saya.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white shadow-[0_10px_30px_-10px_rgba(14,17,19,0.5)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep sm:w-auto"
-              aria-label="Konsultasi gratis via WhatsApp"
+              className="group inline-flex items-center justify-center gap-3 rounded-full bg-white py-3 pl-6 pr-3 text-sm font-medium text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-soft"
             >
               Konsultasi Gratis
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:translate-x-0.5">
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover:translate-x-0.5">
                 <ArrowRight size={15} />
               </span>
             </a>
             <button
               type="button"
-              onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/10 bg-white/60 px-6 py-4 text-sm font-medium text-ink backdrop-blur transition-all duration-500 hover:border-ink/25 hover:bg-white sm:w-auto"
-              aria-label="Lihat paket dan harga"
+              onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-6 py-4 text-sm font-medium text-white/85 transition-colors duration-500 hover:border-white/40 hover:text-white"
             >
-              Lihat Paket & Harga
-              <span className="text-ink/40">· mulai 799rb</span>
+              Lihat Karya Kami
             </button>
-          </nav>
+          </div>
+
+          <dl className="fade-up mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-white/10 pt-8" style={d(720)}>
+            <div>
+              <dt className="sr-only">Rating</dt>
+              <dd className="flex items-center gap-2">
+                <span className="flex">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
+                  ))}
+                </span>
+                <span className="text-sm font-semibold">4.9/5</span>
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <dd className="text-sm font-semibold">20+</dd>
+              <dt className="text-sm text-white/45">website live</dt>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <dd className="text-sm font-semibold">Mulai Rp 2jt</dd>
+              <dt className="text-sm text-white/45">domain & hosting termasuk</dt>
+            </div>
+          </dl>
         </div>
 
-        {/* Visual stage */}
+        {/* Project wall — desktop */}
         <div
-          ref={stageRef}
-          onMouseMove={onMove}
-          onMouseLeave={onLeave}
-          className="fade-up relative mx-auto mt-16 max-w-5xl [perspective:1400px] lg:mt-20"
-          style={d(750)}
+          className="wall wall-mask relative hidden h-[min(100svh,960px)] min-h-[640px] [perspective:1600px] lg:block"
+          aria-label="Contoh website buatan kami"
         >
-          <figure
-            className="relative overflow-hidden rounded-[22px] border border-ink/[0.07] bg-white p-1.5 shadow-[0_40px_100px_-40px_rgba(14,17,19,0.35)] transition-transform duration-700 ease-out [transform:rotateX(var(--rx,0))_rotateY(var(--ry,0))]"
-          >
-            <div className="flex items-center gap-1.5 px-3 py-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
-              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
-              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
-              <span className="mx-auto hidden rounded-full bg-ink/[0.04] px-16 py-1 text-[10px] text-ink/40 sm:block">
-                ymsstudio.id
-              </span>
+          <div className="absolute inset-0 grid grid-cols-2 gap-4 [transform:rotateX(14deg)_rotateZ(-8deg)_scale(1.12)] [transform-style:preserve-3d]">
+            <div className="animate-scroll-up flex flex-col gap-4">
+              {[...colA, ...colA].map((p, i) => (
+                <ProjectCard key={`a${i}`} p={p} eager={i < 2} />
+              ))}
             </div>
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-brand-soft">
-              <Image
-                src="/project-hero.webp"
-                alt="Tampilan contoh website UMKM profesional dengan desain modern"
-                fill
-                className="object-cover object-top"
-                priority
-                fetchPriority="high"
-                quality={85}
-                sizes="(max-width: 1024px) 95vw, 1000px"
-              />
-            </div>
-          </figure>
-
-          {/* Floating chips */}
-          <div
-            className="absolute -left-3 top-1/4 hidden transition-transform duration-700 ease-out [transform:translate(calc(var(--tx,0px)*-1),calc(var(--ty,0px)*-1))] sm:block lg:-left-10"
-            aria-hidden="true"
-          >
-            <div className="animate-float-slow flex items-center gap-3 rounded-2xl border border-ink/[0.06] bg-white/90 px-4 py-3 shadow-xl shadow-ink/[0.06] backdrop-blur">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand/10 text-brand">
-                <Zap size={16} />
-              </span>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-ink">3 Hari</p>
-                <p className="text-[11px] text-ink/50">Rata-rata pengerjaan</p>
-              </div>
-            </div>
-          </div>
-          <div
-            className="absolute -right-3 bottom-1/4 hidden transition-transform duration-700 ease-out [transform:translate(var(--tx,0px),var(--ty,0px))] sm:block lg:-right-10"
-            aria-hidden="true"
-          >
-            <div className="animate-float-slower flex items-center gap-3 rounded-2xl border border-ink/[0.06] bg-white/90 px-4 py-3 shadow-xl shadow-ink/[0.06] backdrop-blur">
-              <div className="flex">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-ink">4.9 / 5</p>
-                <p className="text-[11px] text-ink/50">20+ website live</p>
-              </div>
+            <div className="animate-scroll-down -mt-24 flex flex-col gap-4">
+              {[...colB, ...colB].map((p, i) => (
+                <ProjectCard key={`b${i}`} p={p} />
+              ))}
             </div>
           </div>
         </div>
-
-        {/* Highlights */}
-        <dl className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink/[0.06] bg-ink/[0.06] lg:grid-cols-4">
-          {highlights.map((h, i) => (
-            <div key={h.title} className="fade-up bg-canvas px-5 py-6 sm:px-6" style={d(900 + i * 80)}>
-              <dt className="text-sm font-semibold text-ink sm:text-base">{h.title}</dt>
-              <dd className="mt-1 text-xs text-ink/50 sm:text-sm">{h.text}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
 
-      {/* Marquee */}
-      <div className="marquee-mask mt-16 overflow-hidden border-y border-ink/[0.06] py-5 lg:mt-20" aria-hidden="true">
-        <div className="animate-marquee flex w-max gap-12">
-          {[...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="flex items-center gap-12 whitespace-nowrap text-sm font-medium text-ink/40">
-              {item}
-              <span className="font-serif text-lg text-brand/60">✦</span>
-            </span>
+      {/* Project rows — mobile & tablet */}
+      <div className="marquee-row marquee-mask relative mt-4 space-y-3 overflow-hidden lg:hidden">
+        <div className="animate-marquee flex w-max gap-3">
+          {[...colA, ...colA].map((p, i) => (
+            <ProjectCard key={`m${i}`} p={p} className="w-64" eager={i < 2} />
           ))}
         </div>
       </div>

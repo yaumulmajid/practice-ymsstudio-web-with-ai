@@ -1,8 +1,9 @@
 import Header from "@/components/header"
 import Hero from "@/components/hero"
-import Services from "@/components/services"
 import Projects from "@/components/projects"
+import Services from "@/components/services"
 import Pricing from "@/components/pricing"
+import FAQ from "@/components/faq"
 import CTA from "@/components/cta"
 import Footer from "@/components/footer"
 
@@ -12,9 +13,10 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Services />
         <Projects />
+        <Services />
         <Pricing />
+        <FAQ />
         <CTA />
       </main>
       <Footer />

@@ -1,80 +1,106 @@
 "use client"
 
-import { ArrowUpRight, Code2, Megaphone, MessagesSquare } from "lucide-react"
-import { Eyebrow, Reveal, trackSpotlight } from "@/components/motion"
+import { BarChart3, Code2, Gauge, LifeBuoy, Megaphone, Search } from "lucide-react"
+import { Reveal, SectionHead, trackSpotlight } from "@/components/motion"
 
 const services = [
   {
     icon: Code2,
-    title: "Pengembangan Web",
-    description:
-      "Kami membuat website modern, responsif, dan cepat dengan teknologi terkini seperti WordPress dan Custom Development. Cocok untuk company profile, landing page, hingga toko online yang profesional dan user-friendly.",
+    title: "Desain & Pengembangan Web",
+    text: "Landing page, company profile, toko online, hingga web app custom. Didesain khusus untuk brand Anda — bukan template pasaran.",
+    big: true,
   },
   {
-    icon: MessagesSquare,
-    title: "Konsultasi Digital",
-    description:
-      "Konsultasi mendalam untuk merencanakan strategi digital bisnis Anda. Kami bantu tentukan teknologi yang tepat, fitur yang dibutuhkan, dan solusi terbaik untuk mencapai tujuan bisnis dengan efektif dan efisien.",
+    icon: Search,
+    title: "SEO & Google Business",
+    text: "Struktur SEO on-page, Search Console, dan Google Business Profile agar bisnis Anda muncul saat dicari.",
   },
   {
     icon: Megaphone,
     title: "Google Ads & Meta Ads",
-    description:
-      "Layanan pengelolaan iklan profesional di Google dan Meta (Facebook & Instagram). Kami optimalkan kampanye iklan Anda untuk meningkatkan traffic, engagement, dan konversi penjualan dengan ROI yang maksimal.",
+    text: "Kampanye iklan yang dioptimasi untuk traffic dan konversi, dengan laporan yang mudah dipahami.",
+  },
+  {
+    icon: Gauge,
+    title: "Performa & Keamanan",
+    text: "Website cepat, SSL, backup otomatis, dan perlindungan dari spam serta serangan umum.",
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics & Tracking",
+    text: "GA4, Meta Pixel, dan tracking konversi WhatsApp — tahu persis dari mana pelanggan datang.",
+  },
+  {
+    icon: LifeBuoy,
+    title: "Maintenance & Support",
+    text: "Update konten, perbaikan bug, dan bantuan teknis via WhatsApp setelah website live.",
   },
 ]
 
 const steps = [
-  { title: "Konsultasi", text: "Diskusi kebutuhan & tujuan bisnis" },
-  { title: "Desain", text: "Tampilan sesuai identitas brand" },
-  { title: "Development", text: "Dibangun cepat & mobile-friendly" },
-  { title: "Live", text: "Online, siap menerima pelanggan" },
+  { title: "Konsultasi", text: "Kami pelajari bisnis, target pelanggan, dan tujuan website Anda." },
+  { title: "Desain", text: "Rancangan tampilan sesuai identitas brand, direvisi sampai pas." },
+  { title: "Development", text: "Dibangun cepat, responsif, dan siap SEO di semua perangkat." },
+  { title: "Launch & Support", text: "Website online, Anda dilatih mengelola, kami tetap mendampingi." },
 ]
+
+function BrowserArt() {
+  return (
+    <div className="pointer-events-none relative mt-8 h-44 overflow-hidden rounded-t-2xl border border-b-0 border-ink/[0.08] bg-canvas sm:h-52" aria-hidden="true">
+      <div className="flex items-center gap-1.5 border-b border-ink/[0.06] px-4 py-3">
+        <span className="h-2 w-2 rounded-full bg-ink/15" />
+        <span className="h-2 w-2 rounded-full bg-ink/15" />
+        <span className="h-2 w-2 rounded-full bg-ink/15" />
+        <span className="ml-3 h-4 w-40 rounded-full bg-ink/[0.05]" />
+      </div>
+      <div className="grid grid-cols-[1.3fr_1fr] gap-4 p-5">
+        <div className="space-y-2.5">
+          <div className="h-3 w-4/5 rounded-full bg-ink/80 transition-all duration-700 group-hover:w-full" />
+          <div className="h-3 w-3/5 rounded-full bg-ink/80" />
+          <div className="mt-4 h-2 w-full rounded-full bg-ink/10" />
+          <div className="h-2 w-5/6 rounded-full bg-ink/10" />
+          <div className="mt-4 h-7 w-28 rounded-full bg-brand transition-all duration-700 group-hover:w-32" />
+        </div>
+        <div className="rounded-xl bg-gradient-to-br from-brand/30 to-brand-soft transition-transform duration-700 group-hover:scale-105" />
+      </div>
+    </div>
+  )
+}
 
 export default function Services() {
   return (
-    <section id="services" className="relative py-24 md:py-32">
+    <section id="services" className="relative bg-white py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-end">
-          <div>
-            <Reveal>
-              <Eyebrow index="01">Layanan</Eyebrow>
-            </Reveal>
-            <Reveal as="h2" delay={80} className="mt-5 text-4xl font-semibold leading-[1.05] tracking-[-0.035em] text-ink md:text-5xl">
-              Apa yang kami <em className="font-serif font-normal italic text-brand">tawarkan</em>
-            </Reveal>
-          </div>
-          <Reveal as="p" delay={160} className="max-w-md text-base leading-relaxed text-ink/55 md:justify-self-end">
-            Solusi komprehensif untuk mewujudkan visi digital Anda dan mendorong hasil bisnis nyata.
-          </Reveal>
-        </div>
+        <SectionHead
+          index="02"
+          label="Layanan"
+          title={
+            <>
+              Semua yang bisnis Anda butuhkan untuk <em className="font-serif font-normal italic text-brand">tumbuh online</em>
+            </>
+          }
+          text="Satu tim untuk desain, pengembangan, SEO, dan iklan — Anda cukup fokus menjalankan bisnis."
+        />
 
-        <div className="mt-14 grid gap-4 md:grid-cols-3">
+        <div className="mt-16 grid gap-4 md:grid-cols-3">
           {services.map((s, i) => {
             const Icon = s.icon
             return (
-              <Reveal key={s.title} delay={i * 110} className="h-full">
+              <Reveal key={s.title} delay={(i % 3) * 100} className={s.big ? "md:col-span-2 md:row-span-2" : ""}>
                 <article
                   onMouseMove={trackSpotlight}
-                  className="spotlight group flex h-full flex-col rounded-3xl border border-ink/[0.07] bg-white p-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:border-ink/[0.12] hover:shadow-[0_30px_60px_-30px_rgba(14,17,19,0.2)]"
+                  className={`spotlight group flex h-full flex-col overflow-hidden rounded-[28px] border border-ink/[0.07] bg-canvas p-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(14,17,19,0.2)] ${
+                    s.big ? "pb-0 sm:p-10 sm:pb-0" : ""
+                  }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-soft text-brand transition-all duration-700 group-hover:bg-brand group-hover:text-white">
-                      <Icon size={20} strokeWidth={1.6} />
-                    </span>
-                    <span className="font-serif text-sm italic text-ink/30">0{i + 1}</span>
-                  </div>
-                  <h3 className="mt-10 text-xl font-semibold tracking-tight text-ink">{s.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-ink/55">{s.description}</p>
-                  <div className="mt-auto pt-8">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink/40 transition-colors duration-500 group-hover:text-brand">
-                      Selengkapnya
-                      <ArrowUpRight
-                        size={14}
-                        className="transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      />
-                    </span>
-                  </div>
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-brand shadow-sm transition-all duration-700 group-hover:bg-brand group-hover:text-white">
+                    <Icon size={19} strokeWidth={1.6} />
+                  </span>
+                  <h3 className={`mt-8 font-semibold tracking-tight text-ink ${s.big ? "text-2xl sm:text-3xl" : "text-lg"}`}>
+                    {s.title}
+                  </h3>
+                  <p className={`mt-3 leading-relaxed text-ink/55 ${s.big ? "max-w-md text-base" : "text-sm"}`}>{s.text}</p>
+                  {s.big && <BrowserArt />}
                 </article>
               </Reveal>
             )
@@ -82,27 +108,24 @@ export default function Services() {
         </div>
 
         {/* Process */}
-        <Reveal className="mt-20">
-          <p className="text-center text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">
-            Proses kerja sederhana
-          </p>
-        </Reveal>
-        <div className="relative mt-8">
-          <div
-            className="absolute left-0 right-0 top-[15px] hidden h-px bg-gradient-to-r from-transparent via-ink/10 to-transparent lg:block"
-            aria-hidden="true"
-          />
-        <ol className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-          {steps.map((step, i) => (
-            <Reveal as="li" key={step.title} delay={i * 120} className="relative text-center">
-              <span className="relative mx-auto grid h-8 w-8 place-items-center rounded-full border border-ink/10 bg-canvas text-xs font-medium text-ink">
-                {i + 1}
-              </span>
-              <p className="mt-4 text-sm font-semibold text-ink">{step.title}</p>
-              <p className="mt-1 text-xs text-ink/50">{step.text}</p>
-            </Reveal>
-          ))}
-        </ol>
+        <div className="mt-24 grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
+          <Reveal>
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Cara kami bekerja</p>
+            <h3 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-ink">
+              Proses jelas, <em className="font-serif font-normal italic text-brand">tanpa ribet.</em>
+            </h3>
+          </Reveal>
+          <ol className="divide-y divide-ink/[0.07] border-y border-ink/[0.07]">
+            {steps.map((step, i) => (
+              <Reveal as="li" key={step.title} delay={i * 90} className="group grid grid-cols-[3rem_1fr] gap-4 py-6 sm:grid-cols-[4rem_1fr_1.4fr]">
+                <span className="font-serif text-2xl italic text-ink/25 transition-colors duration-500 group-hover:text-brand">
+                  0{i + 1}
+                </span>
+                <span className="text-lg font-semibold tracking-tight text-ink">{step.title}</span>
+                <span className="col-start-2 text-sm leading-relaxed text-ink/55 sm:col-start-3">{step.text}</span>
+              </Reveal>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

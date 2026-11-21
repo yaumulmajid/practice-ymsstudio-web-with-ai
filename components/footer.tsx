@@ -8,20 +8,20 @@ const socials = [
   { label: "Email", href: "mailto:info@ymsstudio.id", icon: Mail },
 ]
 
-const serviceLinks = ["Website WordPress", "Toko Online / E-Commerce", "Company Profile", "Custom Development"]
+const serviceLinks = ["Landing Page", "Company Profile", "Toko Online", "Web App Custom"]
 
 const navLinks = [
-  { name: "Beranda", href: "#home" },
+  { name: "Karya", href: "#work" },
   { name: "Layanan", href: "#services" },
-  { name: "Portfolio", href: "#portfolio" },
   { name: "Harga", href: "#pricing" },
+  { name: "FAQ", href: "#faq" },
 ]
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer id="contact" className="relative overflow-hidden pt-24">
+    <footer id="contact" className="relative overflow-hidden pt-20">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>

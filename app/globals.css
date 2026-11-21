@@ -282,6 +282,50 @@
   display: none;
 }
 
+
+/* ─────────────── Hero project wall ─────────────── */
+@keyframes scroll-up {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -50%, 0); }
+}
+.animate-scroll-up { animation: scroll-up 38s linear infinite; }
+.animate-scroll-down { animation: scroll-up 38s linear infinite reverse; }
+.wall:hover .animate-scroll-up,
+.wall:hover .animate-scroll-down,
+.marquee-row:hover .animate-marquee,
+.marquee-row:hover .animate-marquee-reverse { animation-play-state: paused; }
+.animate-marquee-reverse { animation: marquee 40s linear infinite reverse; }
+.wall-mask {
+  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+/* Rotating word in the hero headline */
+.word-rotator {
+  display: inline-grid;
+  vertical-align: bottom;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.word-rotator > span {
+  grid-area: 1 / 1;
+  transform: translate3d(0, 105%, 0);
+  opacity: 0;
+  transition: transform 0.9s var(--ease-out-soft), opacity 0.9s var(--ease-out-soft);
+}
+.word-rotator > span:not(.is-active):not(.is-leaving) { transition: none; }
+.word-rotator > span.is-active { transform: none; opacity: 1; }
+.word-rotator > span.is-leaving { transform: translate3d(0, -105%, 0); opacity: 0; }
+
+/* FAQ accordion */
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s var(--ease-out-soft);
+}
+.faq-item.is-open .faq-body { grid-template-rows: 1fr; }
+.faq-item.is-open .faq-icon { transform: rotate(45deg); }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

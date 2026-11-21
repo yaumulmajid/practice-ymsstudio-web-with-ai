@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, Instrument_Serif } from "next/font/google"
 import { Suspense } from "react"
 import WhatsAppButton from "@/components/ui/WhatsAppButton"
+import { faqs } from "@/lib/site-data"
 import "./globals.css"
 
 const inter = Inter({
@@ -22,10 +23,10 @@ const serif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: "YMS Studio - Jasa Website UMKM Profesional (Murah & Bergaransi)",
+  title: "YMS Studio - Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
 
   description:
-    "Jasa pembuatan website profesional untuk UMKM & bisnis kecil Indonesia. Toko online, company profile, landing page mulai 700rb. Cepat, mobile-friendly, dan bergaransi.",
+    "Jasa pembuatan website profesional untuk UMKM & bisnis kecil Indonesia. Landing page, company profile, dan toko online mulai Rp 2 juta — desain custom, domain & hosting termasuk, bergaransi.",
 
   keywords: [
     "website UMKM",
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
   publisher: "YMS Studio",
 
   openGraph: {
-    title: "YMS Studio - Jasa Website UMKM Profesional (Murah & Bergaransi)",
+    title: "YMS Studio - Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
     description:
       "Pembuatan website UMKM cepat, mobile-friendly, dan terjangkau. Toko online, company profile, landing page untuk bisnis kecil Indonesia.",
     type: "website",
@@ -64,9 +65,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "YMS Studio - Jasa Website UMKM Profesional (Murah & Bergaransi)",
+    title: "YMS Studio - Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
     description:
-      "Jasa pembuatan website UMKM mulai 700rb. Toko Online, WordPress, Company Profile. Cepat, mobile-friendly, dan bergaransi.",
+      "Jasa pembuatan website UMKM mulai Rp 2 juta. Landing page, company profile, toko online. Desain custom, cepat, dan bergaransi.",
     images: ["https://ymsstudio.id/og-image.webp"],
     creator: "@ymsstudio",
     site: "@ymsstudio",
@@ -114,7 +115,7 @@ const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     url: "https://ymsstudio.id",
-    name: "YMS Studio — Jasa Website UMKM Profesional (Murah & Bergaransi)",
+    name: "YMS Studio — Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
     publisher: {
       "@type": "Organization",
       name: "YMS Studio",
@@ -133,9 +134,9 @@ const structuredData = {
     image: "https://ymsstudio.id/logo.webp",
     logo: "https://ymsstudio.id/logo.webp",
     description:
-      "Jasa pembuatan website profesional untuk UMKM Indonesia. Cepat, mobile-friendly, SEO-ready, harga terjangkau mulai 700rb, dan bergaransi.",
+      "Jasa pembuatan website profesional untuk UMKM Indonesia. Cepat, mobile-friendly, SEO-ready, mulai Rp 2 juta, dan bergaransi.",
     telephone: "+6283822640883",
-    priceRange: "Rp 700.000 - Rp 2.550.000",
+    priceRange: "Rp 2.000.000 - Rp 6.000.000",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Blok A5 No 29, Jl. Wimbledon Raya, Jatireja, Cikarang Timur",
@@ -192,10 +193,10 @@ const structuredData = {
       name: "Indonesia",
     },
     description:
-      "Jasa pembuatan website profesional untuk UMKM Indonesia. Termasuk landing page, toko online, company profile dengan harga terjangkau mulai 700rb.",
+      "Jasa pembuatan website profesional untuk UMKM Indonesia. Termasuk landing page, toko online, company profile mulai Rp 2 juta.",
     offers: {
       "@type": "Offer",
-      price: "700000",
+      price: "2000000",
       priceCurrency: "IDR",
       availability: "https://schema.org/InStock",
       url: "https://ymsstudio.id",
@@ -204,40 +205,11 @@ const structuredData = {
   faq: {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Berapa harga pembuatan website di YMS Studio?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Harga pembuatan website di YMS Studio mulai dari Rp 700.000, termasuk domain, hosting, desain profesional, dan support penuh.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Berapa lama proses pembuatan website?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Proses pengerjaan rata-rata 3–5 hari kerja, tergantung fitur dan permintaan khusus klien.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Apakah website yang dibuat mobile-friendly?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Ya, semua website di YMS Studio sudah responsive, cepat diakses lewat HP, dan dioptimasi SEO.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Apakah ada garansi?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Ya, setiap website yang dibuat di YMS Studio dilengkapi garansi revisi dan perbaikan sesuai paket yang dipilih.",
-        },
-      },
-    ],
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   },
 }
 
@@ -251,16 +223,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#FAFAF8" />
-
-        {/* Preload Critical Resources */}
-        <link
-          rel="preload"
-          as="image"
-          href="/project-hero.webp"
-          type="image/webp"
-          fetchPriority="high"
-        />
+        <meta name="theme-color" content="#0E1113" />
 
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

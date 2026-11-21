@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type CSSProperties, type ElementType, type MouseEvent, type ReactNode } from "react"
 
+export { WA_NUMBER, waLink } from "@/lib/site-data"
+
 type RevealProps = {
   children: ReactNode
   as?: ElementType
@@ -25,7 +27,7 @@ export function Reveal({ children, as: Tag = "div", delay = 0, className = "", s
           observer.disconnect()
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -55,7 +57,7 @@ export function Eyebrow({ index, children, dark = false }: { index: string; chil
   return (
     <div
       className={`inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.2em] ${
-        dark ? "text-white/60" : "text-ink/50"
+        dark ? "text-white/50" : "text-ink/50"
       }`}
     >
       <span className="text-brand">{index}</span>
@@ -65,5 +67,51 @@ export function Eyebrow({ index, children, dark = false }: { index: string; chil
   )
 }
 
-export const WA_NUMBER = "6283822640883"
-export const waLink = (text: string) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`
+/** Section heading block used across the page. */
+export function SectionHead({
+  index,
+  label,
+  title,
+  text,
+  dark = false,
+  center = false,
+}: {
+  index: string
+  label: string
+  title: ReactNode
+  text?: string
+  dark?: boolean
+  center?: boolean
+}) {
+  return (
+    <div className={center ? "mx-auto max-w-2xl text-center" : text ? "grid gap-6 md:grid-cols-2 md:items-end" : ""}>
+      <div>
+        <Reveal>
+          <Eyebrow index={index} dark={dark}>
+            {label}
+          </Eyebrow>
+        </Reveal>
+        <Reveal
+          as="h2"
+          delay={80}
+          className={`mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] md:text-6xl ${
+            dark ? "text-white" : "text-ink"
+          }`}
+        >
+          {title}
+        </Reveal>
+      </div>
+      {text && (
+        <Reveal
+          as="p"
+          delay={160}
+          className={`text-base leading-relaxed ${center ? "mt-5" : "max-w-md md:justify-self-end"} ${
+            dark ? "text-white/55" : "text-ink/55"
+          }`}
+        >
+          {text}
+        </Reveal>
+      )}
+    </div>
+  )
+}
