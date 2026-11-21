@@ -4,6 +4,7 @@
 
 export type Lang = "id" | "en"
 export const LANGS: Lang[] = ["id", "en"]
+export const isLang = (v: unknown): v is Lang => v === "id" || v === "en"
 export const homePath = (lang: Lang) => (lang === "id" ? "/" : "/en")
 export const blogPath = (lang: Lang, slug?: string) => `${lang === "id" ? "" : "/en"}/blog${slug ? `/${slug}` : ""}`
 
@@ -118,6 +119,7 @@ export type Dict = {
     text: string
     read: string
     minRead: string
+    views: string
     back: string
     more: string
     empty: string
@@ -145,6 +147,7 @@ export const ui = {
       text: "Panduan praktis seputar website, SEO, dan pemasaran digital untuk UMKM.",
       read: "Baca artikel",
       minRead: "menit baca",
+      views: "kali dibaca",
       back: "Semua artikel",
       more: "Artikel lainnya",
       empty: "Belum ada artikel.",
@@ -169,6 +172,7 @@ export const ui = {
       text: "Practical guides on websites, SEO, and digital marketing for small businesses.",
       read: "Read article",
       minRead: "min read",
+      views: "reads",
       back: "All articles",
       more: "More articles",
       empty: "No articles yet.",

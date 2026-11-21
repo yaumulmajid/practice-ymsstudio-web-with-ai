@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import SiteDocument from "@/components/site-document"
 import { getSite } from "@/lib/content"
-import { LANGS, type Lang } from "@/lib/i18n"
+import { isLang } from "@/lib/i18n"
 import { buildMetadata } from "@/lib/seo"
 
 // Root layout of the public site. proxy.ts maps "/" → /id and keeps "/en" as is,
@@ -18,8 +18,6 @@ export const dynamicParams = true
 export function generateStaticParams() {
   return []
 }
-
-const isLang = (v: string): v is Lang => (LANGS as string[]).includes(v)
 
 type Props = { children: React.ReactNode; params: Promise<{ lang: string }> }
 

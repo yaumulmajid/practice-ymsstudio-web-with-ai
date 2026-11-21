@@ -21,7 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = (list: typeof id, lang: "id" | "en", others: typeof id): MetadataRoute.Sitemap =>
     list.map((p) => ({
       url: abs(blogPath(lang, p.slug)),
-      lastModified: p.date || undefined,
+      lastModified: p.updated || p.date || undefined,
+      ...(p.cover ? { images: [`${SITE}${p.cover}`] } : {}),
       changeFrequency: "monthly",
       priority: 0.6,
       ...(others.some((o) => o.slug === p.slug) ? { alternates: pair(blogPath("id", p.slug), blogPath("en", p.slug)) } : {}),

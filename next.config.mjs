@@ -26,6 +26,8 @@ const nextConfig = {
   
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    // app/global-not-found.tsx: real 404s for unknown URLs (the app has several root layouts).
+    globalNotFound: true,
   },
   
   poweredByHeader: false,

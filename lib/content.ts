@@ -179,7 +179,13 @@ export type PostMeta = {
   date: string
   category: string
   cover: string | null
+  coverAlt: string
   minutes: number
+  /** Last edit (YYYY-MM-DD), for dateModified / sitemap lastmod. */
+  updated: string
+  /** Read count at render time (pages are cached; the article page refreshes it live). */
+  views: number
+  words: number
 }
 
 /** Published posts; English needs its own title and content. */
@@ -199,15 +205,22 @@ function lexicalText(node: any): string {
   return `${own} ${kids} ${node.root ? lexicalText(node.root) : ""}`
 }
 
-const toMeta = (p: any): PostMeta => ({
-  slug: s(p.slug),
-  title: s(p.title),
-  excerpt: s(p.excerpt),
-  date: s(p.publishedAt).slice(0, 10),
-  category: s(p.category),
-  cover: mediaUrl(p.cover, "detail") || null,
-  minutes: Math.max(1, Math.round(lexicalText(p.content).split(/\s+/).filter(Boolean).length / 200)),
-})
+const toMeta = (p: any): PostMeta => {
+  const words = lexicalText(p.content).split(/\s+/).filter(Boolean).length
+  return {
+    slug: s(p.slug),
+    title: s(p.title),
+    excerpt: s(p.excerpt),
+    date: s(p.publishedAt).slice(0, 10),
+    category: s(p.category),
+    cover: mediaUrl(p.cover, "detail") || null,
+    coverAlt: s(p.cover?.alt) || s(p.title),
+    minutes: Math.max(1, Math.round(words / 200)),
+    updated: s(p.updatedAt).slice(0, 10) || s(p.publishedAt).slice(0, 10),
+    views: Number(p.views ?? 0) || 0,
+    words,
+  }
+}
 
 export const getPosts = cache(async (lang: Lang): Promise<PostMeta[]> => {
   const payload = await getPayloadClient()

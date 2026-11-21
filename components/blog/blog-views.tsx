@@ -5,11 +5,12 @@ import Image from "next/image"
 import Link from "next/link"
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
 import { RichText } from "@payloadcms/richtext-lexical/react"
-import { ArrowLeft, ArrowUpRight, Clock } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, Clock, Eye } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Eyebrow, Reveal } from "@/components/motion"
 import BlogCta from "@/components/blog/blog-cta"
+import ViewCounter from "@/components/blog/view-counter"
 import { getPost, getPosts, type PostMeta } from "@/lib/content"
 import { blogPath, homePath, ui, type Lang } from "@/lib/i18n"
 import { SITE } from "@/lib/seo"
@@ -47,7 +48,7 @@ function Cover({ post, i, large = false }: { post: PostMeta; i: number; large?: 
       <div className="relative h-full min-h-[220px] overflow-hidden rounded-[22px] bg-ink/5">
         <Image
           src={post.cover}
-          alt=""
+          alt={post.coverAlt}
           fill
           sizes={large ? "(max-width: 1024px) 100vw, 640px" : "(max-width: 768px) 100vw, 400px"}
           className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]"
@@ -71,14 +72,25 @@ function Cover({ post, i, large = false }: { post: PostMeta; i: number; large?: 
   )
 }
 
-function Meta({ post, lang, className = "" }: { post: PostMeta; lang: Lang; className?: string }) {
+/** Category, date, reading time and read count. `live` refreshes and counts the read (article page). */
+function Meta({ post, lang, className = "", live = false }: { post: PostMeta; lang: Lang; className?: string; live?: boolean }) {
+  const t = ui[lang].blog
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink/45 ${className}`}>
       {post.category && <span className="rounded-full bg-brand-soft px-2.5 py-1 font-medium text-brand-deep">{post.category}</span>}
       <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
       <span className="inline-flex items-center gap-1">
-        <Clock size={12} /> {post.minutes} {ui[lang].blog.minRead}
+        <Clock size={12} /> {post.minutes} {t.minRead}
       </span>
+      {live ? (
+        <ViewCounter slug={post.slug} initial={post.views} label={t.views} locale={t.dateLocale} />
+      ) : (
+        post.views > 0 && (
+          <span className="inline-flex items-center gap-1">
+            <Eye size={12} /> {post.views.toLocaleString(t.dateLocale)} {t.views}
+          </span>
+        )
+      )}
     </div>
   )
 }
@@ -137,7 +149,7 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
               href={blogPath(lang, featured.slug)}
               className="group grid overflow-hidden rounded-[32px] border border-ink/[0.07] bg-white p-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:shadow-[0_40px_80px_-40px_rgba(11,18,32,0.25)] md:grid-cols-[1.1fr_1fr]"
             >
-              <div className="aspect-[16/10] md:aspect-auto">
+              <div className="aspect-[16/9] md:self-center">
                 <Cover post={featured} i={0} large />
               </div>
               <div className="flex flex-col p-5 sm:p-8 md:p-10">
@@ -181,11 +193,13 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
       headline: post.title,
       description: post.excerpt,
       datePublished: post.date,
-      dateModified: post.date,
+      dateModified: post.updated || post.date,
+      articleSection: post.category || undefined,
+      wordCount: post.words,
       inLanguage: lang === "id" ? "id-ID" : "en-US",
       mainEntityOfPage: url,
       url,
-      image: post.cover ? `${SITE}${post.cover}` : `${SITE}/og-image.webp`,
+      image: [post.cover ? `${SITE}${post.cover}` : `${SITE}/og-image.webp`],
       author: { "@type": "Organization", name: "YMS Studio", url: SITE },
       publisher: { "@type": "Organization", name: "YMS Studio", logo: { "@type": "ImageObject", url: `${SITE}/logo.webp` } },
     },
@@ -210,7 +224,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
           </Link>
         </Reveal>
         <Reveal delay={60}>
-          <Meta post={post} lang={lang} className="mt-10" />
+          <Meta post={post} lang={lang} className="mt-10" live />
         </Reveal>
         <Reveal as="h1" delay={120} className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-6xl">
           {post.title}
@@ -221,7 +235,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
 
         {post.cover && (
           <Reveal delay={220} className="relative mt-12 aspect-[16/9] overflow-hidden rounded-[28px] bg-ink/5">
-            <Image src={post.cover} alt="" fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+            <Image src={post.cover} alt={post.coverAlt} fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
           </Reveal>
         )}
 
