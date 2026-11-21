@@ -1,145 +1,117 @@
-"use client"
+import { ArrowUpRight, Facebook, Instagram, Mail, MessageCircle } from "lucide-react"
+import { Logo } from "@/components/header"
 
-import { Linkedin, Mail, Instagram, MessageCircle } from "lucide-react"
-import Link from "next/link"
+const socials = [
+  { label: "WhatsApp", href: "https://wa.me/6283822640883", icon: MessageCircle },
+  { label: "Instagram", href: "https://www.instagram.com/ymsstudios/", icon: Instagram },
+  { label: "Facebook", href: "https://www.facebook.com/ymsstudio.web/", icon: Facebook },
+  { label: "Email", href: "mailto:info@ymsstudio.id", icon: Mail },
+]
+
+const serviceLinks = ["Website WordPress", "Toko Online / E-Commerce", "Company Profile", "Custom Development"]
+
+const navLinks = [
+  { name: "Beranda", href: "#home" },
+  { name: "Layanan", href: "#services" },
+  { name: "Portfolio", href: "#portfolio" },
+  { name: "Harga", href: "#pricing" },
+]
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
+  const year = new Date().getFullYear()
 
   return (
-    <footer id="contact" className="relative bg-[#E9F3F4] text-[#1D1E20]">
-      {/* Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#2A8E9E]/3 to-transparent"></div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Main Footer Content */}
-        <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-            {/* Brand */}
-            <div>
-                <Link href="/" className="text-lg lg:text-xl font-bold text-[#2A8E9E] shrink-0">
-                    YMS<span className="text-[#1D1E20]">.</span><sup className="text-[10px] text-[#1D1E20]/90 font-normal ml-0.5">Web Studio</sup>
-                </Link>
-              <p className="text-xs text-[#1D1E20]/80 mb-4 leading-relaxed">
-                Jasa pembuatan website profesional untuk UMKM dan bisnis. Spesialis WordPress & Custom Development dengan harga terjangkau dan hasil maksimal.
-              </p>
-              <div className="flex gap-2.5">
+    <footer id="contact" className="relative overflow-hidden pt-24">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <Logo />
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-ink/55">
+              Jasa pembuatan website profesional untuk UMKM dan bisnis. Spesialis WordPress & Custom Development dengan
+              harga terjangkau dan hasil maksimal.
+            </p>
+            <div className="mt-6 flex gap-2">
+              {socials.map(({ label, href, icon: Icon }) => (
                 <a
-                  href="https://wa.me/6283822640883"
-                  target="_blank"
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-white hover:bg-[#2A8E9E] hover:text-white text-[#1D1E20] transition-colors duration-300"
-                  aria-label="WhatsApp"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-ink/[0.08] text-ink/60 transition-all duration-500 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
                 >
-                  <MessageCircle size={16} />
+                  <Icon size={16} />
                 </a>
-                <a
-                  href="#"
-                  className="p-2 rounded-lg bg-white hover:bg-[#2A8E9E] hover:text-white text-[#1D1E20] transition-colors duration-300"
-                  aria-label="Instagram"
-                >
-                  <Instagram size={16} />
-                </a>
-                <a
-                  href="#"
-                  className="p-2 rounded-lg bg-white hover:bg-[#2A8E9E] hover:text-white text-[#1D1E20] transition-colors duration-300"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin size={16} />
-                </a>
-                <a
-                  href="mailto:info@ymsstudio.id"
-                  className="p-2 rounded-lg bg-white hover:bg-[#2A8E9E] hover:text-white text-[#1D1E20] transition-colors duration-300"
-                  aria-label="Email"
-                >
-                  <Mail size={16} />
-                </a>
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* Services */}
-            <div>
-              <h4 className="font-semibold text-[#1D1E20] text-sm mb-3">Layanan</h4>
-              <ul className="space-y-2">
-                {["Website WordPress", "Toko Online / E-Commerce", "Company Profile", "Custom Development"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#services"
-                      className="text-xs text-[#1D1E20]/80 hover:text-[#2A8E9E] transition-colors duration-300"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div>
-              <h4 className="font-semibold text-[#1D1E20] text-sm mb-3">Navigasi</h4>
-              <ul className="space-y-2">
-                {[
-                  { name: "Beranda", href: "#home" },
-                  { name: "Portfolio", href: "#portfolio" },
-                  { name: "Harga", href: "#pricing" },
-                  { name: "Kontak", href: "#contact" }
-                ].map((item) => (
-                  <li key={item.name}>
-                    <a
-                      href={item.href}
-                      className="text-xs text-[#1D1E20]/90 hover:text-[#2A8E9E] transition-colors duration-300"
-                    >
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h4 className="font-semibold text-[#1D1E20] text-sm mb-3">Hubungi</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="https://wa.me/6283822640883"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-[#1D1E20]/90 hover:text-[#2A8E9E] transition-colors duration-300 flex items-center gap-2"
-                  >
-                    <MessageCircle size={14} />
-                    Whatsapp
+          <div>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Layanan</h4>
+            <ul className="mt-5 space-y-3">
+              {serviceLinks.map((item) => (
+                <li key={item}>
+                  <a href="#services" className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                    {item}
                   </a>
                 </li>
-                <li className="text-xs text-[#1D1E20]/90 pt-2">Siap untuk proyek baru</li>
-              </ul>
-            </div>
+              ))}
+            </ul>
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-[#2A8E9E]/20"></div>
+          <div>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Navigasi</h4>
+            <ul className="mt-5 space-y-3">
+              {navLinks.map((item) => (
+                <li key={item.name}>
+                  <a href={item.href} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Bottom Footer */}
-          <div className="py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#1D1E20]/90">© {currentYear} YMS Web Studio. Semua hak dilindungi.</p>
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="text-xs text-[#1D1E20]/90 hover:text-[#2A8E9E] transition-colors duration-300"
-              >
-                Kebijakan Privasi
-              </a>
-              <a
-                href="#"
-                className="text-xs text-[#1D1E20]/90 hover:text-[#2A8E9E] transition-colors duration-300"
-              >
-                Syarat Layanan
-              </a>
-            </div>
+          <div>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Hubungi</h4>
+            <a
+              href="https://wa.me/6283822640883"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink"
+            >
+              +62 838-2264-0883
+              <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
+            </a>
+            <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink/55">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
+              </span>
+              Siap untuk proyek baru
+            </p>
           </div>
         </div>
+
+        <div className="mt-20 flex flex-col items-center justify-between gap-4 border-t border-ink/[0.07] py-8 text-xs text-ink/45 md:flex-row">
+          <p>© {year} YMS Web Studio. Semua hak dilindungi.</p>
+          <div className="flex gap-6">
+            <a href="#" className="transition-colors hover:text-ink">
+              Kebijakan Privasi
+            </a>
+            <a href="#" className="transition-colors hover:text-ink">
+              Syarat Layanan
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Oversized wordmark */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none select-none text-center font-semibold leading-[0.75] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(14,17,19,0.08)] [font-size:clamp(5rem,22vw,20rem)]"
+      >
+        YMS<span className="font-serif font-normal italic">studio</span>
       </div>
     </footer>
   )

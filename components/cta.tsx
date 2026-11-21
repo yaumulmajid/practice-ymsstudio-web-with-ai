@@ -1,73 +1,49 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { ArrowRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
+import { Reveal, waLink } from "@/components/motion"
 
 export default function CTA() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 bg-white overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2A8E9E]/3 via-transparent to-[#2A8E9E]/3"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl max-h-96 bg-gradient-to-r from-[#2A8E9E]/5 to-[#180D39]/5 rounded-full blur-3xl animate-pulse"></div>
-      </div>
+    <section className="px-3 pb-3 sm:px-5 sm:pb-5">
+      <Reveal className="relative mx-auto max-w-[1400px] overflow-hidden rounded-[32px] bg-ink px-6 py-24 text-center sm:py-32">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="animate-drift absolute left-1/2 top-full h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.55),transparent)] blur-2xl" />
+          <div className="noise absolute inset-0 opacity-[0.07] mix-blend-overlay" />
+        </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div
-          className={`text-center transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-        >
-          <h2 className="text-3xl md:text-4xl lg:text-4xl font-bold text-[#1D1E20] mb-4">
-            Siap Meningkatkan
+        <div className="relative mx-auto max-w-3xl">
+          <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-6xl">
+            Siap meningkatkan
             <br />
-            <span className="text-[#1D1E20]/85">Kehadiran Digital Anda?</span>
+            <em className="font-serif font-normal italic text-brand-soft/90">kehadiran digital</em> Anda?
           </h2>
-          <p className="text-base md:text-lg text-[#1D1E20]/80 max-w-2xl mx-auto mb-8">
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg">
             Mari ciptakan sesuatu yang luar biasa bersama. Hubungi kami untuk mendiskusikan proyek Anda dan bagaimana
             kami dapat membantu.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href="https://wa.me/6283822640883?text=Halo%2C%20saya%20ingin%20konsultasi%20tentang%20website"
+              href={waLink("Halo, saya ingin konsultasi tentang website")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group bg-[#2A8E9E] hover:bg-[#180D39] text-white px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 active:scale-95 hover:shadow-lg"
+              className="group inline-flex items-center gap-3 rounded-full bg-white py-3 pl-6 pr-3 text-sm font-medium text-ink transition-all duration-500 hover:-translate-y-0.5"
             >
               Hubungi via WhatsApp
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover:rotate-45">
+                <ArrowUpRight size={15} />
+              </span>
             </a>
             <button
-              onClick={() => {
-                const element = document.getElementById("pricing")
-                if (element) element.scrollIntoView({ behavior: "smooth" })
-              }}
-              className="border-2 border-[#2A8E9E]/30 text-[#1D1E20] hover:border-[#2A8E9E] hover:bg-[#2A8E9E]/5 px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300 active:scale-95"
+              onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
+              className="rounded-full border border-white/15 px-6 py-4 text-sm font-medium text-white/80 transition-colors duration-500 hover:border-white/40 hover:text-white"
             >
               Lihat Paket
             </button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   )
 }

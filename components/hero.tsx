@@ -1,280 +1,224 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, type CSSProperties, type MouseEvent } from "react"
 import Image from "next/image"
-import { ChevronDown, ArrowRight, CheckCircle, Shield, Clock, Zap } from "lucide-react"
+import { ArrowRight, Star, Zap } from "lucide-react"
+import { waLink } from "@/components/motion"
+
+const HERO_WA = waLink(
+  "Halo Yaumul, saya pelaku UMKM mau konsultasi pembuatan website untuk usaha saya. Bisa bantu?",
+)
+
+const highlights = [
+  { title: "Selesai 3 Hari", text: "Kerja cepat dan efisien" },
+  { title: "Garansi 100%", text: "Uang kembali" },
+  { title: "20+ UMKM Puas", text: "Rating 4.9 dari 5" },
+  { title: "Support 24/7", text: "Via WhatsApp" },
+]
+
+const marqueeItems = [
+  "Fashion & F&B",
+  "Toko Online",
+  "Company Profile",
+  "Jasa & Konsultan",
+  "Produk Lokal",
+  "Landing Page",
+  "WordPress",
+  "WooCommerce",
+  "SEO Ready",
+]
+
+const d = (ms: number) => ({ ["--d" as string]: `${ms}ms` }) as CSSProperties
 
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    setIsMounted(true)
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true)
-      },
-      { threshold: 0.1 }
-    )
-
-    if (sectionRef.current) observer.observe(sectionRef.current)
-
-    return () => observer.disconnect()
-  }, [])
-
-  const scrollToPricing = () => {
-    const element = document.getElementById("pricing")
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-      element.focus({ preventScroll: true })
-    }
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const el = stageRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    el.style.setProperty("--rx", `${(-y * 6).toFixed(2)}deg`)
+    el.style.setProperty("--ry", `${(x * 8).toFixed(2)}deg`)
+    el.style.setProperty("--tx", `${(x * 14).toFixed(1)}px`)
+    el.style.setProperty("--ty", `${(y * 14).toFixed(1)}px`)
+  }
+  const onLeave = () => {
+    const el = stageRef.current
+    if (!el) return
+    ;["--rx", "--ry", "--tx", "--ty"].forEach((p) => el.style.setProperty(p, "0"))
   }
 
   return (
-    <section
-      id="home"
-      ref={sectionRef}
-      className="relative min-h-screen pt-7 bg-white flex items-center overflow-hidden"
-      aria-labelledby="hero-heading"
-    >
-      {/* Skip to content link */}
+    <section id="home" className="relative overflow-hidden pt-32 sm:pt-36 lg:pt-40" aria-labelledby="hero-heading">
       <a
         href="#pricing"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#2A8E9E] focus:text-white focus:rounded-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
       >
         Langsung ke Paket & Harga
       </a>
 
-      {/* Background Elements - Only on desktop */}
-      {isMounted && (
-        <div className="hidden lg:block absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[#2A8E9E]/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#180D39]/5 rounded-full blur-3xl"></div>
-        </div>
-      )}
+      {/* Background */}
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="bg-grid absolute inset-0" />
+        <div className="animate-drift absolute -top-40 left-1/2 h-[560px] w-[860px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.16),transparent)] blur-2xl" />
+      </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-8 lg:gap-16 items-center">
-          {/* Left Content */}
-          <div className="space-y-4 lg:space-y-5 opacity-100 translate-x-0">
-            {/* Promo Badge */}
-            <div 
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2A8E9E]/10 to-[#180D39]/10 text-[#1D1E20] px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold border border-[#2A8E9E]/30"
-              role="status"
-              aria-live="polite"
-            >
-              <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[#2A8E9E] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2A8E9E]"></span>
-              </span>
-              <span role="img" aria-label="promosi">🔥</span>
-              <span className="hidden sm:inline">Promo: Diskon 30% + Gratis Domain & Hosting</span>
-              <span className="sm:hidden">Diskon 30% + Gratis Domain</span>
-            </div>
-
-            {/* Main Heading - Optimized for mobile */}
-            <header className="space-y-2 lg:space-y-3">
-              <h1 id="hero-heading" className="text-[26px] sm:text-3xl lg:text-4xl font-bold text-[#1D1E20] leading-[1.2] tracking-tight">
-                Jasa Website UMKM Profesional{" "}
-                <span className="bg-gradient-to-r from-[#2A8E9E] to-[#180D39] bg-clip-text text-transparent font-bold">
-                  Harga Terjangkau
-                </span>
-              </h1>
-              <div className="h-1 w-14 lg:w-16 bg-gradient-to-r from-[#2A8E9E] to-transparent rounded-full" aria-hidden="true"></div>
-            </header>
-
-            {/* Description - Shorter on mobile */}
-            <p className="text-sm sm:text-base lg:text-lg text-[#1D1E20]/80 leading-relaxed max-w-xl">
-              <span className="hidden sm:inline">Website cepat dan mobile-friendly untuk UMKM. Dari landing page hingga toko online dengan WordPress atau Custom Development. </span>
-              <span className="sm:hidden">Website cepat untuk UMKM. Landing page & toko online. </span>
-              Selesai 3 hari, bergaransi.
-            </p>
-
-            {/* Features Grid - Compact on mobile */}
-            <div className="grid grid-cols-2 gap-3 lg:gap-4 py-2">
-              <h2 className="sr-only">Fitur Utama Layanan</h2>
-              
-              <div className="flex items-start gap-2">
-                <Zap 
-                  className="text-[#2A8E9E] flex-shrink-0 mt-0.5" 
-                  size={16} 
-                  aria-hidden="true" 
-                />
-                <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-[#1D1E20]">Selesai 3 Hari</h3>
-                  <p className="text-[10px] sm:text-xs text-[#1D1E20]/80 hidden sm:block">Kerja cepat dan efisien</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-2">
-                <Shield 
-                  className="text-[#180D39] flex-shrink-0 mt-0.5" 
-                  size={16} 
-                  aria-hidden="true"
-                />
-                <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-[#1D1E20]">Garansi 100%</h3>
-                  <p className="text-[10px] sm:text-xs text-[#1D1E20]/80 hidden sm:block">Uang kembali</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-2">
-                <CheckCircle 
-                  className="text-[#2A8E9E] flex-shrink-0 mt-0.5" 
-                  size={16} 
-                  aria-hidden="true"
-                />
-                <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-[#1D1E20]">20+ UMKM Puas</h3>
-                  <p className="text-[10px] sm:text-xs text-[#1D1E20]/80 hidden sm:block">Rating 4.9 dari 5</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-2">
-                <Clock 
-                  className="text-[#180D39] flex-shrink-0 mt-0.5" 
-                  size={16} 
-                  aria-hidden="true"
-                />
-                <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-[#1D1E20]">Support 24/7</h3>
-                  <p className="text-[10px] sm:text-xs text-[#1D1E20]/80 hidden sm:block">Via WhatsApp</p>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Buttons - Stack on mobile */}
-            <nav aria-label="Aksi utama">
-              <div className="flex flex-col gap-2.5 sm:gap-3 pt-2">
-                <a
-                  href="https://wa.me/6283822640883?text=Halo%20Yaumul%2C%20saya%20pelaku%20UMKM%20mau%20konsultasi%20pembuatan%20website%20untuk%20usaha%20saya.%20Bisa%20bantu%3F"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative bg-[#2A8E9E] text-white px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
-                  aria-label="Konsultasi gratis via WhatsApp"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Konsultasi Gratis
-                    <ArrowRight 
-                      size={16} 
-                      className="group-active:translate-x-1 transition-transform" 
-                      aria-hidden="true"
-                    />
-                  </span>
-                </a>
-
-                <button
-                  onClick={scrollToPricing}
-                  type="button"
-                  className="border-2 border-[#2A8E9E] text-[#1D1E20] px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl font-medium text-sm transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 touch-manipulation"
-                  aria-label="Lihat paket dan harga"
-                >
-                  <span>Lihat Paket & Harga</span>
-                  <span className="text-xs font-normal opacity-80">(Mulai 799rb)</span>
-                </button>
-              </div>
-            </nav>
-
-            {/* Trust Indicators - Mobile optimized */}
-            <aside aria-labelledby="trust-heading" className="pt-3 lg:pt-4 border-t border-[#1D1E20]/10">
-              <h2 id="trust-heading" className="sr-only">Kepercayaan Klien</h2>
-              
-              {/* Mobile: Simple badges */}
-              <div className="flex gap-2 overflow-x-auto pb-2 lg:hidden scrollbar-hide snap-x snap-mandatory">
-                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 bg-white rounded-lg border border-[#2A8E9E]/20 snap-start flex-shrink-0">
-                  <span className="text-green-600" aria-hidden="true">✓</span>
-                  <span className="font-medium text-[#1D1E20]">Fashion & F&B</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 bg-white rounded-lg border border-[#2A8E9E]/20 snap-start flex-shrink-0">
-                  <span aria-hidden="true">🛒</span>
-                  <span className="font-medium text-[#1D1E20]">Toko Online</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 bg-white rounded-lg border border-[#2A8E9E]/20 snap-start flex-shrink-0">
-                  <span aria-hidden="true">🏢</span>
-                  <span className="font-medium text-[#1D1E20]">Jasa</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap px-2.5 py-1.5 bg-white rounded-lg border border-[#2A8E9E]/20 snap-start flex-shrink-0">
-                  <span aria-hidden="true">📦</span>
-                  <span className="font-medium text-[#1D1E20]">Produk Lokal</span>
-                </div>
-              </div>
-
-              {/* Desktop List */}
-              <ul className="hidden lg:flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#1D1E20]/80 list-none">
-                <li className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span className="text-green-600 font-semibold" aria-hidden="true">✓</span>
-                  <span className="font-medium text-[#1D1E20]">Fashion & F&B</span>
-                </li>
-                <li className="w-px h-4 bg-[#1D1E20]/20" aria-hidden="true"></li>
-                <li className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span role="img" aria-label="toko online" aria-hidden="true">🛒</span>
-                  <span className="font-medium text-[#1D1E20]">Toko Online</span>
-                </li>
-                <li className="w-px h-4 bg-[#1D1E20]/20" aria-hidden="true"></li>
-                <li className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span role="img" aria-label="jasa" aria-hidden="true">🏢</span>
-                  <span className="font-medium text-[#1D1E20]">Jasa & Konsultan</span>
-                </li>
-                <li className="w-px h-4 bg-[#1D1E20]/20" aria-hidden="true"></li>
-                <li className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span role="img" aria-label="produk" aria-hidden="true">📦</span>
-                  <span className="font-medium text-[#1D1E20]">Produk Lokal</span>
-                </li>
-              </ul>
-            </aside>
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="mx-auto max-w-5xl text-center">
+          {/* Promo badge */}
+          <div
+            className="fade-up inline-flex items-center gap-2.5 rounded-full border border-ink/[0.07] bg-white/70 py-1.5 pl-2 pr-4 text-xs font-medium text-ink/70 shadow-sm backdrop-blur"
+            style={d(0)}
+            role="status"
+          >
+            <span className="relative grid h-5 w-5 place-items-center rounded-full bg-brand/10">
+              <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-brand" />
+              <span className="relative h-2 w-2 rounded-full bg-brand" />
+            </span>
+            <span className="hidden sm:inline">Promo: Diskon 30% + Gratis Domain & Hosting</span>
+            <span className="sm:hidden">Diskon 30% + Gratis Domain</span>
           </div>
 
-          {/* Right - Image & Stats */}
-          <div className="opacity-100 translate-y-0 scale-100 lg:order-last">
-            {/* Main Image - Mobile optimized */}
-            <figure className="relative aspect-[16/10] sm:aspect-[4/3] group rounded-xl lg:rounded-2xl overflow-hidden shadow-xl lg:shadow-2xl border border-[#2A8E9E]/20 bg-[#2A8E9E]/5">
+          <h1
+            id="hero-heading"
+            className="mt-7 text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-6xl lg:text-[4.75rem]"
+          >
+            <span className="line-mask">
+              <span style={d(120)}>Jasa Website UMKM</span>
+            </span>
+            <span className="line-mask">
+              <span style={d(240)}>
+                Profesional,{" "}
+                <em className="font-serif font-normal italic tracking-[-0.02em] text-brand">harga terjangkau.</em>
+              </span>
+            </span>
+          </h1>
+
+          <p
+            className="fade-up mx-auto mt-7 max-w-xl text-base leading-relaxed text-ink/60 sm:text-lg"
+            style={d(450)}
+          >
+            Website cepat dan mobile-friendly untuk UMKM. Dari landing page hingga toko online dengan WordPress atau
+            Custom Development. Selesai 3 hari, bergaransi.
+          </p>
+
+          <nav
+            aria-label="Aksi utama"
+            className="fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            style={d(580)}
+          >
+            <a
+              href={HERO_WA}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white shadow-[0_10px_30px_-10px_rgba(14,17,19,0.5)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep sm:w-auto"
+              aria-label="Konsultasi gratis via WhatsApp"
+            >
+              Konsultasi Gratis
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:translate-x-0.5">
+                <ArrowRight size={15} />
+              </span>
+            </a>
+            <button
+              type="button"
+              onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/10 bg-white/60 px-6 py-4 text-sm font-medium text-ink backdrop-blur transition-all duration-500 hover:border-ink/25 hover:bg-white sm:w-auto"
+              aria-label="Lihat paket dan harga"
+            >
+              Lihat Paket & Harga
+              <span className="text-ink/40">· mulai 799rb</span>
+            </button>
+          </nav>
+        </div>
+
+        {/* Visual stage */}
+        <div
+          ref={stageRef}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          className="fade-up relative mx-auto mt-16 max-w-5xl [perspective:1400px] lg:mt-20"
+          style={d(750)}
+        >
+          <figure
+            className="relative overflow-hidden rounded-[22px] border border-ink/[0.07] bg-white p-1.5 shadow-[0_40px_100px_-40px_rgba(14,17,19,0.35)] transition-transform duration-700 ease-out [transform:rotateX(var(--rx,0))_rotateY(var(--ry,0))]"
+          >
+            <div className="flex items-center gap-1.5 px-3 py-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
+              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
+              <span className="h-2.5 w-2.5 rounded-full bg-ink/10" />
+              <span className="mx-auto hidden rounded-full bg-ink/[0.04] px-16 py-1 text-[10px] text-ink/40 sm:block">
+                ymsstudio.id
+              </span>
+            </div>
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-brand-soft">
               <Image
                 src="/project-hero.webp"
                 alt="Tampilan contoh website UMKM profesional dengan desain modern"
-                width={800}
-                height={600}
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover object-top"
                 priority
                 fetchPriority="high"
-                quality={80}
-                sizes="(max-width: 640px) 95vw, (max-width: 1024px) 90vw, 700px"
-                placeholder="blur"
-                blurDataURL="data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA="
+                quality={85}
+                sizes="(max-width: 1024px) 95vw, 1000px"
               />
-              <div className="hidden lg:block absolute inset-0 bg-gradient-to-t from-[#180D39]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
-            </figure>
+            </div>
+          </figure>
 
-            {/* Stats Grid - Compact on mobile */}
-            <aside aria-labelledby="stats-heading">
-              <h2 id="stats-heading" className="sr-only">Statistik Layanan Kami</h2>
-              <dl className="mt-3 lg:mt-4 grid grid-cols-3 gap-2">
-                <div className="text-center p-2 sm:p-2.5 lg:p-3 bg-white rounded-lg border border-[#2A8E9E]/20 shadow-sm">
-                  <dt className="sr-only">Jumlah Website Live</dt>
-                  <dd className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1D1E20]">20+</dd>
-                  <dt className="text-[9px] sm:text-[10px] lg:text-xs text-[#1D1E20]/60 mt-0.5">Website Live</dt>
-                </div>
-                <div className="text-center p-2 sm:p-2.5 lg:p-3 bg-white rounded-lg border border-[#2A8E9E]/20 shadow-sm">
-                  <dt className="sr-only">Waktu Pengerjaan</dt>
-                  <dd className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1D1E20]">3 Hari</dd>
-                  <dt className="text-[9px] sm:text-[10px] lg:text-xs text-[#1D1E20]/60 mt-0.5">Rata-rata</dt>
-                </div>
-                <div className="text-center p-2 sm:p-2.5 lg:p-3 bg-white rounded-lg border border-[#2A8E9E]/20 shadow-sm">
-                  <dt className="sr-only">Kepuasan Klien</dt>
-                  <dd className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1D1E20]">100%</dd>
-                  <dt className="text-[9px] sm:text-[10px] lg:text-xs text-[#1D1E20]/60 mt-0.5">Puas</dt>
-                </div>
-              </dl>
-            </aside>
+          {/* Floating chips */}
+          <div
+            className="absolute -left-3 top-1/4 hidden transition-transform duration-700 ease-out [transform:translate(calc(var(--tx,0px)*-1),calc(var(--ty,0px)*-1))] sm:block lg:-left-10"
+            aria-hidden="true"
+          >
+            <div className="animate-float-slow flex items-center gap-3 rounded-2xl border border-ink/[0.06] bg-white/90 px-4 py-3 shadow-xl shadow-ink/[0.06] backdrop-blur">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand/10 text-brand">
+                <Zap size={16} />
+              </span>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-ink">3 Hari</p>
+                <p className="text-[11px] text-ink/50">Rata-rata pengerjaan</p>
+              </div>
+            </div>
+          </div>
+          <div
+            className="absolute -right-3 bottom-1/4 hidden transition-transform duration-700 ease-out [transform:translate(var(--tx,0px),var(--ty,0px))] sm:block lg:-right-10"
+            aria-hidden="true"
+          >
+            <div className="animate-float-slower flex items-center gap-3 rounded-2xl border border-ink/[0.06] bg-white/90 px-4 py-3 shadow-xl shadow-ink/[0.06] backdrop-blur">
+              <div className="flex">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-ink">4.9 / 5</p>
+                <p className="text-[11px] text-ink/50">20+ website live</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Scroll Indicator - Hidden on mobile */}
-        <div className="hidden lg:flex absolute bottom-0 left-1/2 transform -translate-x-1/2 animate-bounce" aria-hidden="true">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs text-[#1D1E20]/50">Scroll untuk info lebih</span>
-            <ChevronDown className="text-[#2A8E9E]" size={24} />
-          </div>
+        {/* Highlights */}
+        <dl className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink/[0.06] bg-ink/[0.06] lg:grid-cols-4">
+          {highlights.map((h, i) => (
+            <div key={h.title} className="fade-up bg-canvas px-5 py-6 sm:px-6" style={d(900 + i * 80)}>
+              <dt className="text-sm font-semibold text-ink sm:text-base">{h.title}</dt>
+              <dd className="mt-1 text-xs text-ink/50 sm:text-sm">{h.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Marquee */}
+      <div className="marquee-mask mt-16 overflow-hidden border-y border-ink/[0.06] py-5 lg:mt-20" aria-hidden="true">
+        <div className="animate-marquee flex w-max gap-12">
+          {[...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span key={i} className="flex items-center gap-12 whitespace-nowrap text-sm font-medium text-ink/40">
+              {item}
+              <span className="font-serif text-lg text-brand/60">✦</span>
+            </span>
+          ))}
         </div>
       </div>
     </section>

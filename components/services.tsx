@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { Code2, Smartphone, Zap } from "lucide-react"
+import { ArrowUpRight, Code2, Megaphone, MessagesSquare } from "lucide-react"
+import { Eyebrow, Reveal, trackSpotlight } from "@/components/motion"
 
 const services = [
   {
@@ -11,123 +11,98 @@ const services = [
       "Kami membuat website modern, responsif, dan cepat dengan teknologi terkini seperti WordPress dan Custom Development. Cocok untuk company profile, landing page, hingga toko online yang profesional dan user-friendly.",
   },
   {
-    icon: Smartphone,
+    icon: MessagesSquare,
     title: "Konsultasi Digital",
     description:
       "Konsultasi mendalam untuk merencanakan strategi digital bisnis Anda. Kami bantu tentukan teknologi yang tepat, fitur yang dibutuhkan, dan solusi terbaik untuk mencapai tujuan bisnis dengan efektif dan efisien.",
   },
   {
-    icon: Zap,
+    icon: Megaphone,
     title: "Google Ads & Meta Ads",
     description:
       "Layanan pengelolaan iklan profesional di Google dan Meta (Facebook & Instagram). Kami optimalkan kampanye iklan Anda untuk meningkatkan traffic, engagement, dan konversi penjualan dengan ROI yang maksimal.",
   },
 ]
 
+const steps = [
+  { title: "Konsultasi", text: "Diskusi kebutuhan & tujuan bisnis" },
+  { title: "Desain", text: "Tampilan sesuai identitas brand" },
+  { title: "Development", text: "Dibangun cepat & mobile-friendly" },
+  { title: "Live", text: "Online, siap menerima pelanggan" },
+]
+
 export default function Services() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(Array(services.length).fill(false))
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          services.forEach((_, index) => {
-            setTimeout(() => {
-              setVisibleCards((prev) => {
-                const newState = [...prev]
-                newState[index] = true
-                return newState
-              })
-            }, index * 150)
-          })
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section id="services" ref={sectionRef} className="relative py-16 md:py-24 bg-[#E9F3F4] overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 -left-96 w-96 h-96 bg-[#2A8E9E]/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -right-96 w-96 h-96 bg-[#180D39]/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <div
-            className={`inline-flex items-center gap-2 text-xs font-semibold text-[#1D1E20] mb-3 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
-            <span className="w-2 h-2 bg-[#2A8E9E] rounded-full"></span>
-            Services
+    <section id="services" className="relative py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-end">
+          <div>
+            <Reveal>
+              <Eyebrow index="01">Layanan</Eyebrow>
+            </Reveal>
+            <Reveal as="h2" delay={80} className="mt-5 text-4xl font-semibold leading-[1.05] tracking-[-0.035em] text-ink md:text-5xl">
+              Apa yang kami <em className="font-serif font-normal italic text-brand">tawarkan</em>
+            </Reveal>
           </div>
-          <h2
-            className={`text-3xl md:text-4xl font-bold text-[#1D1E20] mb-4 transition-all duration-700 delay-100 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
-            Apa yang Kami Tawarkan
-          </h2>
-          <p
-            className={`text-base text-[#1D1E20]/60 max-w-2xl mx-auto transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
+          <Reveal as="p" delay={160} className="max-w-md text-base leading-relaxed text-ink/55 md:justify-self-end">
             Solusi komprehensif untuk mewujudkan visi digital Anda dan mendorong hasil bisnis nyata.
-          </p>
+          </Reveal>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((service, index) => {
-            const Icon = service.icon
+        <div className="mt-14 grid gap-4 md:grid-cols-3">
+          {services.map((s, i) => {
+            const Icon = s.icon
             return (
-              <div
-                key={index}
-                className={`group relative transition-all duration-700 ${
-                  visibleCards[index] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-              >
-                {/* Hover Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2A8E9E]/10 to-[#180D39]/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-
-                {/* Card */}
-                <div className="relative bg-white border border-[#2A8E9E]/20 rounded-xl p-5 hover:border-[#2A8E9E]/40 transition-all duration-500 group-hover:shadow-lg group-hover:shadow-[#2A8E9E]/10">
-                  {/* Icon */}
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#2A8E9E]/10 to-[#180D39]/5 rounded-lg p-2 mb-4 group-hover:from-[#2A8E9E]/15 group-hover:to-[#180D39]/10 transition-all duration-300">
-                    <Icon className="w-6 h-6 text-[#2A8E9E]" strokeWidth={1.5} />
+              <Reveal key={s.title} delay={i * 110} className="h-full">
+                <article
+                  onMouseMove={trackSpotlight}
+                  className="spotlight group flex h-full flex-col rounded-3xl border border-ink/[0.07] bg-white p-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:border-ink/[0.12] hover:shadow-[0_30px_60px_-30px_rgba(14,17,19,0.2)]"
+                >
+                  <div className="flex items-start justify-between">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-soft text-brand transition-all duration-700 group-hover:bg-brand group-hover:text-white">
+                      <Icon size={20} strokeWidth={1.6} />
+                    </span>
+                    <span className="font-serif text-sm italic text-ink/30">0{i + 1}</span>
                   </div>
-
-                  {/* Content */}
-                  <h3 className="text-base font-bold text-[#1D1E20] mb-2 group-hover:opacity-80 transition-opacity duration-300">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-[#1D1E20]/80 leading-relaxed">{service.description}</p>
-
-                  {/* Arrow */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-7 h-7 bg-[#2A8E9E]/10 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="w-3.5 h-3.5 text-[#2A8E9E]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                  <h3 className="mt-10 text-xl font-semibold tracking-tight text-ink">{s.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-ink/55">{s.description}</p>
+                  <div className="mt-auto pt-8">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink/40 transition-colors duration-500 group-hover:text-brand">
+                      Selengkapnya
+                      <ArrowUpRight
+                        size={14}
+                        className="transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </span>
                   </div>
-                </div>
-              </div>
+                </article>
+              </Reveal>
             )
           })}
+        </div>
+
+        {/* Process */}
+        <Reveal className="mt-20">
+          <p className="text-center text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">
+            Proses kerja sederhana
+          </p>
+        </Reveal>
+        <div className="relative mt-8">
+          <div
+            className="absolute left-0 right-0 top-[15px] hidden h-px bg-gradient-to-r from-transparent via-ink/10 to-transparent lg:block"
+            aria-hidden="true"
+          />
+        <ol className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          {steps.map((step, i) => (
+            <Reveal as="li" key={step.title} delay={i * 120} className="relative text-center">
+              <span className="relative mx-auto grid h-8 w-8 place-items-center rounded-full border border-ink/10 bg-canvas text-xs font-medium text-ink">
+                {i + 1}
+              </span>
+              <p className="mt-4 text-sm font-semibold text-ink">{step.title}</p>
+              <p className="mt-1 text-xs text-ink/50">{step.text}</p>
+            </Reveal>
+          ))}
+        </ol>
         </div>
       </div>
     </section>

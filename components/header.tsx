@@ -1,135 +1,164 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
+import { waLink } from "@/components/motion"
 
-interface HeaderProps {
-  isScrolled: boolean
+const navLinks = [
+  { name: "Beranda", id: "home" },
+  { name: "Layanan", id: "services" },
+  { name: "Portfolio", id: "portfolio" },
+  { name: "Harga", id: "pricing" },
+  { name: "Hubungi", id: "contact" },
+]
+
+const CONSULT_LINK = waLink("Halo, saya ingin konsultasi tentang website")
+
+export function Logo({ className = "" }: { className?: string }) {
+  return (
+    <Link href="/" className={`group inline-flex items-baseline gap-1 font-semibold tracking-tight ${className}`}>
+      <span className="text-lg text-ink">YMS</span>
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand transition-transform duration-500 group-hover:scale-150" />
+      <span className="font-serif text-lg italic font-normal text-ink/70">studio</span>
+    </Link>
+  )
 }
 
-export default function Header({ isScrolled }: HeaderProps) {
+export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeLink, setActiveLink] = useState("home")
-
-  const navLinks = [
-    { name: "Beranda", href: "#home" },
-    { name: "Layanan", href: "#services" },
-    { name: "Portfolio", href: "#portfolio" },
-    { name: "Harga", href: "#pricing" },
-    { name: "Hubungi", href: "#contact" },
-  ]
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [active, setActive] = useState("home")
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "services", "portfolio", "pricing", "contact"]
-      const scrollPosition = window.scrollY + 150
-      
-      // Check if we're at the bottom of the page (footer)
-      if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 50) {
-        setActiveLink("contact")
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 24)
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40) {
+        setActive("contact")
         return
       }
-      
-      const current = sections.find((section) => {
-        const element = document.getElementById(section)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          return rect.top <= 150 && rect.bottom >= 150
-        }
-        return false
+      const current = navLinks.find(({ id }) => {
+        const rect = document.getElementById(id)?.getBoundingClientRect()
+        return rect ? rect.top <= 160 && rect.bottom >= 160 : false
       })
-      if (current) setActiveLink(current)
+      if (current) setActive(current.id)
     }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const scrollToSection = (href: string) => {
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : ""
+  }, [isOpen])
+
+  const go = (id: string) => {
     setIsOpen(false)
-    const id = href.replace("#", "")
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="container mx-auto px-4 lg:px-8 py-4 max-w-[1400px]">
-        <div className="flex items-center justify-between bg-white/95 backdrop-blur-2xl border border-[#2A8E9E]/10 rounded-2xl px-8 h-14 lg:h-16 shadow-sm">
-          {/* Logo */}
-          <Link href="/" className="text-lg lg:text-xl font-bold text-[#2A8E9E] shrink-0">
-            YMS<span className="text-[#1D1E20]">.</span><sup className="text-[10px] text-[#1D1E20]/90 font-normal ml-0.5">Web Studio</sup>
-          </Link>
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+      <nav
+        className={`mx-auto flex h-14 max-w-5xl items-center justify-between rounded-full pl-6 pr-2 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
+          isScrolled || isOpen
+            ? "border border-ink/[0.06] bg-white/75 shadow-[0_8px_30px_-12px_rgba(14,17,19,0.12)] backdrop-blur-xl"
+            : "border border-transparent bg-transparent"
+        }`}
+        aria-label="Navigasi utama"
+      >
+        <Logo />
 
-          {/* Desktop Navigation - Center */}
-          <div className="hidden lg:flex items-center justify-center gap-8 flex-1">
-            {navLinks.map((link) => (
+        <ul className="hidden items-center gap-1 lg:flex">
+          {navLinks.map((link) => (
+            <li key={link.id}>
               <button
-                key={link.name}
-                onClick={() => scrollToSection(link.href)}
-                className={`text-sm font-medium transition-colors ${
-                  activeLink === link.href.replace("#", "")
-                    ? "text-[#2A8E9E]"
-                    : "text-[#1D1E20]/70 hover:text-[#1D1E20]"
+                onClick={() => go(link.id)}
+                className={`relative rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 ${
+                  active === link.id ? "text-ink" : "text-ink/50 hover:text-ink"
                 }`}
+                aria-current={active === link.id ? "true" : undefined}
               >
+                <span
+                  className={`absolute inset-0 -z-10 rounded-full bg-ink/[0.05] transition-all duration-500 ${
+                    active === link.id ? "scale-100 opacity-100" : "scale-75 opacity-0"
+                  }`}
+                />
                 {link.name}
               </button>
-            ))}
-          </div>
+            </li>
+          ))}
+        </ul>
 
-          {/* CTA Button */}
-          <div className="hidden lg:flex items-center shrink-0">
-            <a
-              href="https://wa.me/6283822640883?text=Halo%2C%20saya%20ingin%20konsultasi%20tentang%20website"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-semibold rounded-2xl px-8 py-2.5 bg-[#2A8E9E] hover:bg-[#248795] text-white transition-all duration-300 shadow-sm"
-            >
-              Konsultasi
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2 text-[#2A8E9E]"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
+        <div className="flex items-center gap-2">
+          <a
+            href={CONSULT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group hidden items-center gap-2 rounded-full bg-ink py-2.5 pl-5 pr-2.5 text-[13px] font-medium text-white transition-all duration-500 hover:bg-brand-deep sm:inline-flex"
           >
-            {isOpen ? <X className="w-5 h-5 text-[#2A8E9E]" /> : <Menu className="w-5 h-5 text-[#2A8E9E]" />}
+            Konsultasi
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-white/10 transition-transform duration-500 group-hover:rotate-45">
+              <ArrowUpRight size={14} />
+            </span>
+          </a>
+
+          <button
+            className="relative grid h-10 w-10 place-items-center rounded-full lg:hidden"
+            onClick={() => setIsOpen((v) => !v)}
+            aria-label={isOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={isOpen}
+          >
+            <span
+              className={`absolute h-px w-5 bg-ink transition-transform duration-500 ${
+                isOpen ? "rotate-45" : "-translate-y-[4px]"
+              }`}
+            />
+            <span
+              className={`absolute h-px w-5 bg-ink transition-transform duration-500 ${
+                isOpen ? "-rotate-45" : "translate-y-[4px]"
+              }`}
+            />
           </button>
         </div>
+      </nav>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="lg:hidden mt-2 bg-white/70 backdrop-blur-2xl border-0 rounded-2xl overflow-hidden shadow-sm animate-fade-in">
-            <div className="p-4 space-y-3">
-              {navLinks.map((link) => (
-                <button
-                  key={link.name}
-                  onClick={() => scrollToSection(link.href)}
-                  className="block w-full text-left text-sm font-medium text-[#1D1E20]/50 hover:text-[#1D1E20]/80 transition-colors py-2"
-                >
-                  {link.name}
-                </button>
-              ))}
-              <div className="pt-3 border-t border-[#1D1E20]/5">
-                <a
-                  href="https://wa.me/6283822640883?text=Halo%2C%20saya%20ingin%20konsultasi%20tentang%20website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center rounded-full py-2 bg-[#2A8E9E] hover:bg-[#180D39] text-white text-sm font-medium transition-colors"
-                >
-                  Konsultasi
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
+      {/* Mobile menu */}
+      <div
+        className={`mx-auto mt-2 max-w-5xl overflow-hidden rounded-3xl border border-ink/[0.06] bg-white/90 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] lg:hidden ${
+          isOpen ? "max-h-[480px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+        }`}
+      >
+        <ul className="p-3">
+          {navLinks.map((link, i) => (
+            <li
+              key={link.id}
+              className={`transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
+                isOpen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+              style={{ transitionDelay: isOpen ? `${80 + i * 50}ms` : "0ms" }}
+            >
+              <button
+                onClick={() => go(link.id)}
+                className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-2xl font-medium tracking-tight text-ink transition-colors hover:bg-ink/[0.03]"
+              >
+                {link.name}
+                <span className="text-xs font-normal text-ink/30">0{i + 1}</span>
+              </button>
+            </li>
+          ))}
+          <li className="p-1 pt-2">
+            <a
+              href={CONSULT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-ink py-3.5 text-sm font-medium text-white"
+            >
+              Konsultasi Gratis <ArrowUpRight size={16} />
+            </a>
+          </li>
+        </ul>
       </div>
-    </nav>
+    </header>
   )
 }

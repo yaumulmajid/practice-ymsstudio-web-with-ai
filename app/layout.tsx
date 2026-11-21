@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Instrument_Serif } from "next/font/google"
 import { Suspense } from "react"
 import WhatsAppButton from "@/components/ui/WhatsAppButton"
 import "./globals.css"
@@ -11,6 +11,14 @@ const inter = Inter({
   preload: true,
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
+})
+
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-serif-display",
+  weight: "400",
+  style: ["normal", "italic"],
 })
 
 export const metadata: Metadata = {
@@ -235,7 +243,7 @@ const structuredData = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" className={`${inter.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -243,7 +251,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#2A8E9E" />
+        <meta name="theme-color" content="#FAFAF8" />
 
         {/* Preload Critical Resources */}
         <link
@@ -282,7 +290,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
 
-      <body className={`${inter.variable} antialiased`}>
+      <body className="antialiased">
         {children}
         
         {/* Lazy load non-critical components */}

@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { X } from "lucide-react"
-import Image from "next/image"
 import { createPortal } from "react-dom"
+import Image from "next/image"
+import { ArrowUpRight, X } from "lucide-react"
+import { Eyebrow, Reveal, waLink } from "@/components/motion"
 
 const projects = [
   {
@@ -74,245 +75,148 @@ const projects = [
   },
 ]
 
-export default function Projects() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [selectedProject, setSelectedProject] = useState<(typeof projects)[0] | null>(null)
-  const [mounted, setMounted] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
+type Project = (typeof projects)[number]
+
+function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
-      { 
-        threshold: 0.1,
-        rootMargin: '50px'
-      }
-    )
-
-    const currentRef = sectionRef.current
-    if (currentRef) {
-      observer.observe(currentRef)
-    }
-
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
+    document.addEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+    closeRef.current?.focus()
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef)
-      }
+      document.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
     }
-  }, [])
+  }, [onClose])
 
-  useEffect(() => {
-    if (selectedProject) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [selectedProject])
-
-  const Modal = () => {
-    if (!selectedProject || !mounted) return null
-
-    return createPortal(
+  return createPortal(
+    <div
+      className="animate-in fade-in fixed inset-0 z-[60] flex items-end justify-center bg-ink/40 p-0 backdrop-blur-md duration-300 sm:items-center sm:p-6"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in"
-        onClick={() => setSelectedProject(null)}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
+        className="animate-in slide-in-from-bottom-8 fade-in relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-[28px] bg-white shadow-2xl duration-500 sm:rounded-[28px]"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div
-          className="bg-white border border-[#2A8E9E]/20 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 will-change-transform"
-          onClick={(e) => e.stopPropagation()}
+        <button
+          ref={closeRef}
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-ink backdrop-blur transition-transform duration-500 hover:rotate-90"
+          aria-label="Tutup"
         >
-          <div className="sticky top-0 bg-white border-b border-[#2A8E9E]/20 p-6 flex items-center justify-between z-10">
-            <h2 id="modal-title" className="text-lg font-bold text-[#1D1E20]">
-              {selectedProject.title}
-            </h2>
-            <button
-              onClick={() => setSelectedProject(null)}
-              className="text-[#1D1E20]/80 hover:text-[#1D1E20] transition-colors"
-              aria-label="Close modal"
-            >
-              <X size={20} />
-            </button>
-          </div>
+          <X size={18} />
+        </button>
 
-          <div className="p-6 space-y-5">
-            <div className="relative h-64 md:h-80 bg-gradient-to-br from-[#2A8E9E]/10 to-[#180D39]/5 rounded-lg overflow-hidden border border-[#2A8E9E]/10">
-              {selectedProject.image ? (
-                <Image
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 672px"
-                  className="object-contain"
-                  quality={85}
-                  priority={false}
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-20 h-20 text-[#1D1E20]/30" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
-                  </svg>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p className="text-xs font-semibold text-[#1D1E20] uppercase tracking-wide">
-                    {selectedProject.category}
-                  </p>
-                  <p className="text-xs text-[#1D1E20]/60 mt-1">Tipe: {selectedProject.type}</p>
-                </div>
-              </div>
-              <p className="text-sm text-[#1D1E20] leading-relaxed">{selectedProject.detailDescription}</p>
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold text-[#1D1E20] mb-2 uppercase tracking-wide">Tech Stack</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedProject.tags.map((tag, idx) => (
-                  <span key={idx} className="text-xs bg-[#2A8E9E]/10 text-[#1D1E20] px-2 py-1 rounded">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <a
-              href="https://wa.me/6283822640883?text=Saya%20tertarik%20dengan%20project%20Anda"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-[#2A8E9E] hover:bg-[#180D39] text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors duration-300 block text-center"
-            >
-              Hubungi
-            </a>
-          </div>
+        <div className="relative aspect-[16/10] bg-brand-soft">
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover object-top"
+            quality={85}
+          />
         </div>
-      </div>,
-      document.body
-    )
-  }
+
+        <div className="p-6 sm:p-10">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-brand">
+            {project.category} · {project.type}
+          </p>
+          <h2 id="modal-title" className="mt-3 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+            {project.title}
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-ink/60 sm:text-base">{project.detailDescription}</p>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            {project.tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-ink/10 px-3 py-1 text-xs text-ink/70">
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <a
+            href={waLink(`Halo, saya tertarik dengan project "${project.title}". Bisa dibuatkan yang serupa?`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-medium text-white transition-colors duration-500 hover:bg-brand-deep"
+          >
+            Buat website seperti ini
+            <ArrowUpRight size={16} className="transition-transform duration-500 group-hover:rotate-45" />
+          </a>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+export default function Projects() {
+  const [selected, setSelected] = useState<Project | null>(null)
 
   return (
-    <section id="portfolio" ref={sectionRef} className="relative py-16 md:py-24 bg-white overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div
-            className={`inline-flex items-center gap-2 text-xs font-semibold text-[#1D1E20] mb-3 transition-all duration-700 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <span className="w-2 h-2 bg-[#2A8E9E] rounded-full"></span>
-            Portfolios
+    <section id="portfolio" className="relative bg-white py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="grid gap-8 md:grid-cols-2 md:items-end">
+          <div>
+            <Reveal>
+              <Eyebrow index="02">Portfolio</Eyebrow>
+            </Reveal>
+            <Reveal as="h2" delay={80} className="mt-5 text-4xl font-semibold leading-[1.05] tracking-[-0.035em] text-ink md:text-5xl">
+              Proyek <em className="font-serif font-normal italic text-brand">unggulan</em>
+            </Reveal>
           </div>
-          <h2
-            className={`text-3xl md:text-4xl font-bold text-[#1D1E20] mb-4 transition-all duration-700 delay-100 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            Proyek Unggulan
-          </h2>
-          <p
-            className={`text-base text-[#1D1E20]/90 max-w-2xl mx-auto transition-all duration-700 delay-200 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
+          <Reveal as="p" delay={160} className="max-w-md text-base leading-relaxed text-ink/55 md:justify-self-end">
             Beberapa website pilihan yang sudah dikerjakan untuk berbagai bisnis.
-          </p>
+          </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              className="group relative cursor-pointer"
-              onClick={() => setSelectedProject(project)}
-            >
-              <div className="relative bg-white border border-[#2A8E9E]/20 rounded-lg overflow-hidden hover:border-[#2A8E9E]/40 transition-all duration-500 hover:shadow-lg hover:shadow-[#2A8E9E]/10 h-full flex flex-col">
-                <div className="relative aspect-[16/9] bg-gradient-to-br from-[#2A8E9E]/10 to-[#180D39]/5 overflow-hidden group-hover:from-[#2A8E9E]/15 group-hover:to-[#180D39]/10 transition-all duration-500">
-                  {project.image ? (
+        <div className="mt-14 grid gap-x-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project, i) => (
+            <Reveal key={project.id} delay={(i % 3) * 110}>
+              <button
+                type="button"
+                onClick={() => setSelected(project)}
+                className="group block w-full text-left"
+                aria-label={`Lihat detail ${project.title}`}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-brand-soft">
+                  <div className="absolute inset-x-6 bottom-0 top-8 overflow-hidden rounded-t-xl shadow-[0_20px_50px_-20px_rgba(14,17,19,0.35)] transition-transform duration-[900ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-2 group-hover:scale-[1.03]">
                     <Image
                       src={project.image}
                       alt={project.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 90vw, (max-width: 1024px) 45vw, 360px"
+                      className="object-cover object-top"
                       quality={75}
-                      loading={index < 3 ? "eager" : "lazy"}
-                      priority={index < 3}
                     />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <svg
-                        className="w-12 h-12 text-[#1D1E20]/30 group-hover:text-[#2A8E9E]/30 transition-colors duration-300"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-4 flex flex-col flex-grow">
-                  <div className="mb-2">
-                    <div className="flex items-start justify-between mb-1">
-                      <div>
-                        <p className="text-xs font-semibold text-[#1D1E20] uppercase tracking-wide">
-                          {project.category}
-                        </p>
-                        <h3 className="text-sm font-bold text-[#1D1E20] group-hover:opacity-80 transition-opacity duration-300 mt-1">
-                          {project.title}
-                        </h3>
-                      </div>
-                      <span className="text-xs text-[#1D1E20] whitespace-nowrap ml-2 bg-[#2A8E9E]/10 px-2 py-1 rounded">
-                        {project.type}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#1D1E20]/80 mt-2">{project.description}</p>
                   </div>
-
-                  <div className="flex flex-wrap gap-1 mt-auto">
-                    {project.tags.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs bg-[#2A8E9E]/10 text-[#1D1E20] px-2 py-0.5 rounded"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  <span className="absolute left-4 top-4 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-ink/70 backdrop-blur">
+                    {project.category}
+                  </span>
+                  <span className="absolute bottom-4 right-4 grid h-11 w-11 translate-y-3 place-items-center rounded-full bg-ink text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                    <ArrowUpRight size={18} />
+                  </span>
                 </div>
-
-                <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                  <div className="w-6 h-6 bg-[#2A8E9E]/10 rounded flex items-center justify-center">
-                    <svg className="w-3 h-3 text-[#2A8E9E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                <div className="mt-5 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight text-ink">{project.title}</h3>
+                    <p className="mt-1 text-sm text-ink/50">{project.description}</p>
                   </div>
+                  <span className="shrink-0 text-xs text-ink/40">{project.type}</span>
                 </div>
-              </div>
-            </div>
+              </button>
+            </Reveal>
           ))}
         </div>
       </div>
 
-      <Modal />
+      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
     </section>
   )
 }
