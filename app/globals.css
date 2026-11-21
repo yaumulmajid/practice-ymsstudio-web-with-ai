@@ -315,7 +315,12 @@
 }
 .word-rotator > span:not(.is-active):not(.is-leaving) { transition: none; }
 .word-rotator > span.is-active { transform: none; opacity: 1; }
-.word-rotator > span.is-leaving { transform: translate3d(0, -105%, 0); opacity: 0; }
+.word-rotator > span.is-leaving {
+  transform: translate3d(0, -105%, 0);
+  opacity: 0;
+  transition: transform 0.7s var(--ease-out-soft), opacity 0.3s ease-out;
+}
+.word-rotator > span.is-active { transition-delay: 0.15s; }
 
 /* Hero showcase tab progress (drives auto-advance via animationend) */
 @keyframes hero-progress {

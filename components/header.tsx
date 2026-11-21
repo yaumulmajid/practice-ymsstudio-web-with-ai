@@ -4,43 +4,70 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { waLink } from "@/lib/site-data"
+import { homePath, LANGS } from "@/lib/i18n"
+import { useLang, useT } from "@/components/lang"
 
-const navLinks = [
-  { name: "Karya", id: "work" },
-  { name: "Layanan", id: "services" },
-  { name: "Harga", id: "pricing" },
-  { name: "FAQ", id: "faq" },
-]
-
-const CONSULT_LINK = waLink("Halo YMS Studio, saya ingin konsultasi pembuatan website.")
-
-export function Logo({ light = false, className = "" }: { light?: boolean; className?: string }) {
+export function Logo({ className = "" }: { className?: string }) {
+  const lang = useLang()
   return (
     <Link
-      href="/"
-      className={`group inline-flex items-baseline gap-1 font-semibold tracking-tight transition-colors duration-500 ${className}`}
-      aria-label="YMS Studio — Beranda"
+      href={homePath(lang)}
+      className={`group inline-flex items-baseline gap-1 font-semibold tracking-tight ${className}`}
+      aria-label="YMS Studio"
     >
-      <span className={`text-lg ${light ? "text-white" : "text-ink"}`}>YMS</span>
+      <span className="text-lg text-ink">YMS</span>
       <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand transition-transform duration-500 group-hover:scale-150" />
-      <span className={`font-serif text-lg font-normal italic ${light ? "text-white/70" : "text-ink/70"}`}>studio</span>
+      <span className="font-serif text-lg font-normal italic text-ink/70">studio</span>
     </Link>
   )
 }
 
+/** ID | EN switch. Plain links so each language has its own crawlable URL. */
+export function LangSwitch({ className = "" }: { className?: string }) {
+  const lang = useLang()
+  return (
+    <div className={`flex items-center rounded-full bg-ink/[0.05] p-0.5 text-[11px] font-semibold ${className}`} role="group" aria-label="Language">
+      {LANGS.map((l) => (
+        <Link
+          key={l}
+          href={homePath(l)}
+          hrefLang={l}
+          aria-current={l === lang ? "page" : undefined}
+          className={`rounded-full px-2.5 py-1.5 uppercase transition-all duration-300 ${
+            l === lang ? "bg-white text-ink shadow-sm" : "text-ink/45 hover:text-ink"
+          }`}
+        >
+          {l}
+        </Link>
+      ))}
+    </div>
+  )
+}
+
 export default function Header() {
+  const t = useT()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [active, setActive] = useState("")
 
+  const navLinks = [
+    { name: t.nav.work, id: "work" },
+    { name: t.nav.services, id: "services" },
+    ...(t.reviews.items.length ? [{ name: t.nav.reviews, id: "reviews" }] : []),
+    { name: t.nav.pricing, id: "pricing" },
+    { name: t.nav.faq, id: "faq" },
+  ]
+  const consult = waLink(t.wa.general)
+
   useEffect(() => {
+    const ids = ["work", "services", "reviews", "pricing", "faq"]
     const onScroll = () => {
       setIsScrolled(window.scrollY > 40)
-      const current = navLinks.find(({ id }) => {
+      const current = ids.find((id) => {
         const rect = document.getElementById(id)?.getBoundingClientRect()
         return rect ? rect.top <= 160 && rect.bottom >= 160 : false
       })
-      setActive(current?.id ?? "")
+      setActive(current ?? "")
     }
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
@@ -57,7 +84,6 @@ export default function Header() {
   }
 
   const solid = isScrolled || isOpen
-  const light = false
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
@@ -67,9 +93,8 @@ export default function Header() {
             ? "border border-ink/[0.06] bg-white/80 shadow-[0_8px_30px_-12px_rgba(11,18,32,0.15)] backdrop-blur-xl"
             : "border border-transparent bg-transparent"
         }`}
-        aria-label="Navigasi utama"
       >
-        <Logo light={light} />
+        <Logo />
 
         <ul className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {
@@ -79,14 +104,14 @@ export default function Header() {
                 <button
                   onClick={() => go(link.id)}
                   className={`relative rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 ${
-                    light ? (on ? "text-white" : "text-white/60 hover:text-white") : on ? "text-ink" : "text-ink/50 hover:text-ink"
+                    on ? "text-ink" : "text-ink/50 hover:text-ink"
                   }`}
                   aria-current={on ? "true" : undefined}
                 >
                   <span
-                    className={`absolute inset-0 -z-10 rounded-full transition-all duration-500 ${
-                      light ? "bg-white/10" : "bg-ink/[0.05]"
-                    } ${on ? "scale-100 opacity-100" : "scale-75 opacity-0"}`}
+                    className={`absolute inset-0 -z-10 rounded-full bg-ink/[0.05] transition-all duration-500 ${
+                      on ? "scale-100 opacity-100" : "scale-75 opacity-0"
+                    }`}
                   />
                   {link.name}
                 </button>
@@ -95,21 +120,16 @@ export default function Header() {
           })}
         </ul>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <LangSwitch />
           <a
-            href={CONSULT_LINK}
+            href={consult}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group hidden items-center gap-2 rounded-full py-2.5 pl-5 pr-2.5 text-[13px] font-medium transition-all duration-500 sm:inline-flex ${
-              light ? "bg-white text-ink hover:bg-brand-soft" : "bg-ink text-white hover:bg-brand-deep"
-            }`}
+            className="group hidden items-center gap-2 rounded-full bg-ink py-2.5 pl-5 pr-2.5 text-[13px] font-medium text-white transition-all duration-500 hover:bg-brand-deep sm:inline-flex"
           >
-            Mulai Proyek
-            <span
-              className={`grid h-6 w-6 place-items-center rounded-full transition-transform duration-500 group-hover:rotate-45 ${
-                light ? "bg-ink text-white" : "bg-white/15"
-              }`}
-            >
+            {t.nav.cta}
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-45">
               <ArrowUpRight size={14} />
             </span>
           </a>
@@ -117,13 +137,13 @@ export default function Header() {
           <button
             className="relative grid h-10 w-10 place-items-center rounded-full md:hidden"
             onClick={() => setIsOpen((v) => !v)}
-            aria-label={isOpen ? "Tutup menu" : "Buka menu"}
+            aria-label={isOpen ? t.nav.close : t.nav.open}
             aria-expanded={isOpen}
           >
             {[0, 1].map((i) => (
               <span
                 key={i}
-                className={`absolute h-px w-5 transition-all duration-500 ${light ? "bg-white" : "bg-ink"} ${
+                className={`absolute h-px w-5 bg-ink transition-all duration-500 ${
                   isOpen ? (i ? "-rotate-45" : "rotate-45") : i ? "translate-y-[4px]" : "-translate-y-[4px]"
                 }`}
               />
@@ -135,7 +155,7 @@ export default function Header() {
       {/* Mobile menu */}
       <div
         className={`mx-auto mt-2 max-w-6xl overflow-hidden rounded-3xl border border-ink/[0.06] bg-white/95 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] md:hidden ${
-          isOpen ? "max-h-[480px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+          isOpen ? "max-h-[520px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
         }`}
       >
         <ul className="p-3">
@@ -158,12 +178,12 @@ export default function Header() {
           ))}
           <li className="p-1 pt-2">
             <a
-              href={CONSULT_LINK}
+              href={consult}
               target="_blank"
               rel="noopener noreferrer"
               className="flex w-full items-center justify-center gap-2 rounded-full bg-ink py-3.5 text-sm font-medium text-white"
             >
-              Mulai Proyek <ArrowUpRight size={16} />
+              {t.nav.cta} <ArrowUpRight size={16} />
             </a>
           </li>
         </ul>

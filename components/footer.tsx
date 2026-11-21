@@ -1,5 +1,8 @@
+"use client"
+
 import { ArrowUpRight, Facebook, Instagram, Mail, MessageCircle } from "lucide-react"
-import { Logo } from "@/components/header"
+import { LangSwitch, Logo } from "@/components/header"
+import { useT } from "@/components/lang"
 
 const socials = [
   { label: "WhatsApp", href: "https://wa.me/6283822640883", icon: MessageCircle },
@@ -8,17 +11,17 @@ const socials = [
   { label: "Email", href: "mailto:info@ymsstudio.id", icon: Mail },
 ]
 
-const serviceLinks = ["Landing Page", "Company Profile", "Toko Online", "Web App Custom"]
-
-const navLinks = [
-  { name: "Karya", href: "#work" },
-  { name: "Layanan", href: "#services" },
-  { name: "Harga", href: "#pricing" },
-  { name: "FAQ", href: "#faq" },
-]
-
 export default function Footer() {
+  const t = useT()
+  const f = t.footer
   const year = new Date().getFullYear()
+  const navLinks = [
+    { name: t.nav.work, href: "#work" },
+    { name: t.nav.services, href: "#services" },
+    ...(t.reviews.items.length ? [{ name: t.nav.reviews, href: "#reviews" }] : []),
+    { name: t.nav.pricing, href: "#pricing" },
+    { name: t.nav.faq, href: "#faq" },
+  ]
 
   return (
     <footer id="contact" className="relative overflow-hidden pt-20">
@@ -26,10 +29,7 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Logo />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-ink/55">
-              Jasa pembuatan website profesional untuk UMKM dan bisnis. Spesialis WordPress & Custom Development dengan
-              harga terjangkau dan hasil maksimal.
-            </p>
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-ink/55">{f.about}</p>
             <div className="mt-6 flex gap-2">
               {socials.map(({ label, href, icon: Icon }) => (
                 <a
@@ -47,9 +47,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Layanan</h4>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.servicesLabel}</h4>
             <ul className="mt-5 space-y-3">
-              {serviceLinks.map((item) => (
+              {f.services.map((item) => (
                 <li key={item}>
                   <a href="#services" className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                     {item}
@@ -60,10 +60,10 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Navigasi</h4>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.navLabel}</h4>
             <ul className="mt-5 space-y-3">
               {navLinks.map((item) => (
-                <li key={item.name}>
+                <li key={item.href}>
                   <a href={item.href} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                     {item.name}
                   </a>
@@ -73,7 +73,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">Hubungi</h4>
+            <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.contactLabel}</h4>
             <a
               href="https://wa.me/6283822640883"
               target="_blank"
@@ -88,25 +88,27 @@ export default function Footer() {
                 <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-500" />
                 <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
               </span>
-              Siap untuk proyek baru
+              {f.available}
             </p>
+            <LangSwitch className="mt-6 w-fit" />
           </div>
         </div>
 
         <div className="mt-20 flex flex-col items-center justify-between gap-4 border-t border-ink/[0.07] py-8 text-xs text-ink/45 md:flex-row">
-          <p>© {year} YMS Web Studio. Semua hak dilindungi.</p>
+          <p>
+            © {year} YMS Web Studio. {f.rights}
+          </p>
           <div className="flex gap-6">
             <a href="#" className="transition-colors hover:text-ink">
-              Kebijakan Privasi
+              {f.privacy}
             </a>
             <a href="#" className="transition-colors hover:text-ink">
-              Syarat Layanan
+              {f.terms}
             </a>
           </div>
         </div>
       </div>
 
-      {/* Oversized wordmark */}
       <div
         aria-hidden="true"
         className="pointer-events-none select-none text-center font-semibold leading-[0.75] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(11,18,32,0.08)] [font-size:clamp(5rem,22vw,20rem)]"

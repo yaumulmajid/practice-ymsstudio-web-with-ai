@@ -2,28 +2,31 @@
 
 import { ArrowRight, ArrowUpRight, Check, Clock } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { tiers, waLink } from "@/lib/site-data"
-
-const included = ["Desain custom", "Domain .com + hosting", "SSL & keamanan", "Mobile-friendly", "SEO-ready", "Tombol WhatsApp"]
+import { useT } from "@/components/lang"
+import { waLink } from "@/lib/site-data"
 
 export default function Pricing() {
+  const t = useT()
+  const p = t.pricing
+  const index = t.reviews.items.length ? "04" : "03"
+
   return (
     <section id="pricing" tabIndex={-1} className="relative py-24 outline-none md:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHead
           center
-          index="03"
-          label="Investasi"
+          index={index}
+          label={p.label}
           title={
             <>
-              Harga jelas, <em className="font-serif font-normal italic text-brand">hasil maksimal</em>
+              {p.titleA} <em className="font-serif font-normal italic text-brand">{p.titleEm}</em>
             </>
           }
-          text="Pilih paket sesuai tahap bisnis Anda. Semua harga sudah termasuk domain, hosting tahun pertama, dan desain custom."
+          text={p.text}
         />
 
         <Reveal className="mt-10 flex flex-wrap justify-center gap-2">
-          {included.map((item) => (
+          {p.included.map((item) => (
             <span key={item} className="inline-flex items-center gap-1.5 rounded-full border border-ink/[0.08] bg-white px-3 py-1.5 text-xs text-ink/65">
               <Check size={12} className="text-brand" strokeWidth={3} />
               {item}
@@ -32,7 +35,7 @@ export default function Pricing() {
         </Reveal>
 
         <div className="mt-14 grid items-stretch gap-4 lg:grid-cols-3">
-          {tiers.map((tier, i) => {
+          {p.tiers.map((tier, i) => {
             const dark = tier.featured
             return (
               <Reveal key={tier.name} delay={i * 120} className="h-full">
@@ -43,22 +46,18 @@ export default function Pricing() {
                       : "border border-ink/[0.07] bg-white text-ink hover:shadow-[0_30px_60px_-30px_rgba(11,18,32,0.18)]"
                   }`}
                 >
-                  {dark && (
-                    <div className="animate-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/40 blur-3xl" aria-hidden="true" />
-                  )}
+                  {dark && <div className="animate-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/40 blur-3xl" aria-hidden="true" />}
 
                   <div className="relative flex items-center justify-between">
                     <h3 className="text-lg font-semibold tracking-tight">{tier.name}</h3>
-                    {dark && (
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-white/80">Paling Populer</span>
-                    )}
+                    {dark && <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-white/80">{p.popular}</span>}
                   </div>
                   <p className={`relative mt-2 min-h-[2.5rem] text-sm ${dark ? "text-white/60" : "text-ink/55"}`}>{tier.tagline}</p>
 
                   <div className="relative mt-8">
-                    <span className={`text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>Mulai dari</span>
+                    <span className={`text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{p.from}</span>
                     <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>Rp</span>
+                      <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>{p.currency}</span>
                       <span className="text-5xl font-semibold tracking-[-0.045em]">{tier.price}</span>
                     </div>
                   </div>
@@ -67,14 +66,14 @@ export default function Pricing() {
                   </p>
 
                   <a
-                    href={waLink(`Halo YMS Studio, saya tertarik dengan paket ${tier.name} (mulai Rp ${tier.price}).`)}
+                    href={waLink(t.wa.tier(tier.name, tier.price))}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group/btn relative mt-8 flex items-center justify-center gap-2 rounded-full py-3.5 text-sm font-medium transition-all duration-500 ${
                       dark ? "bg-white text-ink hover:bg-brand-soft" : "bg-ink text-white hover:bg-brand-deep"
                     }`}
                   >
-                    Pilih {tier.name}
+                    {p.choose} {tier.name}
                     <ArrowRight size={15} className="transition-transform duration-500 group-hover/btn:translate-x-1" />
                   </a>
 
@@ -83,11 +82,7 @@ export default function Pricing() {
                   <ul className="relative space-y-3.5">
                     {tier.features.map((f) => (
                       <li key={f} className="flex items-start gap-3">
-                        <span
-                          className={`mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full ${
-                            dark ? "bg-brand text-white" : "bg-brand-soft text-brand"
-                          }`}
-                        >
+                        <span className={`mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full ${dark ? "bg-brand text-white" : "bg-brand-soft text-brand"}`}>
                           <Check size={10} strokeWidth={3} />
                         </span>
                         <span className={`text-sm leading-snug ${dark ? "text-white/75" : "text-ink/65"}`}>{f}</span>
@@ -102,22 +97,19 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Custom */}
         <Reveal className="mt-4">
           <div className="flex flex-col items-start justify-between gap-6 rounded-[28px] border border-dashed border-ink/15 p-8 sm:flex-row sm:items-center">
             <div>
-              <h3 className="text-lg font-semibold tracking-tight text-ink">Butuh web app atau sistem custom?</h3>
-              <p className="mt-1 text-sm text-ink/55">
-                Dashboard, sistem informasi, booking, membership, integrasi API — kami hitungkan sesuai kebutuhan.
-              </p>
+              <h3 className="text-lg font-semibold tracking-tight text-ink">{p.customTitle}</h3>
+              <p className="mt-1 text-sm text-ink/55">{p.customText}</p>
             </div>
             <a
-              href={waLink("Halo YMS Studio, saya butuh web app / sistem custom. Bisa diskusi?")}
+              href={waLink(t.wa.custom)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm font-medium text-ink transition-colors duration-500 hover:border-ink hover:bg-ink hover:text-white"
             >
-              Diskusikan proyek
+              {p.customCta}
               <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
             </a>
           </div>

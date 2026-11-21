@@ -3,9 +3,12 @@
 import { useState } from "react"
 import { Plus } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { faqs } from "@/lib/site-data"
+import { useT } from "@/components/lang"
 
 export default function FAQ() {
+  const t = useT()
+  const f = t.faq
+  const index = t.reviews.items.length ? "05" : "04"
   const [open, setOpen] = useState<number | null>(0)
 
   return (
@@ -13,22 +16,21 @@ export default function FAQ() {
       <div className="mx-auto grid max-w-6xl gap-12 px-5 sm:px-8 md:grid-cols-[0.8fr_1.2fr]">
         <div className="md:sticky md:top-28 md:self-start">
           <SectionHead
-            center={false}
-            index="04"
-            label="FAQ"
+            index={index}
+            label={f.label}
             title={
               <>
-                Pertanyaan yang <em className="font-serif font-normal italic text-brand">sering ditanya</em>
+                {f.titleA} <em className="font-serif font-normal italic text-brand">{f.titleEm}</em>
               </>
             }
           />
         </div>
 
         <div className="border-t border-ink/[0.08]">
-          {faqs.map((f, i) => {
+          {f.items.map((item, i) => {
             const isOpen = open === i
             return (
-              <Reveal key={f.q} delay={i * 60} className={`faq-item border-b border-ink/[0.08] ${isOpen ? "is-open" : ""}`}>
+              <Reveal key={item.q} delay={i * 60} className={`faq-item border-b border-ink/[0.08] ${isOpen ? "is-open" : ""}`}>
                 <h3>
                   <button
                     type="button"
@@ -37,7 +39,7 @@ export default function FAQ() {
                     aria-controls={`faq-${i}`}
                     className="flex w-full items-center justify-between gap-6 py-6 text-left text-base font-medium tracking-tight text-ink sm:text-lg"
                   >
-                    {f.q}
+                    {item.q}
                     <span
                       className={`faq-icon grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-all duration-500 ${
                         isOpen ? "border-ink bg-ink text-white" : "border-ink/10 text-ink"
@@ -49,7 +51,7 @@ export default function FAQ() {
                 </h3>
                 <div id={`faq-${i}`} className="faq-body" role="region">
                   <div className="overflow-hidden">
-                    <p className="max-w-xl pb-6 text-sm leading-relaxed text-ink/60 sm:text-base">{f.a}</p>
+                    <p className="max-w-xl pb-6 text-sm leading-relaxed text-ink/60 sm:text-base">{item.a}</p>
                   </div>
                 </div>
               </Reveal>

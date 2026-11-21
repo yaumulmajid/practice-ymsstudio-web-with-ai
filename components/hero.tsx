@@ -3,20 +3,19 @@
 import { useEffect, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import { ArrowRight, ArrowUpRight, Lock, ShieldCheck, Star } from "lucide-react"
-import { projects, waLink } from "@/lib/site-data"
+import { domain, waLink } from "@/lib/site-data"
+import { useProjects, useT } from "@/components/lang"
 
-const words = ["dipercaya.", "ditemukan.", "dipilih.", "laris."]
-const marqueeItems = ["Landing Page", "Company Profile", "Toko Online", "Web App Custom", "SEO & Google Business", "Google & Meta Ads", "Maintenance"]
 
 const d = (ms: number) => ({ ["--d" as string]: `${ms}ms` }) as CSSProperties
-const domain = (url: string) => url.replace(/^https?:\/\//, "")
 
 function WordRotator() {
+  const words = useT().hero.words
   const [index, setIndex] = useState(0)
   useEffect(() => {
     const t = setInterval(() => setIndex((i) => (i + 1) % words.length), 2600)
     return () => clearInterval(t)
-  }, [])
+  }, [words.length])
   const prev = (index - 1 + words.length) % words.length
   return (
     <span className="word-rotator text-brand" aria-label={words.join(" ")}>
@@ -34,6 +33,8 @@ function WordRotator() {
 }
 
 function Showcase() {
+  const t = useT()
+  const projects = useProjects()
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const current = projects[active]
@@ -66,7 +67,7 @@ function Showcase() {
             rel="noopener noreferrer"
             className="hidden items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-ink/70 transition-colors hover:bg-ink/[0.04] hover:text-ink sm:inline-flex"
           >
-            Buka <ArrowUpRight size={13} />
+            {t.hero.open} <ArrowUpRight size={13} />
           </a>
         </div>
 
@@ -75,7 +76,7 @@ function Showcase() {
           target="_blank"
           rel="noopener noreferrer"
           className="group relative block aspect-[16/10] overflow-hidden rounded-[20px] bg-[#e8ebef] sm:aspect-[16/9]"
-          aria-label={`Kunjungi ${domain(current.url)}`}
+          aria-label={`${t.hero.visit} ${domain(current.url)}`}
         >
           {projects.map((p, i) => (
             <Image
@@ -144,8 +145,8 @@ function Showcase() {
             <ShieldCheck size={17} />
           </span>
           <div>
-            <p className="text-sm font-semibold text-ink">Garansi revisi</p>
-            <p className="text-[11px] text-ink/50">Sampai Anda puas</p>
+            <p className="text-sm font-semibold text-ink">{t.hero.guaranteeTitle}</p>
+            <p className="text-[11px] text-ink/50">{t.hero.guaranteeText}</p>
           </div>
         </div>
       </div>
@@ -155,21 +156,22 @@ function Showcase() {
             <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
           ))}
         </div>
-        <p className="mt-1 text-sm font-semibold text-ink">4.9/5 rating klien</p>
-        <p className="text-[11px] text-ink/50">20+ website live</p>
+        <p className="mt-1 text-sm font-semibold text-ink">{t.hero.ratingTitle}</p>
+        <p className="text-[11px] text-ink/50">{t.hero.ratingText}</p>
       </div>
     </div>
   )
 }
 
 export default function Hero() {
+  const t = useT()
   return (
     <section id="home" className="relative overflow-hidden pt-32 sm:pt-36 lg:pt-40" aria-labelledby="hero-heading">
       <a
         href="#pricing"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
       >
-        Langsung ke Paket & Harga
+        {t.hero.skip}
       </a>
 
       {/* Background */}
@@ -189,38 +191,37 @@ export default function Hero() {
               <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-500" />
               <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            Menerima proyek baru
+            {t.hero.badge}
           </div>
 
           <h1 id="hero-heading" className="mt-7 text-ink">
             <span className="fade-up block text-sm font-semibold uppercase tracking-[0.2em] text-brand" style={d(60)}>
-              Jasa Website UMKM & Bisnis
+              {t.hero.kicker}
             </span>
             <span className="mt-5 block text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-[5rem]">
               <span className="line-mask">
-                <span style={d(140)}>Website profesional</span>
+                <span style={d(140)}>{t.hero.line1}</span>
               </span>
               <span className="line-mask">
                 <span style={d(240)}>
-                  yang bikin bisnis Anda <WordRotator />
+                  {t.hero.line2} <WordRotator />
                 </span>
               </span>
             </span>
           </h1>
 
           <p className="fade-up mx-auto mt-7 max-w-xl text-base leading-relaxed text-ink/60 sm:text-lg" style={d(420)}>
-            Kami merancang dan membangun website yang cepat, mudah ditemukan di Google, dan mengubah pengunjung menjadi
-            pelanggan.
+            {t.hero.sub}
           </p>
 
           <div className="fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={d(540)}>
             <a
-              href={waLink("Halo YMS Studio, saya ingin konsultasi pembuatan website untuk bisnis saya.")}
+              href={waLink(t.wa.hero)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white shadow-[0_12px_30px_-10px_rgba(11,18,32,0.55)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep sm:w-auto"
             >
-              Konsultasi Gratis
+              {t.hero.ctaPrimary}
               <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-ink transition-transform duration-500 group-hover:translate-x-0.5">
                 <ArrowRight size={15} />
               </span>
@@ -230,7 +231,7 @@ export default function Hero() {
               onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-4 text-sm font-medium text-ink ring-1 ring-ink/10 transition-all duration-500 hover:ring-ink/25 sm:w-auto"
             >
-              Lihat Paket <span className="text-ink/40">· mulai Rp 2jt</span>
+              {t.hero.ctaSecondary} <span className="text-ink/40">{t.hero.ctaSecondaryNote}</span>
             </button>
           </div>
         </div>
@@ -241,7 +242,7 @@ export default function Hero() {
       {/* Marquee */}
       <div className="marquee-mask mt-20 overflow-hidden border-y border-ink/[0.06] py-5" aria-hidden="true">
         <div className="animate-marquee flex w-max gap-12">
-          {[...marqueeItems, ...marqueeItems].map((item, i) => (
+          {[...t.hero.marquee, ...t.hero.marquee].map((item, i) => (
             <span key={i} className="flex items-center gap-12 whitespace-nowrap text-sm font-medium text-ink/40">
               {item}
               <span className="font-serif text-lg text-brand/60">✦</span>

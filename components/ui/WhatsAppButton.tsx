@@ -1,9 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { waLink } from "@/components/motion"
+import { waLink } from "@/lib/site-data"
+import { useT } from "@/components/lang"
 
 export default function WhatsAppButton() {
+  const t = useT()
   const [show, setShow] = useState(false)
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function WhatsAppButton() {
 
   return (
     <a
-      href={waLink("Halo YMS Studio, saya ingin konsultasi pembuatan website untuk usaha saya.")}
+      href={waLink(t.wa.float)}
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
@@ -30,7 +32,7 @@ export default function WhatsAppButton() {
       }`}
     >
       <span className="pointer-events-none hidden translate-x-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink opacity-0 shadow-lg ring-1 ring-ink/[0.06] transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100 sm:block">
-        Chat via WhatsApp
+        {t.cta.button}
       </span>
       <span
         className="grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.6)] transition-transform duration-500 group-hover:scale-105"
