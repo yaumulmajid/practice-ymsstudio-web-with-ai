@@ -163,6 +163,7 @@ export const getSite = cache(async (lang: Lang): Promise<SiteData> => {
     waNumber: s(c.waNumber),
     phoneDisplay: s(c.phoneDisplay),
     email: s(c.email),
+    mapsUrl: s(c.mapsUrl),
     instagram: s(c.instagram),
     facebook: s(c.facebook),
   }

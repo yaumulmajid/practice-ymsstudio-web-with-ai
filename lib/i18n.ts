@@ -43,6 +43,7 @@ export type Settings = {
   waNumber: string
   phoneDisplay: string
   email: string
+  mapsUrl: string
   instagram: string
   facebook: string
 }
@@ -105,6 +106,8 @@ export type Dict = {
     services: string[]
     navLabel: string
     contactLabel: string
+    chatWa: string
+    maps: string
     available: string
     rights: string
     privacy: string
@@ -139,7 +142,7 @@ export const ui = {
     work: { visit: "Kunjungi website" },
     reviews: { visit: "Lihat website" },
     pricing: { from: "Mulai dari", currency: "Rp", popular: "Paling Populer", choose: "Pilih" },
-    footer: { servicesLabel: "Layanan", navLabel: "Navigasi", contactLabel: "Hubungi", rights: "Semua hak dilindungi.", privacy: "Kebijakan Privasi", terms: "Syarat Layanan" },
+    footer: { servicesLabel: "Layanan", navLabel: "Navigasi", contactLabel: "Hubungi", chatWa: "Chat via WhatsApp", maps: "Lihat lokasi di Google Maps", rights: "Semua hak dilindungi.", privacy: "Kebijakan Privasi", terms: "Syarat Layanan" },
     blog: {
       label: "Blog",
       titleA: "Insight untuk",
@@ -164,7 +167,7 @@ export const ui = {
     work: { visit: "Visit website" },
     reviews: { visit: "View website" },
     pricing: { from: "Starting at", currency: "IDR", popular: "Most Popular", choose: "Choose" },
-    footer: { servicesLabel: "Services", navLabel: "Navigate", contactLabel: "Contact", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms of Service" },
+    footer: { servicesLabel: "Services", navLabel: "Navigate", contactLabel: "Contact", chatWa: "Chat on WhatsApp", maps: "Find us on Google Maps", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms of Service" },
     blog: {
       label: "Blog",
       titleA: "Insights for",

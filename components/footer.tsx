@@ -1,15 +1,16 @@
 "use client"
 
-import { ArrowUpRight, Facebook, Instagram, Mail, MessageCircle } from "lucide-react"
+import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import { LangSwitch, Logo, useNavLinks } from "@/components/header"
-import { useLang, useSettings, useT } from "@/components/lang"
+import { useLang, useSettings, useT, useWa } from "@/components/lang"
 import { homePath } from "@/lib/i18n"
 
 export default function Footer() {
   const t = useT()
   const f = t.footer
   const s = useSettings()
+  const wa = useWa()
   const lang = useLang()
   const year = new Date().getFullYear()
   const { links: navLinks, isHome } = useNavLinks()
@@ -17,6 +18,7 @@ export default function Footer() {
   const socials = [
     { label: "WhatsApp", href: `https://wa.me/${s.waNumber}`, icon: MessageCircle },
     { label: "Instagram", href: s.instagram, icon: Instagram },
+    { label: "Google Maps", href: s.mapsUrl, icon: MapPin },
     { label: "Facebook", href: s.facebook, icon: Facebook },
     { label: "Email", href: s.email ? `mailto:${s.email}` : "", icon: Mail },
   ].filter((x) => x.href)
@@ -72,16 +74,35 @@ export default function Footer() {
 
           <div>
             <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.contactLabel}</h4>
-            <a
-              href={`https://wa.me/${s.waNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink"
-            >
-              {s.phoneDisplay}
-              <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
-            </a>
-            <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink/55">
+            <ul className="mt-5 space-y-3">
+              <li>
+                <a
+                  href={wa(t.wa.general)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-ink transition-colors duration-300 hover:text-brand"
+                >
+                  <MessageCircle size={15} className="text-[#25D366]" />
+                  {f.chatWa}
+                  <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
+                </a>
+              </li>
+              {s.mapsUrl && (
+                <li>
+                  <a
+                    href={s.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 text-sm text-ink/70 transition-colors duration-300 hover:text-brand"
+                  >
+                    <MapPin size={15} className="text-brand" />
+                    {f.maps}
+                    <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
+                  </a>
+                </li>
+              )}
+            </ul>
+            <p className="mt-4 inline-flex items-center gap-2 text-sm text-ink/55">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-500" />
                 <span className="relative h-2 w-2 rounded-full bg-emerald-500" />

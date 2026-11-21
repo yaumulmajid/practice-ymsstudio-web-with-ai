@@ -34,6 +34,12 @@ export const SiteSettings: GlobalConfig = {
             },
             { name: 'email', label: 'Email', type: 'email' },
             {
+              name: 'mapsUrl',
+              label: 'Link Google Maps',
+              type: 'text',
+              admin: { description: 'Link lokasi kantor dari Google Maps (Bagikan → Salin link). Tampil di footer.' },
+            },
+            {
               type: 'row',
               fields: [
                 { name: 'instagram', label: 'Instagram URL', type: 'text', admin: { width: '50%' } },

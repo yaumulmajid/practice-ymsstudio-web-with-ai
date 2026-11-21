@@ -1,11 +1,11 @@
 import * as migration_20261121_112610_initial from './20261121_112610_initial';
 import * as migration_20261121_115322_post_views from './20261121_115322_post_views';
+import * as migration_20261121_115325_maps_url from './20261121_115325_maps_url';
 import * as migration_20261121_115330_seed_content from './20261121_115330_seed_content';
 import * as migration_20261121_115400_blog_covers from './20261121_115400_blog_covers';
 import * as migration_20261121_120000_admin_password from './20261121_120000_admin_password';
+import * as migration_20261121_121400_post_ai_search from './20261121_121400_post_ai_search';
 
-// Data migrations (seed_content, blog_covers) are idempotent: they skip anything that
-// already has content, so re-running them on an existing database changes nothing.
 export const migrations = [
   {
     up: migration_20261121_112610_initial.up,
@@ -16,6 +16,11 @@ export const migrations = [
     up: migration_20261121_115322_post_views.up,
     down: migration_20261121_115322_post_views.down,
     name: '20261121_115322_post_views',
+  },
+  {
+    up: migration_20261121_115325_maps_url.up,
+    down: migration_20261121_115325_maps_url.down,
+    name: '20261121_115325_maps_url',
   },
   {
     up: migration_20261121_115330_seed_content.up,
@@ -31,5 +36,10 @@ export const migrations = [
     up: migration_20261121_120000_admin_password.up,
     down: migration_20261121_120000_admin_password.down,
     name: '20261121_120000_admin_password',
+  },
+  {
+    up: migration_20261121_121400_post_ai_search.up,
+    down: migration_20261121_121400_post_ai_search.down,
+    name: '20261121_121400_post_ai_search',
   },
 ];

@@ -55,6 +55,7 @@ export function buildStructuredData(site: SiteData) {
       latitude: -6.23827,
       longitude: 106.975571,
     },
+    ...(settings.mapsUrl ? { hasMap: settings.mapsUrl } : {}),
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
