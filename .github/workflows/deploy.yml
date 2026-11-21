@@ -4,6 +4,10 @@
 # Repository secrets (Settings → Secrets and variables → Actions):
 #   VPS_HOST, VPS_USER, VPS_SSH_KEY   (deploy step is skipped until VPS_HOST is set)
 #   VPS_PORT (optional, default 22)
+# CMS (Keystatic, /keystatic) — see docs/CMS.md:
+#   secrets: KEYSTATIC_GITHUB_CLIENT_ID, KEYSTATIC_GITHUB_CLIENT_SECRET, KEYSTATIC_SECRET
+#   variable: KEYSTATIC_GITHUB_APP_SLUG
+# Saving in the CMS commits to main, so every edit redeploys through this workflow.
 name: Deploy
 
 on:
@@ -44,6 +48,8 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:latest
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=${{ vars.KEYSTATIC_GITHUB_APP_SLUG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -68,7 +74,12 @@ jobs:
       - name: Pull image and restart
         if: env.VPS_HOST != ''
         uses: appleboy/ssh-action@v1
+        env:
+          KEYSTATIC_GITHUB_CLIENT_ID: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_ID }}
+          KEYSTATIC_GITHUB_CLIENT_SECRET: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_SECRET }}
+          KEYSTATIC_SECRET: ${{ secrets.KEYSTATIC_SECRET }}
         with:
+          envs: KEYSTATIC_GITHUB_CLIENT_ID,KEYSTATIC_GITHUB_CLIENT_SECRET,KEYSTATIC_SECRET
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
@@ -87,6 +98,17 @@ jobs:
             else
               echo "APP_IMAGE=$APP_IMAGE" >> .env
             fi
+            # CMS credentials: written to .env (read by docker compose) when set as secrets.
+            set_env() {
+              [ -n "$2" ] || return 0
+              grep -v "^$1=" .env > .env.tmp || true
+              printf '%s=%s\n' "$1" "$2" >> .env.tmp
+              mv .env.tmp .env
+            }
+            set_env KEYSTATIC_GITHUB_CLIENT_ID "$KEYSTATIC_GITHUB_CLIENT_ID"
+            set_env KEYSTATIC_GITHUB_CLIENT_SECRET "$KEYSTATIC_GITHUB_CLIENT_SECRET"
+            set_env KEYSTATIC_SECRET "$KEYSTATIC_SECRET"
+            chmod 600 .env 2>/dev/null || true
             # One-time migration: the old setup ran the site with pm2 on port 3000,
             # possibly as root. Stop it for both users (sudo -n never prompts).
             if command -v pm2 >/dev/null 2>&1 && pm2 describe ymsstudio >/dev/null 2>&1; then

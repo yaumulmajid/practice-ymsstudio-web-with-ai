@@ -1,27 +1,25 @@
 "use client"
 
 import { ArrowUpRight, Facebook, Instagram, Mail, MessageCircle } from "lucide-react"
-import { LangSwitch, Logo } from "@/components/header"
-import { useT } from "@/components/lang"
-
-const socials = [
-  { label: "WhatsApp", href: "https://wa.me/6283822640883", icon: MessageCircle },
-  { label: "Instagram", href: "https://www.instagram.com/ymsstudios/", icon: Instagram },
-  { label: "Facebook", href: "https://www.facebook.com/ymsstudio.web/", icon: Facebook },
-  { label: "Email", href: "mailto:info@ymsstudio.id", icon: Mail },
-]
+import Link from "next/link"
+import { LangSwitch, Logo, useNavLinks } from "@/components/header"
+import { useLang, useSettings, useT } from "@/components/lang"
+import { homePath } from "@/lib/i18n"
 
 export default function Footer() {
   const t = useT()
   const f = t.footer
+  const s = useSettings()
+  const lang = useLang()
   const year = new Date().getFullYear()
-  const navLinks = [
-    { name: t.nav.work, href: "#work" },
-    { name: t.nav.services, href: "#services" },
-    ...(t.reviews.items.length ? [{ name: t.nav.reviews, href: "#reviews" }] : []),
-    { name: t.nav.pricing, href: "#pricing" },
-    { name: t.nav.faq, href: "#faq" },
-  ]
+  const { links: navLinks, isHome } = useNavLinks()
+  const servicesHref = isHome ? "#services" : `${homePath(lang)}#services`
+  const socials = [
+    { label: "WhatsApp", href: `https://wa.me/${s.waNumber}`, icon: MessageCircle },
+    { label: "Instagram", href: s.instagram, icon: Instagram },
+    { label: "Facebook", href: s.facebook, icon: Facebook },
+    { label: "Email", href: s.email ? `mailto:${s.email}` : "", icon: Mail },
+  ].filter((x) => x.href)
 
   return (
     <footer id="contact" className="relative overflow-hidden pt-20">
@@ -51,9 +49,9 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               {f.services.map((item) => (
                 <li key={item}>
-                  <a href="#services" className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  <Link href={servicesHref} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                     {item}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -64,9 +62,9 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               {navLinks.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  <Link href={item.href} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -75,12 +73,12 @@ export default function Footer() {
           <div>
             <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.contactLabel}</h4>
             <a
-              href="https://wa.me/6283822640883"
+              href={`https://wa.me/${s.waNumber}`}
               target="_blank"
               rel="noopener noreferrer"
               className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink"
             >
-              +62 838-2264-0883
+              {s.phoneDisplay}
               <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
             </a>
             <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink/55">

@@ -1,11 +1,34 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type MouseEvent } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
-import { waLink } from "@/lib/site-data"
-import { homePath, LANGS } from "@/lib/i18n"
-import { useLang, useT } from "@/components/lang"
+import { usePathname } from "next/navigation"
+import { blogPath, homePath, LANGS, type Lang } from "@/lib/i18n"
+import { useBlogSlugs, useLang, useT, useWa } from "@/components/lang"
+
+type NavLink = { name: string; id: string; href: string }
+
+/** Section links (scroll on the home page, navigate elsewhere) plus Blog. */
+export function useNavLinks(): { links: NavLink[]; isHome: boolean } {
+  const t = useT()
+  const lang = useLang()
+  const pathname = usePathname() ?? "/"
+  const home = homePath(lang)
+  const isHome = pathname === home
+  const section = (name: string, id: string) => ({ name, id, href: isHome ? `#${id}` : `${home}#${id}` })
+  return {
+    isHome,
+    links: [
+      section(t.nav.work, "work"),
+      section(t.nav.services, "services"),
+      ...(t.reviews.items.length ? [section(t.nav.reviews, "reviews")] : []),
+      section(t.nav.pricing, "pricing"),
+      section(t.nav.faq, "faq"),
+      { name: t.nav.blog, id: "blog", href: blogPath(lang) },
+    ],
+  }
+}
 
 export function Logo({ className = "" }: { className?: string }) {
   const lang = useLang()
@@ -22,15 +45,29 @@ export function Logo({ className = "" }: { className?: string }) {
   )
 }
 
+/** The same page in another language (blog posts map to their translation by slug). */
+function useLangHref() {
+  const pathname = usePathname() ?? "/"
+  const slugs = useBlogSlugs()
+  return (l: Lang) => {
+    const path = pathname.replace(/^\/en(?=\/|$)/, "") || "/"
+    const post = path.match(/^\/blog\/([^/]+)/)
+    if (post) return slugs[l].includes(post[1]) ? blogPath(l, post[1]) : blogPath(l)
+    if (path.startsWith("/blog")) return blogPath(l)
+    return homePath(l)
+  }
+}
+
 /** ID | EN switch. Plain links so each language has its own crawlable URL. */
 export function LangSwitch({ className = "" }: { className?: string }) {
   const lang = useLang()
+  const hrefFor = useLangHref()
   return (
     <div className={`flex items-center rounded-full bg-ink/[0.05] p-0.5 text-[11px] font-semibold ${className}`} role="group" aria-label="Language">
       {LANGS.map((l) => (
         <Link
           key={l}
-          href={homePath(l)}
+          href={hrefFor(l)}
           hrefLang={l}
           aria-current={l === lang ? "page" : undefined}
           className={`rounded-full px-2.5 py-1.5 uppercase transition-all duration-300 ${
@@ -46,23 +83,20 @@ export function LangSwitch({ className = "" }: { className?: string }) {
 
 export default function Header() {
   const t = useT()
+  const wa = useWa()
+  const pathname = usePathname() ?? "/"
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [active, setActive] = useState("")
 
-  const navLinks = [
-    { name: t.nav.work, id: "work" },
-    { name: t.nav.services, id: "services" },
-    ...(t.reviews.items.length ? [{ name: t.nav.reviews, id: "reviews" }] : []),
-    { name: t.nav.pricing, id: "pricing" },
-    { name: t.nav.faq, id: "faq" },
-  ]
-  const consult = waLink(t.wa.general)
+  const { links: navLinks, isHome } = useNavLinks()
+  const consult = wa(t.wa.general)
 
   useEffect(() => {
     const ids = ["work", "services", "reviews", "pricing", "faq"]
     const onScroll = () => {
       setIsScrolled(window.scrollY > 40)
+      if (!isHome) return setActive(/\/blog(\/|$)/.test(pathname) ? "blog" : "")
       const current = ids.find((id) => {
         const rect = document.getElementById(id)?.getBoundingClientRect()
         return rect ? rect.top <= 160 && rect.bottom >= 160 : false
@@ -72,15 +106,19 @@ export default function Header() {
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+  }, [isHome, pathname])
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : ""
   }, [isOpen])
 
-  const go = (id: string) => {
+  const go = (e: MouseEvent, link: NavLink) => {
     setIsOpen(false)
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+    const el = link.href.startsWith("#") ? document.getElementById(link.id) : null
+    if (el) {
+      e.preventDefault()
+      el.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   const solid = isScrolled || isOpen
@@ -101,9 +139,10 @@ export default function Header() {
             const on = active === link.id
             return (
               <li key={link.id}>
-                <button
-                  onClick={() => go(link.id)}
-                  className={`relative rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 ${
+                <Link
+                  href={link.href}
+                  onClick={(e) => go(e, link)}
+                  className={`relative block rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 ${
                     on ? "text-ink" : "text-ink/50 hover:text-ink"
                   }`}
                   aria-current={on ? "true" : undefined}
@@ -114,7 +153,7 @@ export default function Header() {
                     }`}
                   />
                   {link.name}
-                </button>
+                </Link>
               </li>
             )
           })}
@@ -155,7 +194,7 @@ export default function Header() {
       {/* Mobile menu */}
       <div
         className={`mx-auto mt-2 max-w-6xl overflow-hidden rounded-3xl border border-ink/[0.06] bg-white/95 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] md:hidden ${
-          isOpen ? "max-h-[520px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+          isOpen ? "max-h-[600px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
         }`}
       >
         <ul className="p-3">
@@ -167,13 +206,14 @@ export default function Header() {
               }`}
               style={{ transitionDelay: isOpen ? `${80 + i * 50}ms` : "0ms" }}
             >
-              <button
-                onClick={() => go(link.id)}
+              <Link
+                href={link.href}
+                onClick={(e) => go(e, link)}
                 className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left text-2xl font-medium tracking-tight text-ink transition-colors hover:bg-ink/[0.03]"
               >
                 {link.name}
                 <span className="text-xs font-normal text-ink/30">0{i + 1}</span>
-              </button>
+              </Link>
             </li>
           ))}
           <li className="p-1 pt-2">

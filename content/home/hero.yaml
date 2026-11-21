@@ -1,0 +1,56 @@
+id:
+  badge: Menerima proyek baru
+  kicker: Jasa Website UMKM & Bisnis
+  line1: Website profesional
+  line2: yang bikin bisnis Anda
+  words:
+    - dipercaya.
+    - ditemukan.
+    - dipilih.
+    - laris.
+  sub: >-
+    Kami merancang dan membangun website yang cepat, mudah ditemukan di Google,
+    dan mengubah pengunjung menjadi pelanggan.
+  ctaPrimary: Konsultasi Gratis
+  ctaSecondary: Lihat Paket
+  ctaSecondaryNote: · mulai Rp 2jt
+  guaranteeTitle: Garansi revisi
+  guaranteeText: Sampai Anda puas
+  ratingTitle: 4.9/5 rating klien
+  ratingText: 20+ website live
+  marquee:
+    - Landing Page
+    - Company Profile
+    - Toko Online
+    - Web App Custom
+    - SEO & Google Business
+    - Google & Meta Ads
+    - Maintenance
+en:
+  badge: Taking on new projects
+  kicker: Web Design & Development Studio
+  line1: Professional websites
+  line2: that make your business
+  words:
+    - trusted.
+    - found.
+    - chosen.
+    - grow.
+  sub: >-
+    We design and build websites that load fast, rank on Google, and turn
+    visitors into customers.
+  ctaPrimary: Free Consultation
+  ctaSecondary: See Pricing
+  ctaSecondaryNote: · from IDR 2M
+  guaranteeTitle: Revision guarantee
+  guaranteeText: Until you're happy
+  ratingTitle: 4.9/5 client rating
+  ratingText: 20+ live websites
+  marquee:
+    - Landing Pages
+    - Company Profiles
+    - Online Stores
+    - Custom Web Apps
+    - SEO & Google Business
+    - Google & Meta Ads
+    - Maintenance

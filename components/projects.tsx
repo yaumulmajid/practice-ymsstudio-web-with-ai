@@ -4,7 +4,7 @@ import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { SectionHead } from "@/components/motion"
 import { useProjects, useT } from "@/components/lang"
-import { domain } from "@/lib/site-data"
+import { domain } from "@/lib/i18n"
 
 const themes = [
   { card: "bg-white border border-ink/[0.07]", text: "text-ink", sub: "text-ink/55", chip: "border-ink/10 text-ink/70", btn: "bg-ink text-white hover:bg-brand-deep" },

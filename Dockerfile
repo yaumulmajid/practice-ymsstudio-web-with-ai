@@ -13,7 +13,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+# Public (non-secret) CMS setting, inlined into the admin UI at build time.
+ARG NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=""
+ENV NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=$NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG     NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 FROM base AS runner

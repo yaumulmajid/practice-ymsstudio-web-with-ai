@@ -3,7 +3,7 @@
 import { ArrowUpRight, Quote, Star } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
 import { useT } from "@/components/lang"
-import { domain } from "@/lib/site-data"
+import { domain } from "@/lib/i18n"
 
 const initials = (name: string) =>
   name

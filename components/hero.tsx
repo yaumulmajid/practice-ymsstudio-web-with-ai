@@ -3,8 +3,8 @@
 import { useEffect, useState, type CSSProperties } from "react"
 import Image from "next/image"
 import { ArrowRight, ArrowUpRight, Lock, ShieldCheck, Star } from "lucide-react"
-import { domain, waLink } from "@/lib/site-data"
-import { useProjects, useT } from "@/components/lang"
+import { domain } from "@/lib/i18n"
+import { useProjects, useT, useWa } from "@/components/lang"
 
 
 const d = (ms: number) => ({ ["--d" as string]: `${ms}ms` }) as CSSProperties
@@ -32,12 +32,12 @@ function WordRotator() {
   )
 }
 
-/** Projects shown in the hero showcase (in this order of the projects list). */
-const HERO_DOMAINS = ["sarasa.id", "ikk.lan.go.id", "loopnet.com"]
-
 function Showcase() {
   const t = useT()
-  const projects = useProjects().filter((p) => HERO_DOMAINS.some((d) => p.url.includes(d)))
+  // Projects ticked "Tampilkan di Hero" in the CMS (falls back to all projects).
+  const all = useProjects()
+  const picked = all.filter((p) => p.showInHero)
+  const projects = picked.length ? picked : all
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const current = projects[active]
@@ -110,7 +110,7 @@ function Showcase() {
 
       {/* Tabs */}
       <div className="scrollbar-hide -mx-5 mt-5 overflow-x-auto px-5">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-flow-col auto-cols-[minmax(7.5rem,1fr)] gap-2">
           {projects.map((p, i) => {
             const on = i === active
             return (
@@ -168,6 +168,7 @@ function Showcase() {
 
 export default function Hero() {
   const t = useT()
+  const wa = useWa()
   return (
     <section id="home" className="relative overflow-hidden pt-32 sm:pt-36 lg:pt-40" aria-labelledby="hero-heading">
       <a
@@ -219,7 +220,7 @@ export default function Hero() {
 
           <div className="fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={d(540)}>
             <a
-              href={waLink(t.wa.hero)}
+              href={wa(t.wa.hero)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white shadow-[0_12px_30px_-10px_rgba(11,18,32,0.55)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep sm:w-auto"

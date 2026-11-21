@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ElementType, type MouseEvent, type ReactNode } from "react"
 
-export { WA_NUMBER, waLink } from "@/lib/site-data"
 
 type RevealProps = {
   children: ReactNode

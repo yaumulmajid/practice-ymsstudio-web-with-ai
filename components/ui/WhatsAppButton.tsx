@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { waLink } from "@/lib/site-data"
-import { useT } from "@/components/lang"
+import { useT, useWa } from "@/components/lang"
 
 export default function WhatsAppButton() {
   const t = useT()
+  const wa = useWa()
   const [show, setShow] = useState(false)
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function WhatsAppButton() {
 
   return (
     <a
-      href={waLink(t.wa.float)}
+      href={wa(t.wa.float)}
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}

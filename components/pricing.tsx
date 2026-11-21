@@ -2,11 +2,12 @@
 
 import { ArrowRight, ArrowUpRight, Check, Clock } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { useT } from "@/components/lang"
-import { waLink } from "@/lib/site-data"
+import { tierMessage } from "@/lib/i18n"
+import { useT, useWa } from "@/components/lang"
 
 export default function Pricing() {
   const t = useT()
+  const wa = useWa()
   const p = t.pricing
   const index = t.reviews.items.length ? "04" : "03"
 
@@ -66,7 +67,7 @@ export default function Pricing() {
                   </p>
 
                   <a
-                    href={waLink(t.wa.tier(tier.name, tier.price))}
+                    href={wa(tierMessage(t.wa.tier, tier.name, tier.price))}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group/btn relative mt-8 flex items-center justify-center gap-2 rounded-full py-3.5 text-sm font-medium transition-all duration-500 ${
@@ -104,7 +105,7 @@ export default function Pricing() {
               <p className="mt-1 text-sm text-ink/55">{p.customText}</p>
             </div>
             <a
-              href={waLink(t.wa.custom)}
+              href={wa(t.wa.custom)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm font-medium text-ink transition-colors duration-500 hover:border-ink hover:bg-ink hover:text-white"

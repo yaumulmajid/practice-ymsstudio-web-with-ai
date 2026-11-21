@@ -2,11 +2,11 @@
 
 import { ArrowUpRight } from "lucide-react"
 import { Reveal } from "@/components/motion"
-import { useT } from "@/components/lang"
-import { waLink } from "@/lib/site-data"
+import { useT, useWa } from "@/components/lang"
 
 export default function CTA() {
   const t = useT()
+  const wa = useWa()
   const c = t.cta
 
   return (
@@ -27,7 +27,7 @@ export default function CTA() {
           <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-white/55 sm:text-lg">{c.text}</p>
 
           <a
-            href={waLink(t.wa.cta)}
+            href={wa(t.wa.cta)}
             target="_blank"
             rel="noopener noreferrer"
             className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white py-3 pl-7 pr-3 text-base font-medium text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-soft"

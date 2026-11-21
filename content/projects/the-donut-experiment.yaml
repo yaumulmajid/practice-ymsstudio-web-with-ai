@@ -1,0 +1,16 @@
+client: The Donut Experiment
+url: https://thedonutexperiment.com
+image: /images/projects/the-donut-experiment/image.webp
+tags:
+  - WordPress
+  - WooCommerce
+order: 5
+showInHero: false
+id:
+  title: The Donut Experiment
+  category: Food & Beverage
+  description: Website toko donat dengan menu interaktif, pemesanan online, dan informasi lokasi gerai.
+en:
+  title: The Donut Experiment
+  category: Food & Beverage
+  description: Donut shop website with an interactive menu, online ordering, and store locations.

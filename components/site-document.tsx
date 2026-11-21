@@ -5,6 +5,7 @@ import WhatsAppButton from "@/components/ui/WhatsAppButton"
 import { LangProvider } from "@/components/lang"
 import type { Lang } from "@/lib/i18n"
 import { buildStructuredData } from "@/lib/seo"
+import { getSite } from "@/lib/content"
 import "@/app/globals.css"
 
 const inter = Inter({
@@ -24,8 +25,9 @@ const serif = Instrument_Serif({
 })
 
 /** The <html> document shared by every language's root layout. */
-export default function SiteDocument({ lang, children }: { lang: Lang; children: React.ReactNode }) {
-  const structuredData = buildStructuredData(lang)
+export default async function SiteDocument({ lang, children }: { lang: Lang; children: React.ReactNode }) {
+  const site = await getSite(lang)
+  const structuredData = buildStructuredData(site)
 
   return (
     <html lang={lang} className={`${inter.variable} ${serif.variable}`} suppressHydrationWarning>
@@ -35,13 +37,14 @@ export default function SiteDocument({ lang, children }: { lang: Lang; children:
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#F7F9FB" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        {Object.values(structuredData).map((data, i) => (
+        {/* FAQPage markup is added on the home page only (where the FAQ is visible). */}
+        {Object.entries(structuredData).filter(([k]) => k !== "faq").map(([, data], i) => (
           <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
         ))}
       </head>
 
       <body className="antialiased">
-        <LangProvider lang={lang}>
+        <LangProvider site={site}>
           {children}
           <Suspense fallback={null}>
             <WhatsAppButton />

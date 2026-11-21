@@ -9,6 +9,7 @@ Allow: /_next/static/
 
 # Block API routes (tetap diblokir untuk security)
 Disallow: /api/
+Disallow: /keystatic
 
 # Block system files
 Disallow: /*.json$

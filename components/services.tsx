@@ -50,7 +50,7 @@ export default function Services() {
 
         <div className="mt-16 grid gap-4 md:grid-cols-3">
           {s.items.map((item, i) => {
-            const Icon = icons[i]
+            const Icon = icons[i % icons.length]
             const big = i === 0
             return (
               <Reveal key={item.title} delay={(i % 3) * 100} className={big ? "md:col-span-2 md:row-span-2" : ""}>

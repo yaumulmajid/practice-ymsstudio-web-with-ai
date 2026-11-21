@@ -1,10 +1,12 @@
 // SEO: shared metadata pieces and JSON-LD structured data per language.
 import type { Metadata } from "next"
-import { dictionaries, type Lang } from "@/lib/i18n"
+import type { SiteData } from "@/lib/content"
 
 // Structured data JSON-LD
-export function buildStructuredData(lang: Lang) {
-  const faqs = dictionaries[lang].faq.items
+export function buildStructuredData(site: SiteData) {
+  const faqs = site.dict.faq.items
+  const { settings } = site
+  const social = [settings.instagram, settings.facebook].filter(Boolean)
   return {
   organization: {
     "@context": "https://schema.org",
@@ -12,11 +14,7 @@ export function buildStructuredData(lang: Lang) {
     name: "YMS Studio",
     url: "https://ymsstudio.id",
     logo: "https://ymsstudio.id/logo.webp",
-    sameAs: [
-      "https://www.instagram.com/ymsstud.io",
-      "https://www.facebook.com/ymsstudio",
-      "https://www.linkedin.com/company/ymsstudio",
-    ],
+    sameAs: social,
   },
   website: {
     "@context": "https://schema.org",
@@ -42,7 +40,7 @@ export function buildStructuredData(lang: Lang) {
     logo: "https://ymsstudio.id/logo.webp",
     description:
       "Jasa pembuatan website profesional untuk UMKM Indonesia. Cepat, mobile-friendly, SEO-ready, mulai Rp 2 juta, dan bergaransi.",
-    telephone: "+6283822640883",
+    telephone: `+${settings.waNumber}`,
     priceRange: "Rp 2.000.000 - Rp 6.000.000",
     address: {
       "@type": "PostalAddress",
@@ -65,11 +63,7 @@ export function buildStructuredData(lang: Lang) {
         closes: "20:00",
       },
     ],
-    sameAs: [
-      "https://www.instagram.com/ymsstudios/",
-      "https://www.facebook.com/ymsstudio.web/",
-      "https://wa.me/6283822640883",
-    ],
+    sameAs: [...social, `https://wa.me/${settings.waNumber}`],
     serviceType: [
       "Jasa Website UMKM",
       "Jasa Landing Page",
@@ -121,11 +115,12 @@ export function buildStructuredData(lang: Lang) {
   }
 }
 
-const SITE = "https://ymsstudio.id"
-const OG_IMAGE = `${SITE}/og-image.webp`
+export const SITE = "https://ymsstudio.id"
+export const OG_IMAGE = `${SITE}/og-image.webp`
 
-export function buildMetadata(lang: Lang): Metadata {
-  const t = dictionaries[lang].meta
+export function buildMetadata(site: SiteData): Metadata {
+  const { lang } = site
+  const t = site.dict.meta
   const url = lang === "id" ? SITE : `${SITE}/en`
   return {
     metadataBase: new URL(SITE),

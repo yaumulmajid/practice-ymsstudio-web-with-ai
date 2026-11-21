@@ -1,25 +1,30 @@
 "use client"
 
 import { createContext, useContext, type ReactNode } from "react"
-import { dictionaries, type Dict, type Lang } from "@/lib/i18n"
-import { projects } from "@/lib/site-data"
+import { waLink, type Lang } from "@/lib/i18n"
+import type { SiteData } from "@/lib/content"
 
-const LangContext = createContext<Lang>("id")
+const SiteContext = createContext<SiteData | null>(null)
 
-export function LangProvider({ lang, children }: { lang: Lang; children: ReactNode }) {
-  return <LangContext.Provider value={lang}>{children}</LangContext.Provider>
+/** Provides the CMS content (loaded on the server) to client components. */
+export function LangProvider({ site, children }: { site: SiteData; children: ReactNode }) {
+  return <SiteContext.Provider value={site}>{children}</SiteContext.Provider>
 }
 
-export function useLang(): Lang {
-  return useContext(LangContext)
+function useSite(): SiteData {
+  const site = useContext(SiteContext)
+  if (!site) throw new Error("LangProvider is missing")
+  return site
 }
 
-export function useT(): Dict {
-  return dictionaries[useContext(LangContext)]
-}
+export const useLang = (): Lang => useSite().lang
+export const useT = () => useSite().dict
+export const useProjects = () => useSite().projects
+export const useSettings = () => useSite().settings
+export const useBlogSlugs = () => useSite().blogSlugs
 
-/** Projects merged with their localized title/category/description. */
-export function useProjects() {
-  const t = useT()
-  return projects.map((p, i) => ({ ...p, ...t.work.projects[i] }))
+/** Returns a function that builds a wa.me link with the configured number. */
+export function useWa() {
+  const { waNumber } = useSite().settings
+  return (text: string) => waLink(waNumber, text)
 }
