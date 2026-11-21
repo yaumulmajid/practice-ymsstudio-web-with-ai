@@ -4,8 +4,6 @@ services:
   app:
     image: ${APP_IMAGE:-ghcr.io/yaumulmajid/practice-ymsstudio-web-with-ai:latest}
     restart: unless-stopped
-    env_file:
-      - path: .env
-        required: false
+    env_file: .env
     ports:
       - '127.0.0.1:${APP_PORT:-3000}:3000'

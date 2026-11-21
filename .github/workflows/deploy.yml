@@ -87,11 +87,22 @@ jobs:
             else
               echo "APP_IMAGE=$APP_IMAGE" >> .env
             fi
-            # One-time migration: the old setup ran the site with pm2 on port 3000.
+            # One-time migration: the old setup ran the site with pm2 on port 3000,
+            # possibly as root. Stop it for both users (sudo -n never prompts).
             if command -v pm2 >/dev/null 2>&1 && pm2 describe ymsstudio >/dev/null 2>&1; then
-              pm2 delete ymsstudio
-              pm2 save
+              pm2 delete ymsstudio && pm2 save
             fi
+            if sudo -n true 2>/dev/null; then
+              if sudo -n env "PATH=$PATH" pm2 describe ymsstudio >/dev/null 2>&1; then
+                sudo -n env "PATH=$PATH" pm2 delete ymsstudio && sudo -n env "PATH=$PATH" pm2 save
+              fi
+              # Free the port only before the container exists, never from our own container.
+              if [ -z "$(docker compose ps -q app 2>/dev/null)" ]; then
+                sudo -n fuser -k 3000/tcp 2>/dev/null || true
+                sleep 2
+              fi
+            fi
+            docker compose version
             docker compose up -d --remove-orphans
             docker logout ghcr.io
             docker image prune -f
