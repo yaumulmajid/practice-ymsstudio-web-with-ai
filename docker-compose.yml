@@ -1,0 +1,11 @@
+# Production stack for ymsstudio.id.
+# The app listens on 127.0.0.1:${APP_PORT} only; the VPS's nginx proxies the domain to it.
+services:
+  app:
+    image: ${APP_IMAGE:-ghcr.io/yaumulmajid/practice-ymsstudio-web-with-ai:latest}
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - '127.0.0.1:${APP_PORT:-3000}:3000'

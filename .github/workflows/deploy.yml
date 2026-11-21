@@ -1,66 +1,106 @@
-name: Deploy Next.js to VPS
+# On push to main: build the Docker image, push it to GHCR, then deploy to the VPS.
+# Same flow as wanton-pratama-industri.
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   VPS_HOST, VPS_USER, VPS_SSH_KEY   (deploy step is skipped until VPS_HOST is set)
+#   VPS_PORT (optional, default 22)
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
-jobs:
-  deploy:
-    name: Deploy to Sumopod VPS
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: Deploy to VPS via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        port: ${{ secrets.VPS_PORT }}
-        script: |
-          echo "🚀 Starting deployment..."
-          
-          cd /var/www/ymsstudio
-          
-          echo "📦 Pulling latest code from GitHub..."
-          git pull origin main
-          
-          echo "📚 Installing dependencies..."
-          npm install --production=false
-          
-          if [ ! -z "${{ secrets.ENV_FILE }}" ]; then
-            echo "🔐 Updating environment variables..."
-            echo "${{ secrets.ENV_FILE }}" > .env
-          fi
-          
-          echo "🔨 Building Next.js application..."
-          npm run build
-          
-          echo "🛑 Stopping old process..."
-          pm2 stop ymsstudio || true
+concurrency:
+  group: deploy
+  cancel-in-progress: false
 
-          echo "🧹 Killing port 3000..."
-          sudo fuser -k 3000/tcp 2>/dev/null || true
-          sleep 3
-          
-          echo "🔄 Starting application..."
-          pm2 start npm --name "ymsstudio" -- start || pm2 restart ymsstudio
-          
-          pm2 save
-          
-          echo "✅ Deployment completed successfully!"
-          
-    - name: Deployment Status
-      if: success()
-      run: |
-        echo "🎉 Deployment to ymsstudio.co.id successful!"
-        
-    - name: Deployment Failed
-      if: failure()
-      run: |
-        echo "❌ Deployment failed. Check the logs above for details."
+permissions:
+  contents: read
+  packages: write
+
+env:
+  APP_DIR: /var/www/ymsstudio
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:latest
+            ${{ steps.meta.outputs.image }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.VPS_HOST != ''
+      - name: Copy compose file to the VPS
+        if: env.VPS_HOST != ''
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: docker-compose.yml
+          target: ${{ env.APP_DIR }}
+      - name: Pull image and restart
+        if: env.VPS_HOST != ''
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            cd ${{ env.APP_DIR }}
+            touch .env
+            # Short-lived token from this run lets the VPS pull the private image.
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            export APP_IMAGE="${{ needs.build.outputs.image }}:${{ github.sha }}"
+            docker compose pull app
+            # Remember the deployed image so manual `docker compose ...` on the VPS uses it.
+            if grep -q '^APP_IMAGE=' .env; then
+              sed -i "s#^APP_IMAGE=.*#APP_IMAGE=$APP_IMAGE#" .env
+            else
+              echo "APP_IMAGE=$APP_IMAGE" >> .env
+            fi
+            # One-time migration: the old setup ran the site with pm2 on port 3000.
+            if command -v pm2 >/dev/null 2>&1 && pm2 describe ymsstudio >/dev/null 2>&1; then
+              pm2 delete ymsstudio
+              pm2 save
+            fi
+            docker compose up -d --remove-orphans
+            docker logout ghcr.io
+            docker image prune -f
+            # Wait until the site answers.
+            for i in $(seq 1 20); do
+              if curl -fsS -o /dev/null http://127.0.0.1:3000; then echo "✅ Site is up"; exit 0; fi
+              sleep 3
+            done
+            echo "❌ Site did not respond on 127.0.0.1:3000"; docker compose logs --tail=50 app; exit 1
+      - name: Deploy skipped
+        if: env.VPS_HOST == ''
+        run: echo "::notice::VPS_HOST secret is not set yet. The image was pushed to GHCR but not deployed."
