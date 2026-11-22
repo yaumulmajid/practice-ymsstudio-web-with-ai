@@ -283,20 +283,20 @@ export default function Header() {
                       href={link.href}
                       onClick={(e) => go(e, link)}
                       aria-current={on ? "page" : undefined}
-                      className={`group flex items-center gap-4 rounded-2xl px-3 py-2.5 transition-colors [@media(max-height:720px)]:py-1.5 duration-300 active:bg-ink/[0.05] ${on ? "bg-white shadow-[0_8px_24px_-16px_rgba(11,18,32,0.35)]" : ""}`}
+                      className={`group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-colors [@media(max-height:720px)]:py-1.5 duration-300 active:bg-ink/[0.05] ${on ? "bg-white shadow-[0_8px_24px_-16px_rgba(11,18,32,0.35)]" : ""}`}
                     >
                       <span
-                        className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors [@media(max-height:720px)]:h-10 [@media(max-height:720px)]:w-10 duration-300 ${
+                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-colors [@media(max-height:720px)]:h-9 [@media(max-height:720px)]:w-9 duration-300 ${
                           on ? "bg-brand text-white" : "bg-white text-ink/70 ring-1 ring-ink/[0.06] group-active:bg-brand group-active:text-white"
                         }`}
                       >
-                        <Icon size={19} strokeWidth={1.8} />
+                        <Icon size={17} strokeWidth={1.8} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-lg font-semibold leading-tight tracking-[-0.02em]">{link.name}</span>
-                        <span className="mt-0.5 block truncate text-[13px] text-ink/45">{m.desc[link.id as keyof typeof m.desc] ?? ""}</span>
+                        <span className="block text-base font-semibold leading-tight tracking-[-0.015em]">{link.name}</span>
+                        <span className="mt-0.5 block truncate text-xs text-ink/45">{m.desc[link.id as keyof typeof m.desc] ?? ""}</span>
                       </span>
-                      <ChevronRight size={18} className={`shrink-0 transition-transform duration-300 group-active:translate-x-0.5 ${on ? "text-brand" : "text-ink/25"}`} />
+                      <ChevronRight size={16} className={`shrink-0 transition-transform duration-300 group-active:translate-x-0.5 ${on ? "text-brand" : "text-ink/25"}`} />
                     </Link>
                   </li>
                 )
