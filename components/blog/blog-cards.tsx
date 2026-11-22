@@ -33,6 +33,7 @@ export function Cover({ post, i, large = false }: { post: PostMeta; i: number; l
           src={post.cover}
           alt={post.coverAlt}
           fill
+          loading={large ? "eager" : "lazy"}
           sizes={large ? "(max-width: 1024px) 100vw, 640px" : "(max-width: 768px) 100vw, 400px"}
           className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]"
         />

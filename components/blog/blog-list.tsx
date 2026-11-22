@@ -4,7 +4,7 @@
 // Pages switch on the client (no reload) but keep real URLs (/blog/page/2), so
 // sharing, refresh, the back button and crawlers all work. Search filters the
 // posts already on the page and is mirrored in ?q= for sharing.
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { ArrowLeft, ArrowRight, Search, X } from "lucide-react"
 import { FeaturedCard, PostCard } from "@/components/blog/blog-cards"
@@ -38,6 +38,63 @@ const prefersReducedMotion = () => typeof window !== "undefined" && window.match
 
 /** Plain left click (no new tab / modifier keys): handle it on the client. */
 const isPlainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey
+
+/**
+ * Cards under the featured post: a swipeable row on phones (manual, snaps per card,
+ * with dots), the usual 3-column grid from md up.
+ */
+function CardSlider({ children, label }: { children: ReactNode[]; label: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(0)
+
+  function onScroll() {
+    const el = ref.current
+    if (!el || el.children.length < 2) return
+    const step = (el.children[1] as HTMLElement).offsetLeft - (el.children[0] as HTMLElement).offsetLeft
+    const max = el.scrollWidth - el.clientWidth
+    // At the far right the last card can't snap to the start, so treat "end of scroll" as the last card.
+    setActive(el.scrollLeft >= max - 4 ? el.children.length - 1 : Math.round(el.scrollLeft / step))
+  }
+
+  function goTo(i: number) {
+    const el = ref.current
+    const card = el?.children[i] as HTMLElement | undefined
+    if (!el || !card) return
+    el.scrollTo({ left: card.offsetLeft - (el.children[0] as HTMLElement).offsetLeft, behavior: prefersReducedMotion() ? "auto" : "smooth" })
+  }
+
+  return (
+    <div className="mt-6">
+      <div
+        ref={ref}
+        onScroll={onScroll}
+        className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 pb-1 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:px-8 md:mx-0 md:grid md:snap-none md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden"
+      >
+        {children.map((child, i) => (
+          <div key={i} className="w-[84%] shrink-0 snap-start sm:w-[60%] md:w-auto">
+            {child}
+          </div>
+        ))}
+      </div>
+      {children.length > 1 && (
+        <div className="mt-5 flex justify-center gap-2 md:hidden" role="group" aria-label={label}>
+          {children.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`${i + 1} / ${children.length}`}
+              aria-current={i === active ? "true" : undefined}
+              className="grid h-6 place-items-center px-0.5"
+            >
+              <span className={`block h-2 rounded-full transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] ${i === active ? "w-6 bg-ink" : "w-2 bg-ink/20"}`} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lang }) {
   const t = ui[lang].blog
@@ -164,13 +221,20 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
         ) : (
           <>
             {featured && <FeaturedCard post={featured} lang={lang} className="blog-in" style={delay(0)} />}
-            {cards.length > 0 && (
-              <div className={`${featured ? "mt-6 md:grid-cols-3" : "md:grid-cols-2"} grid grid-cols-1 gap-6`}>
-                {cards.map((post, i) => (
-                  <PostCard key={post.slug} post={post} lang={lang} i={i + (featured ? 0 : 1)} className="blog-in" style={delay(i + (featured ? 1 : 0))} />
-                ))}
-              </div>
-            )}
+            {cards.length > 0 &&
+              (featured ? (
+                <CardSlider label={t.pages}>
+                  {cards.map((post, i) => (
+                    <PostCard key={post.slug} post={post} lang={lang} i={i} className="blog-in" style={delay(i + 1)} />
+                  ))}
+                </CardSlider>
+              ) : (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {cards.map((post, i) => (
+                    <PostCard key={post.slug} post={post} lang={lang} i={i + 1} className="blog-in" style={delay(i)} />
+                  ))}
+                </div>
+              ))}
           </>
         )}
       </div>
