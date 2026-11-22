@@ -7,10 +7,8 @@ import {
   BookOpen,
   Calculator,
   ChevronRight,
-  Facebook,
   FileText,
   HelpCircle,
-  Instagram,
   LayoutGrid,
   Mail,
   MessageCircle,
@@ -21,7 +19,7 @@ import {
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { blogPath, homePath, LANGS, localePath, PATHS, type Lang } from "@/lib/i18n"
-import { useBlogSlugs, useLang, useSettings, useT, useWa } from "@/components/lang"
+import { useBlogSlugs, useLang, useT, useWa } from "@/components/lang"
 import { services } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
 
@@ -124,7 +122,6 @@ export default function Header() {
   const { links: navLinks, isHome } = useNavLinks()
   const consult = wa(t.wa.general)
   const lang = useLang()
-  const settings = useSettings()
   const m = pui[lang].menu
 
   useEffect(() => {
@@ -168,7 +165,7 @@ export default function Header() {
       <nav
         className={`mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pl-5 pr-2 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:pl-6 ${
           isOpen
-            ? "border border-transparent bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)]"
+            ? "border border-ink/[0.06] bg-white shadow-[0_8px_30px_-12px_rgba(11,18,32,0.15)]"
             : solid
             ? "border border-ink/[0.06] bg-white/80 shadow-[0_8px_30px_-12px_rgba(11,18,32,0.15)] backdrop-blur-xl"
             : "border border-transparent bg-transparent"
@@ -258,16 +255,15 @@ export default function Header() {
         id="mobile-menu"
         aria-hidden={!isOpen}
         inert={!isOpen}
-        className="fixed inset-0 -z-10 overflow-hidden bg-ink text-white md:hidden"
+        className="fixed inset-0 -z-10 overflow-hidden bg-background text-ink md:hidden"
         style={{
           clipPath: isOpen ? "circle(150% at calc(100% - 3.25rem) 2.75rem)" : "circle(0% at calc(100% - 3.25rem) 2.75rem)",
           transition: "clip-path 0.8s cubic-bezier(.16,1,.3,1)",
         }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="animate-drift absolute -right-32 -top-40 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.55),transparent)] blur-2xl" />
-          <div className="absolute -bottom-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.25),transparent)] blur-2xl" />
-          <div className="noise absolute inset-0 opacity-[0.06] mix-blend-overlay" />
+          <div className="animate-drift absolute -right-32 -top-40 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.18),transparent)] blur-2xl" />
+          <div className="absolute -bottom-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.1),transparent)] blur-2xl" />
         </div>
 
         <div className="relative flex h-[100dvh] flex-col">
@@ -287,20 +283,20 @@ export default function Header() {
                       href={link.href}
                       onClick={(e) => go(e, link)}
                       aria-current={on ? "page" : undefined}
-                      className={`group flex items-center gap-4 rounded-2xl px-3 py-2.5 transition-colors [@media(max-height:720px)]:py-1.5 duration-300 active:bg-white/[0.08] ${on ? "bg-white/[0.06]" : ""}`}
+                      className={`group flex items-center gap-4 rounded-2xl px-3 py-2.5 transition-colors [@media(max-height:720px)]:py-1.5 duration-300 active:bg-ink/[0.05] ${on ? "bg-white shadow-[0_8px_24px_-16px_rgba(11,18,32,0.35)]" : ""}`}
                     >
                       <span
                         className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors [@media(max-height:720px)]:h-10 [@media(max-height:720px)]:w-10 duration-300 ${
-                          on ? "bg-brand text-white" : "bg-white/[0.07] text-white/70 group-active:bg-brand group-active:text-white"
+                          on ? "bg-brand text-white" : "bg-white text-ink/70 ring-1 ring-ink/[0.06] group-active:bg-brand group-active:text-white"
                         }`}
                       >
                         <Icon size={19} strokeWidth={1.8} />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block text-lg font-semibold leading-tight tracking-[-0.02em]">{link.name}</span>
-                        <span className="mt-0.5 block truncate text-[13px] text-white/45">{m.desc[link.id as keyof typeof m.desc] ?? ""}</span>
+                        <span className="mt-0.5 block truncate text-[13px] text-ink/45">{m.desc[link.id as keyof typeof m.desc] ?? ""}</span>
                       </span>
-                      <ChevronRight size={18} className={`shrink-0 transition-transform duration-300 group-active:translate-x-0.5 ${on ? "text-brand-soft" : "text-white/25"}`} />
+                      <ChevronRight size={18} className={`shrink-0 transition-transform duration-300 group-active:translate-x-0.5 ${on ? "text-brand" : "text-ink/25"}`} />
                     </Link>
                   </li>
                 )
@@ -312,7 +308,7 @@ export default function Header() {
               className={`mt-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${isOpen ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}`}
               style={{ transitionDelay: isOpen ? `${160 + navLinks.length * 40}ms` : "0ms" }}
             >
-              <p className="px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40">{m.explore}</p>
+              <p className="px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{m.explore}</p>
               <div className="-mx-5 mt-3 flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-px-5 px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {services.map((sv) => {
                   const tier = sv.tierIndex !== null ? t.pricing.tiers[sv.tierIndex] : undefined
@@ -321,10 +317,10 @@ export default function Header() {
                       key={sv.slug}
                       href={localePath(lang, PATHS.service(sv.slug))}
                       onClick={() => setIsOpen(false)}
-                      className="flex w-[44%] shrink-0 snap-start flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-colors active:bg-white/[0.1]"
+                      className="flex w-[44%] shrink-0 snap-start flex-col justify-between rounded-2xl border border-ink/[0.07] bg-white p-4 transition-colors active:border-ink/20"
                     >
                       <span className="text-sm font-semibold leading-snug">{sv.copy[lang].name}</span>
-                      <span className="mt-3 text-xs text-white/45">
+                      <span className="mt-3 text-xs text-ink/45">
                         {tier ? `${t.pricing.from} ${t.pricing.currency} ${tier.price}` : pui[lang].service.custom}
                       </span>
                     </Link>
@@ -336,13 +332,13 @@ export default function Header() {
 
           {/* Contact dock (thumb zone) */}
           <div
-            className={`relative shrink-0 rounded-t-[28px] bg-white px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 text-ink shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
+            className={`relative shrink-0 rounded-t-[28px] border-t border-ink/[0.06] bg-white px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 text-ink shadow-[0_-20px_50px_-25px_rgba(11,18,32,0.25)] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
               isOpen ? "translate-y-0" : "translate-y-full"
             }`}
             style={{ transitionDelay: isOpen ? "220ms" : "0ms" }}
           >
             {/* Fade above the dock hints that the list scrolls on short screens. */}
-            <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-background to-transparent" aria-hidden="true" />
             <div className="flex items-center gap-3">
               <span className="relative flex h-2.5 w-2.5 shrink-0">
                 <span className="animate-ping-soft absolute h-2.5 w-2.5 rounded-full bg-emerald-500" />
@@ -351,25 +347,6 @@ export default function Header() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold leading-tight">{m.consult}</p>
                 <p className="mt-0.5 truncate text-xs text-ink/50">{m.hours}</p>
-              </div>
-              <div className="flex gap-1.5">
-                {[
-                  { href: settings.instagram, icon: Instagram, label: "Instagram" },
-                  { href: settings.facebook, icon: Facebook, label: "Facebook" },
-                ]
-                  .filter((x) => x.href)
-                  .map(({ href, icon: Icon, label }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={label}
-                      className="grid h-9 w-9 place-items-center rounded-full bg-ink/[0.05] text-ink/60"
-                    >
-                      <Icon size={15} />
-                    </a>
-                  ))}
               </div>
             </div>
             <a
