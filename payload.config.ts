@@ -1,5 +1,6 @@
 // Payload CMS (same stack as the Woodnest site): admin at /admin, PostgreSQL storage.
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { en } from '@payloadcms/translations/languages/en'
 import { id } from '@payloadcms/translations/languages/id'
@@ -8,6 +9,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { Leads } from './payload/collections/Leads'
 import { Media } from './payload/collections/Media'
 import { Posts } from './payload/collections/Posts'
 import { Projects } from './payload/collections/Projects'
@@ -41,7 +43,7 @@ export default buildConfig({
   },
   // Text is bilingual per field (`title` + `titleEn`, side by side). The website reads
   // with `context: { lang }` and pickLanguage returns the right language.
-  collections: [Projects, Reviews, Posts, Media, Users].map((c) => ({
+  collections: [Projects, Reviews, Posts, Leads, Media, Users].map((c) => ({
     ...c,
     hooks: { ...c.hooks, afterRead: [...(c.hooks?.afterRead ?? []), pickLanguageCollection] },
   })),
@@ -65,6 +67,22 @@ export default buildConfig({
     prodMigrations: migrations,
   }),
   sharp,
+  // Email (new-brief notifications) only when SMTP is configured in .env; otherwise
+  // Payload logs emails to the console and nothing is sent.
+  ...(process.env.SMTP_HOST
+    ? {
+        email: nodemailerAdapter({
+          defaultFromAddress: process.env.SMTP_FROM || 'info@ymsstudio.id',
+          defaultFromName: 'YMS Studio Website',
+          transportOptions: {
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT || 587),
+            secure: Number(process.env.SMTP_PORT) === 465,
+            auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+          },
+        }),
+      }
+    : {}),
   // First admin account from ADMIN_EMAIL / ADMIN_PASSWORD (written to the VPS .env by
   // the deploy workflow), so the public "create first user" screen is never exposed.
   onInit: async (payload) => {

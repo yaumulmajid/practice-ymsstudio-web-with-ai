@@ -7,6 +7,20 @@ export const LANGS: Lang[] = ["id", "en"]
 export const isLang = (v: unknown): v is Lang => v === "id" || v === "en"
 export const homePath = (lang: Lang) => (lang === "id" ? "/" : "/en")
 export const blogPath = (lang: Lang, slug?: string) => `${lang === "id" ? "" : "/en"}/blog${slug ? `/${slug}` : ""}`
+/** Any site path in a language: "/x" (Indonesian) or "/en/x". Paths are shared by both languages. */
+export const localePath = (lang: Lang, path: string) => (lang === "id" ? path || "/" : `/en${path === "/" ? "" : path}`)
+
+/** Public pages besides home and blog (same slug in both languages). */
+export const PATHS = {
+  privacy: "/kebijakan-privasi",
+  terms: "/syarat-layanan",
+  calculator: "/kalkulator-biaya",
+  brief: "/mulai-proyek",
+  local: "/jasa-website-bekasi",
+  service: (slug: string) => `/layanan/${slug}`,
+  project: (slug: string) => `/karya/${slug}`,
+} as const
+
 /** Blog index page n (page 1 is the plain /blog URL). */
 export const blogPagePath = (lang: Lang, page: number) => (page > 1 ? `${blogPath(lang)}/page/${page}` : blogPath(lang))
 
@@ -39,6 +53,11 @@ export type Project = {
   title: string
   category: string
   description: string
+  /** URL slug of the case-study page (/karya/slug). */
+  slug: string
+  challenge: string
+  solution: string
+  result: string
 }
 
 export type Settings = {

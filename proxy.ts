@@ -7,6 +7,11 @@ const hasLangPrefix = (path: string) => /^\/(id|en)(\/|$)/.test(path)
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+  // One canonical host: www.ymsstudio.id → ymsstudio.id (301). Needs nginx to pass the Host header.
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? ""
+  if (host.startsWith("www.")) {
+    return NextResponse.redirect(`https://${host.slice(4)}${pathname}${request.nextUrl.search}`, 301)
+  }
   // Already language-prefixed: /en/... (public) or /id/... (our own rewrite — the proxy can
   // run again for it, so it must not redirect; canonical tags point to the clean URL).
   if (hasLangPrefix(pathname)) return NextResponse.next()

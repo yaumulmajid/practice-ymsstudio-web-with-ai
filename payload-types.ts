@@ -70,6 +70,7 @@ export interface Config {
     projects: Project;
     reviews: Review;
     posts: Post;
+    leads: Lead;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -82,6 +83,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    leads: LeadsSelect<false> | LeadsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -130,7 +132,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Website di section Karya. Centang "Tampilkan di Hero" untuk showcase paling atas.
+ * Website di section Karya. Centang "Tampilkan di Hero" untuk showcase paling atas. Isi bagian Studi Kasus agar halaman detail project (/karya/slug) lebih lengkap.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
@@ -150,6 +152,25 @@ export interface Project {
   description: string;
   descriptionEn?: string | null;
   tags?: string[] | null;
+  /**
+   * Masalah atau kebutuhan klien sebelum project.
+   */
+  challenge?: string | null;
+  challengeEn?: string | null;
+  /**
+   * Apa yang kami bangun dan kenapa.
+   */
+  solution?: string | null;
+  solutionEn?: string | null;
+  /**
+   * Dampak setelah website live (angka nyata bila ada).
+   */
+  result?: string | null;
+  resultEn?: string | null;
+  /**
+   * Dibuat otomatis dari judul. Dipakai untuk versi ID dan EN.
+   */
+  slug?: string | null;
   /**
    * Angka kecil tampil lebih dulu.
    */
@@ -242,7 +263,7 @@ export interface Post {
   title: string;
   titleEn?: string | null;
   /**
-   * 1–2 kalimat. Tampil di daftar blog dan hasil Google.
+   * 1–2 kalimat (±155 karakter). Tampil di daftar blog dan sebagai deskripsi di Google.
    */
   excerpt: string;
   excerptEn?: string | null;
@@ -251,6 +272,9 @@ export interface Post {
    */
   category?: string | null;
   categoryEn?: string | null;
+  /**
+   * Rasio 16:9, minimal 1200×675 px. Dipakai juga sebagai gambar saat dibagikan dan di hasil Google.
+   */
   cover?: (number | null) | Media;
   content: {
     root: {
@@ -291,6 +315,32 @@ export interface Post {
   slug?: string | null;
   status: 'draft' | 'published';
   publishedAt: string;
+  /**
+   * Bertambah otomatis setiap artikel dibaca.
+   */
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Brief yang dikirim calon klien lewat form di website. Centang "Sudah ditindaklanjuti" setelah dihubungi.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: number;
+  name: string;
+  business?: string | null;
+  whatsapp: string;
+  email?: string | null;
+  service?: string | null;
+  budget?: string | null;
+  timeline?: string | null;
+  message?: string | null;
+  handled?: boolean | null;
+  sourcePage?: string | null;
+  lang?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -362,6 +412,10 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'leads';
+        value: number | Lead;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -426,6 +480,13 @@ export interface ProjectsSelect<T extends boolean = true> {
   description?: T;
   descriptionEn?: T;
   tags?: T;
+  challenge?: T;
+  challengeEn?: T;
+  solution?: T;
+  solutionEn?: T;
+  result?: T;
+  resultEn?: T;
+  slug?: T;
   sortOrder?: T;
   showInHero?: T;
   updatedAt?: T;
@@ -464,6 +525,26 @@ export interface PostsSelect<T extends boolean = true> {
   slug?: T;
   status?: T;
   publishedAt?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  name?: T;
+  business?: T;
+  whatsapp?: T;
+  email?: T;
+  service?: T;
+  budget?: T;
+  timeline?: T;
+  message?: T;
+  handled?: T;
+  sourcePage?: T;
+  lang?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -818,6 +899,10 @@ export interface SiteSetting {
     waNumber: string;
     phoneDisplay?: string | null;
     email?: string | null;
+    /**
+     * Link lokasi kantor dari Google Maps (Bagikan → Salin link). Tampil di footer.
+     */
+    mapsUrl?: string | null;
     instagram?: string | null;
     facebook?: string | null;
   };
@@ -1075,6 +1160,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         waNumber?: T;
         phoneDisplay?: T;
         email?: T;
+        mapsUrl?: T;
         instagram?: T;
         facebook?: T;
       };

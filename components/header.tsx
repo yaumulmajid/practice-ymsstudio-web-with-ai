@@ -4,7 +4,7 @@ import { useEffect, useState, type MouseEvent } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { blogPath, homePath, LANGS, type Lang } from "@/lib/i18n"
+import { blogPath, homePath, LANGS, localePath, type Lang } from "@/lib/i18n"
 import { useBlogSlugs, useLang, useT, useWa } from "@/components/lang"
 
 type NavLink = { name: string; id: string; href: string }
@@ -56,7 +56,8 @@ function useLangHref() {
     const post = path.match(/^\/blog\/([^/]+)/)
     if (post) return slugs[l].includes(post[1]) ? blogPath(l, post[1]) : blogPath(l)
     if (path.startsWith("/blog")) return blogPath(l)
-    return homePath(l)
+    // Other pages use the same path in both languages (/x ↔ /en/x).
+    return path === "/" || path === "" ? homePath(l) : localePath(l, path)
   }
 }
 

@@ -1,7 +1,8 @@
 // /sitemap.xml — generated from the CMS on each request (no database at build time).
 import type { MetadataRoute } from "next"
-import { getPosts } from "@/lib/content"
-import { blogPath, homePath } from "@/lib/i18n"
+import { getPosts, getSite } from "@/lib/content"
+import { blogPath, homePath, localePath, PATHS } from "@/lib/i18n"
+import { services } from "@/lib/page-content/services"
 import { SITE } from "@/lib/seo"
 
 const abs = (path: string) => `${SITE}${path === "/" ? "" : path}`
@@ -9,7 +10,7 @@ const abs = (path: string) => `${SITE}${path === "/" ? "" : path}`
 export const dynamic = "force-dynamic"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [id, en] = await Promise.all([getPosts("id"), getPosts("en")])
+  const [id, en, site] = await Promise.all([getPosts("id"), getPosts("en"), getSite("id")])
   const pair = (idPath: string, enPath: string) => ({ languages: { "id-ID": abs(idPath), "en-US": abs(enPath) } })
 
   const pages: MetadataRoute.Sitemap = [
@@ -28,5 +29,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...(others.some((o) => o.slug === p.slug) ? { alternates: pair(blogPath("id", p.slug), blogPath("en", p.slug)) } : {}),
     }))
 
-  return [...pages, ...posts(id, "id", en), ...posts(en, "en", id)]
+  // Content pages share their path across languages (/x and /en/x).
+  const shared = (path: string, priority: number, changeFrequency: "weekly" | "monthly" | "yearly" = "monthly"): MetadataRoute.Sitemap =>
+    (["id", "en"] as const).map((lang) => ({
+      url: abs(localePath(lang, path)),
+      changeFrequency,
+      priority: lang === "id" ? priority : Math.round((priority - 0.1) * 10) / 10,
+      alternates: pair(localePath("id", path), localePath("en", path)),
+    }))
+  const content: MetadataRoute.Sitemap = [
+    ...services.flatMap((s) => shared(PATHS.service(s.slug), 0.9)),
+    ...shared(PATHS.local, 0.9),
+    ...shared(PATHS.calculator, 0.7),
+    ...shared(PATHS.brief, 0.6),
+    ...site.projects.flatMap((p) => shared(PATHS.project(p.slug), 0.6)),
+    ...shared(PATHS.privacy, 0.2, "yearly"),
+    ...shared(PATHS.terms, 0.2, "yearly"),
+  ]
+
+  return [...pages, ...content, ...posts(id, "id", en), ...posts(en, "en", id)]
 }

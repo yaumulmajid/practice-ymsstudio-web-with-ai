@@ -1,8 +1,9 @@
 "use client"
 
-import { ArrowUpRight, Quote, Star } from "lucide-react"
+import { ArrowUpRight, MapPin, Quote, Star } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { useT } from "@/components/lang"
+import { useLang, useSettings, useT } from "@/components/lang"
+import { pui } from "@/lib/pages-ui"
 import { domain } from "@/lib/i18n"
 
 const initials = (name: string) =>
@@ -16,6 +17,8 @@ const initials = (name: string) =>
 export default function Reviews() {
   const t = useT()
   const r = t.reviews
+  const { mapsUrl } = useSettings()
+  const lang = useLang()
   if (!r.items.length) return null
 
   const [first, ...rest] = r.items
@@ -96,6 +99,20 @@ export default function Reviews() {
             </Reveal>
           ))}
         </div>
+
+        {mapsUrl && (
+          <Reveal className="mt-10 text-center">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-5 py-3 text-sm font-medium text-ink transition-colors duration-300 hover:border-ink/25"
+            >
+              <MapPin size={16} className="text-brand" /> {pui[lang].googleReviews}
+              <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
+            </a>
+          </Reveal>
+        )}
       </div>
     </section>
   )

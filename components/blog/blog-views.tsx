@@ -12,6 +12,7 @@ import { Eyebrow, Reveal } from "@/components/motion"
 import BlogCta from "@/components/blog/blog-cta"
 import BlogList from "@/components/blog/blog-list"
 import { Meta, PostCard } from "@/components/blog/blog-cards"
+import { AuthorBox, headingConverters, ShareRow, Toc, tocFrom } from "@/components/blog/article-extras"
 import { getPost, getPosts } from "@/lib/content"
 import { blogPath, homePath, ui, type Lang } from "@/lib/i18n"
 import { SITE } from "@/lib/seo"
@@ -58,7 +59,14 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
   const t = ui[lang].blog
   const post = await getPost(lang, slug)
   if (!post) return null
-  const others = (await getPosts(lang)).filter((p) => p.slug !== slug).slice(0, 2)
+  // Related: same category first, then newest.
+  const others = (await getPosts(lang))
+    .filter((p) => p.slug !== slug)
+    .map((p, i) => ({ p, score: (p.category && p.category === post.category ? 0 : 1) * 1000 + i }))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 2)
+    .map((x) => x.p)
+  const toc = tocFrom(post.content)
   const url = `${SITE}${blogPath(lang, slug)}`
 
   const jsonLd = [
@@ -114,11 +122,15 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
           </Reveal>
         )}
 
+        <Toc items={toc} lang={lang} />
+
         {/* Plain fade-in on load: a scroll reveal never fires on long articles on small screens. */}
         <div className="fade-up prose-yms mt-12 border-t border-ink/[0.07] pt-12" style={{ ["--d" as string]: "300ms" }}>
-          <RichText data={post.content as SerializedEditorState} disableContainer />
+          <RichText data={post.content as SerializedEditorState} converters={headingConverters()} disableContainer />
         </div>
 
+        <ShareRow url={url} title={post.title} lang={lang} />
+        <AuthorBox lang={lang} />
         <BlogCta title={t.ctaTitle} text={t.ctaText} button={t.ctaButton} />
       </article>
 

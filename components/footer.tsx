@@ -4,7 +4,9 @@ import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, MessageCircle } from "
 import Link from "next/link"
 import { LangSwitch, Logo, useNavLinks } from "@/components/header"
 import { useLang, useSettings, useT, useWa } from "@/components/lang"
-import { homePath } from "@/lib/i18n"
+import { homePath, localePath, PATHS } from "@/lib/i18n"
+import { services } from "@/lib/page-content/services"
+import { pui } from "@/lib/pages-ui"
 
 export default function Footer() {
   const t = useT()
@@ -15,6 +17,9 @@ export default function Footer() {
   const year = new Date().getFullYear()
   const { links: navLinks, isHome } = useNavLinks()
   const servicesHref = isHome ? "#services" : `${homePath(lang)}#services`
+  const u = pui[lang]
+  // Footer service names (CMS) link to their service pages, in the same order.
+  const serviceHref = (i: number) => (services[i] ? localePath(lang, PATHS.service(services[i].slug)) : servicesHref)
   const socials = [
     { label: "WhatsApp", href: `https://wa.me/${s.waNumber}`, icon: MessageCircle },
     { label: "Instagram", href: s.instagram, icon: Instagram },
@@ -49,13 +54,18 @@ export default function Footer() {
           <div>
             <h4 className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{f.servicesLabel}</h4>
             <ul className="mt-5 space-y-3">
-              {f.services.map((item) => (
+              {f.services.map((item, i) => (
                 <li key={item}>
-                  <Link href={servicesHref} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  <Link href={serviceHref(i)} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                     {item}
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link href={localePath(lang, PATHS.local)} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  {u.footer.local}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -86,6 +96,16 @@ export default function Footer() {
                   {f.chatWa}
                   <ArrowUpRight size={14} className="transition-transform duration-500 group-hover:rotate-45" />
                 </a>
+              </li>
+              <li>
+                <Link href={localePath(lang, PATHS.brief)} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  {u.footer.brief}
+                </Link>
+              </li>
+              <li>
+                <Link href={localePath(lang, PATHS.calculator)} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                  {u.footer.calculator}
+                </Link>
               </li>
               {s.mapsUrl && (
                 <li>
@@ -118,12 +138,12 @@ export default function Footer() {
             © {year} YMS Web Studio. {f.rights}
           </p>
           <div className="flex gap-6">
-            <a href="#" className="transition-colors hover:text-ink">
+            <Link href={localePath(lang, PATHS.privacy)} className="transition-colors hover:text-ink">
               {f.privacy}
-            </a>
-            <a href="#" className="transition-colors hover:text-ink">
+            </Link>
+            <Link href={localePath(lang, PATHS.terms)} className="transition-colors hover:text-ink">
               {f.terms}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

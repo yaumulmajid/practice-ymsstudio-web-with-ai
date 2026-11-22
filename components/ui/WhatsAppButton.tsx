@@ -15,17 +15,12 @@ export default function WhatsAppButton() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const handleClick = () => {
-    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
-    gtag?.("event", "conversion", { send_to: "AW-17737646735/hlfWCMHqi9obEI-F_IlC" })
-  }
-
   return (
     <a
       href={wa(t.wa.float)}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={handleClick}
+      data-track="floating_button"
       aria-label="Chat WhatsApp"
       className={`group fixed bottom-5 right-5 z-50 flex items-center gap-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:bottom-6 sm:right-6 ${
         show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"

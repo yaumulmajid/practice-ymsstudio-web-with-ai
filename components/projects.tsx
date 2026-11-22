@@ -1,10 +1,12 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { SectionHead } from "@/components/motion"
-import { useProjects, useT } from "@/components/lang"
-import { domain } from "@/lib/i18n"
+import { useLang, useProjects, useT } from "@/components/lang"
+import { domain, localePath, PATHS } from "@/lib/i18n"
+import { pui } from "@/lib/pages-ui"
 
 const themes = [
   { card: "bg-white border border-ink/[0.07]", text: "text-ink", sub: "text-ink/55", chip: "border-ink/10 text-ink/70", btn: "bg-ink text-white hover:bg-brand-deep" },
@@ -15,6 +17,8 @@ const themes = [
 export default function Projects() {
   const t = useT()
   const projects = useProjects()
+  const lang = useLang()
+  const caseLabel = pui[lang].service.viewCase
 
   return (
     <section id="work" className="relative py-24 md:py-32">
@@ -66,7 +70,13 @@ export default function Projects() {
                           <ArrowUpRight size={15} className="transition-transform duration-500 group-hover/btn:rotate-45" />
                         </span>
                       </a>
-                      <span className={`hidden text-sm sm:inline ${th.sub}`}>{domain(p.url)}</span>
+                      <Link
+                        href={localePath(lang, PATHS.project(p.slug))}
+                        className={`text-sm font-medium underline decoration-current/25 underline-offset-4 transition-colors hover:decoration-current ${th.text}`}
+                      >
+                        {caseLabel}
+                      </Link>
+                      <span className={`hidden text-sm lg:inline ${th.sub}`}>{domain(p.url)}</span>
                     </div>
                   </div>
 

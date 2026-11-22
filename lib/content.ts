@@ -5,6 +5,7 @@ import "server-only"
 import { cache } from "react"
 import type { Where } from "payload"
 import { getPayloadClient } from "@/lib/payload"
+import { slugify } from "@/payload/fields"
 import { LANGS, ui, type Dict, type Lang, type Project, type Review, type Settings } from "@/lib/i18n"
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- CMS documents are mapped field by field below */
@@ -63,6 +64,10 @@ export const getSite = cache(async (lang: Lang): Promise<SiteData> => {
     title: s(p.title),
     category: s(p.category),
     description: s(p.description),
+    slug: s(p.slug) || slugify(s(p.client)),
+    challenge: s(p.challenge),
+    solution: s(p.solution),
+    result: s(p.result),
   }))
 
   const reviews: Review[] = reviewDocs.docs

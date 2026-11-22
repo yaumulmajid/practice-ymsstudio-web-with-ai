@@ -11,6 +11,7 @@ import { FeaturedCard, PostCard } from "@/components/blog/blog-cards"
 import { BLOG_PER_PAGE, blogPageCount } from "@/components/blog/pagination"
 import type { PostMeta } from "@/lib/content"
 import { blogPagePath, blogPath, ui, type Lang } from "@/lib/i18n"
+import { pui } from "@/lib/pages-ui"
 
 const normalize = (s: string) =>
   s
@@ -104,6 +105,9 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
   const [input, setInput] = useState("")
   const [query, setQuery] = useState("") // input, debounced
   const [resultPage, setResultPage] = useState(1)
+  const [cat, setCat] = useState("") // "" = all categories
+  const categories = useMemo(() => [...new Set(posts.map((p) => p.category).filter(Boolean))], [posts])
+  const filtering = Boolean(query || cat)
 
   // Restore a shared search (?q=) after hydration.
   useEffect(() => {
@@ -128,18 +132,19 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
   }, [input, query, lang])
 
   const results = useMemo(() => {
-    if (!query) return posts
+    const inCat = cat ? posts.filter((p) => p.category === cat) : posts
+    if (!query) return inCat
     const terms = normalize(query).split(/\s+/).filter(Boolean)
-    return posts.filter((p) => {
+    return inCat.filter((p) => {
       const hay = normalize(`${p.title} ${p.excerpt} ${p.category}`)
       return terms.every((term) => hay.includes(term))
     })
-  }, [posts, query])
+  }, [posts, query, cat])
 
   const total = blogPageCount(results.length)
-  const page = Math.min(query ? resultPage : pageFromPath(pathname), total)
+  const page = Math.min(filtering ? resultPage : pageFromPath(pathname), total)
   const visible = results.slice((page - 1) * BLOG_PER_PAGE, page * BLOG_PER_PAGE)
-  const showFeatured = !query && page === 1 && visible.length > 0
+  const showFeatured = !filtering && page === 1 && visible.length > 0
   const featured = showFeatured ? visible[0] : undefined
   const cards = showFeatured ? visible.slice(1) : visible
 
@@ -156,7 +161,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
       e.preventDefault()
     }
     if (n === page) return
-    if (query) setResultPage(n)
+    if (filtering) setResultPage(n)
     else window.history.pushState(null, "", blogPagePath(lang, n))
     scrollToList()
   }
@@ -164,11 +169,12 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
   function clear() {
     setInput("")
     setQuery("")
+    setCat("")
     setResultPage(1)
     window.history.replaceState(null, "", blogPath(lang))
   }
 
-  const swapKey = `${query}|${page}`
+  const swapKey = `${query}|${cat}|${page}`
   const delay = (i: number): CSSProperties => ({ ["--d" as string]: `${i * 70}ms` })
   const pageLink = "grid h-11 min-w-11 place-items-center rounded-full px-3 text-sm font-medium transition-colors duration-300"
   const pill =
@@ -203,9 +209,32 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
           )}
         </label>
         <p className="text-sm text-ink/45" aria-live="polite">
-          {query ? t.results.replace("{n}", String(results.length)).replace("{q}", query) : total > 1 ? `${t.page} ${page} / ${total}` : ""}
+          {query ? t.results.replace("{n}", String(results.length)).replace("{q}", query) : cat ? `${results.length} · ${cat}` : total > 1 ? `${t.page} ${page} / ${total}` : ""}
         </p>
       </div>
+
+      {/* Categories */}
+      {categories.length > 1 && (
+        <div className="-mx-5 mt-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden" role="group" aria-label={t.label}>
+          {["", ...categories].map((c) => (
+            <button
+              key={c || "all"}
+              type="button"
+              aria-pressed={cat === c}
+              onClick={() => {
+                setCat(c)
+                setResultPage(1)
+                if (!query && pageFromPath(pathname) > 1) window.history.replaceState(null, "", blogPath(lang))
+              }}
+              className={`h-9 shrink-0 rounded-full px-4 text-sm font-medium transition-colors duration-300 ${
+                cat === c ? "bg-ink text-white" : "border border-ink/[0.08] bg-white text-ink/60 hover:border-ink/20 hover:text-ink"
+              }`}
+            >
+              {c || pui[lang].blog.all}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Posts */}
       <div key={swapKey} className="mt-8">

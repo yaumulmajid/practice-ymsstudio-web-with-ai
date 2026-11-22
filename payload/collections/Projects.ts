@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone, isStaff } from '../access'
-import { bilingual, sortOrderField } from '../fields'
+import { bilingual, slugField, sortOrderField } from '../fields'
 import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
 
 export const Projects: CollectionConfig = {
@@ -12,7 +12,8 @@ export const Projects: CollectionConfig = {
     group: 'Konten',
     useAsTitle: 'client',
     defaultColumns: ['client', 'url', 'showInHero', 'sortOrder'],
-    description: 'Website di section Karya. Centang "Tampilkan di Hero" untuk showcase paling atas.',
+    description:
+      'Website di section Karya. Centang "Tampilkan di Hero" untuk showcase paling atas. Isi bagian Studi Kasus agar halaman detail project (/karya/slug) lebih lengkap.',
   },
   access: { read: anyone, create: isStaff, update: isStaff, delete: isStaff },
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
@@ -36,6 +37,20 @@ export const Projects: CollectionConfig = {
     ...bilingual({ name: 'category', label: 'Kategori', type: 'text', required: true }),
     ...bilingual({ name: 'description', label: 'Deskripsi singkat', type: 'textarea', required: true }),
     { name: 'tags', label: 'Teknologi / tag', type: 'text', hasMany: true },
+    {
+      type: 'collapsible',
+      label: 'Studi kasus (halaman detail project)',
+      admin: {
+        initCollapsed: false,
+        description: 'Opsional. Bagian yang kosong tidak ditampilkan. Tulis hanya fakta yang disetujui klien.',
+      },
+      fields: [
+        ...bilingual({ name: 'challenge', label: 'Tantangan klien', type: 'textarea', admin: { description: 'Masalah atau kebutuhan klien sebelum project.' } }),
+        ...bilingual({ name: 'solution', label: 'Solusi kami', type: 'textarea', admin: { description: 'Apa yang kami bangun dan kenapa.' } }),
+        ...bilingual({ name: 'result', label: 'Hasil', type: 'textarea', admin: { description: 'Dampak setelah website live (angka nyata bila ada).' } }),
+      ],
+    },
+    slugField('client'),
     sortOrderField,
     { name: 'showInHero', label: 'Tampilkan di Hero', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
   ],

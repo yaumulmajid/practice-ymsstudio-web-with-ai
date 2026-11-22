@@ -403,3 +403,6 @@
 @media (prefers-reduced-motion: reduce) {
   .blog-in { opacity: 1; transform: none; animation: none; }
 }
+
+/* Article headings are TOC targets: keep them clear of the fixed header. */
+.prose-yms h2[id], .prose-yms h3[id] { scroll-margin-top: 112px; }

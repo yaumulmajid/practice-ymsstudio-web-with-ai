@@ -2,6 +2,7 @@ import type React from "react"
 import { Suspense } from "react"
 import { Inter, Instrument_Serif } from "next/font/google"
 import WhatsAppButton from "@/components/ui/WhatsAppButton"
+import Analytics from "@/components/analytics"
 import { LangProvider } from "@/components/lang"
 import type { Lang } from "@/lib/i18n"
 import { buildStructuredData } from "@/lib/seo"
@@ -27,6 +28,8 @@ const serif = Instrument_Serif({
 /** The <html> document shared by every language's root layout. */
 export default async function SiteDocument({ lang, children }: { lang: Lang; children: React.ReactNode }) {
   const site = await getSite(lang)
+  // GA4 property (e.g. G-XXXXXXX), set in the server .env; Google Ads is always on.
+  const gaId = /^G-[A-Z0-9]+$/.test(process.env.GA_MEASUREMENT_ID ?? "") ? process.env.GA_MEASUREMENT_ID : ""
   const structuredData = buildStructuredData(site)
 
   return (
@@ -49,6 +52,7 @@ export default async function SiteDocument({ lang, children }: { lang: Lang; chi
           <Suspense fallback={null}>
             <WhatsAppButton />
           </Suspense>
+          <Analytics />
         </LangProvider>
 
         <script defer src="https://www.googletagmanager.com/gtag/js?id=AW-17737646735" />
@@ -59,7 +63,8 @@ export default async function SiteDocument({ lang, children }: { lang: Lang; chi
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'AW-17737646735', { page_path: window.location.pathname });
+              gtag('config', 'AW-17737646735', { page_path: window.location.pathname });${gaId ? `
+              gtag('config', '${gaId}');` : ""}
             `,
           }}
         />

@@ -1,14 +1,17 @@
 "use client"
 
-import { ArrowRight, ArrowUpRight, Check, Clock } from "lucide-react"
+import Link from "next/link"
+import { ArrowRight, ArrowUpRight, Calculator, Check, Clock } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { tierMessage } from "@/lib/i18n"
-import { useT, useWa } from "@/components/lang"
+import { localePath, PATHS, tierMessage } from "@/lib/i18n"
+import { pui } from "@/lib/pages-ui"
+import { useLang, useT, useWa } from "@/components/lang"
 
 export default function Pricing() {
   const t = useT()
   const wa = useWa()
   const p = t.pricing
+  const lang = useLang()
   const index = t.reviews.items.length ? "04" : "03"
 
   return (
@@ -114,6 +117,16 @@ export default function Pricing() {
               <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
             </a>
           </div>
+        </Reveal>
+
+        <Reveal className="mt-8 text-center">
+          <Link
+            href={localePath(lang, PATHS.calculator)}
+            className="group inline-flex items-center gap-2 text-sm font-medium text-ink/60 transition-colors hover:text-ink"
+          >
+            <Calculator size={16} className="text-brand" /> {pui[lang].service.ctaCalc}
+            <ArrowRight size={15} className="transition-transform duration-500 group-hover:translate-x-1" />
+          </Link>
         </Reveal>
       </div>
     </section>
