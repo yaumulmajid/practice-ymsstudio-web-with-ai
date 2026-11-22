@@ -28,7 +28,7 @@ export default async function Page({ params }: Props) {
   const trail = [{ name: b.label, path: PATHS.brief }]
 
   const cards = [
-    s.waNumber && { icon: MessageCircle, label: c.wa, value: s.phoneDisplay || `+${s.waNumber}`, note: c.waText, href: waLink(s.waNumber, dict.wa.general), primary: true },
+    s.waNumber && { icon: MessageCircle, label: c.wa, value: c.waValue, note: c.waText, href: waLink(s.waNumber, dict.wa.general), primary: true },
     s.email && { icon: Mail, label: c.email, value: s.email, href: `mailto:${s.email}` },
     { icon: MapPin, label: c.location, value: c.locationText, href: s.mapsUrl || undefined },
     { icon: Clock, label: c.hours, value: c.hoursText },

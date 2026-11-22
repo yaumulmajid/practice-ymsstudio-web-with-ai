@@ -2,7 +2,23 @@
 
 import { useEffect, useState, type MouseEvent } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Facebook, FileText, Instagram, MessageCircle } from "lucide-react"
+import {
+  ArrowUpRight,
+  BookOpen,
+  Calculator,
+  ChevronRight,
+  Facebook,
+  FileText,
+  HelpCircle,
+  Instagram,
+  LayoutGrid,
+  Mail,
+  MessageCircle,
+  Sparkles,
+  Star,
+  Tag,
+  type LucideIcon,
+} from "lucide-react"
 import { usePathname } from "next/navigation"
 import { blogPath, homePath, LANGS, localePath, PATHS, type Lang } from "@/lib/i18n"
 import { useBlogSlugs, useLang, useSettings, useT, useWa } from "@/components/lang"
@@ -10,6 +26,16 @@ import { services } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
 
 type NavLink = { name: string; id: string; href: string }
+
+const NAV_ICONS: Record<string, LucideIcon> = {
+  work: LayoutGrid,
+  services: Sparkles,
+  reviews: Star,
+  pricing: Tag,
+  faq: HelpCircle,
+  blog: BookOpen,
+  contact: Mail,
+}
 
 /** Path without the language prefix ("/en/blog" → "/blog"). Indonesian pages are served
  *  through an internal /id rewrite, so that prefix is stripped too. */
@@ -141,7 +167,9 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
       <nav
         className={`mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pl-5 pr-2 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:pl-6 ${
-          solid
+          isOpen
+            ? "border border-transparent bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)]"
+            : solid
             ? "border border-ink/[0.06] bg-white/80 shadow-[0_8px_30px_-12px_rgba(11,18,32,0.15)] backdrop-blur-xl"
             : "border border-transparent bg-transparent"
         }`}
@@ -187,6 +215,18 @@ export default function Header() {
             </span>
           </a>
 
+          <a
+            href={consult}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={m.chat}
+            data-track="header_icon"
+            className={`grid h-10 w-10 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_8px_20px_-8px_rgba(37,211,102,0.8)] transition-all duration-500 sm:hidden ${
+              isOpen ? "pointer-events-none scale-75 opacity-0" : "scale-100 opacity-100"
+            }`}
+          >
+            <MessageCircle size={18} />
+          </a>
           <button
             className={`relative inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-3 text-[13px] font-medium transition-colors duration-500 md:hidden ${
               isOpen ? "bg-ink text-white" : "bg-ink/[0.06] text-ink"
@@ -211,105 +251,108 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile menu: full-screen sheet revealed from the menu button */}
+      {/* Mobile menu: dark sheet revealed from the Menu button. Rows carry an icon and a
+          one-line description (information scent); contact actions sit in a dock at the
+          bottom, within thumb reach. */}
       <div
         id="mobile-menu"
         aria-hidden={!isOpen}
         inert={!isOpen}
-        className="fixed inset-0 -z-10 bg-background md:hidden"
+        className="fixed inset-0 -z-10 overflow-hidden bg-ink text-white md:hidden"
         style={{
           clipPath: isOpen ? "circle(150% at calc(100% - 3.25rem) 2.75rem)" : "circle(0% at calc(100% - 3.25rem) 2.75rem)",
           transition: "clip-path 0.8s cubic-bezier(.16,1,.3,1)",
         }}
       >
-        <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-brand/15 blur-3xl" aria-hidden="true" />
-        <div className="relative flex h-[100dvh] flex-col overflow-y-auto px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-24">
-          <ul>
-            {navLinks.map((link, i) => {
-              const on = active === link.id
-              return (
-                <li
-                  key={link.id}
-                  className={`border-b border-ink/[0.06] transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
-                    isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-                  }`}
-                  style={{ transitionDelay: isOpen ? `${120 + i * 45}ms` : "0ms" }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={(e) => go(e, link)}
-                    aria-current={on ? "page" : undefined}
-                    className="group flex items-center gap-4 py-3.5"
-                  >
-                    <span className="w-6 text-[11px] font-medium tabular-nums text-ink/30">0{i + 1}</span>
-                    <span
-                      className={`flex-1 text-[1.75rem] font-semibold leading-none tracking-[-0.03em] transition-colors duration-300 ${
-                        on ? "text-brand" : "text-ink group-active:text-brand"
-                      }`}
-                    >
-                      {link.name}
-                    </span>
-                    {on ? (
-                      <span className="h-2 w-2 rounded-full bg-brand" />
-                    ) : (
-                      <ArrowUpRight size={20} className="text-ink/25 transition-transform duration-500 group-hover:rotate-45" />
-                    )}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="animate-drift absolute -right-32 -top-40 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.55),transparent)] blur-2xl" />
+          <div className="absolute -bottom-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.25),transparent)] blur-2xl" />
+          <div className="noise absolute inset-0 opacity-[0.06] mix-blend-overlay" />
+        </div>
 
-          <div
-            className={`mt-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
-            style={{ transitionDelay: isOpen ? `${160 + navLinks.length * 45}ms` : "0ms" }}
-          >
-            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{m.explore}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {services.map((sv) => (
-                <Link
-                  key={sv.slug}
-                  href={localePath(lang, PATHS.service(sv.slug))}
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-full border border-ink/[0.08] bg-white px-3.5 py-2 text-sm text-ink/70 transition-colors active:border-ink/25"
-                >
-                  {sv.copy[lang].name}
-                </Link>
-              ))}
+        <div className="relative flex h-[100dvh] flex-col">
+          {/* Scrollable navigation */}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-10 pt-24 [@media(max-height:720px)]:pt-[5.5rem]">
+            <ul className="space-y-1">
+              {navLinks.map((link, i) => {
+                const on = active === link.id
+                const Icon = NAV_ICONS[link.id] ?? ChevronRight
+                return (
+                  <li
+                    key={link.id}
+                    className={`transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${isOpen ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}`}
+                    style={{ transitionDelay: isOpen ? `${120 + i * 40}ms` : "0ms" }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={(e) => go(e, link)}
+                      aria-current={on ? "page" : undefined}
+                      className={`group flex items-center gap-4 rounded-2xl px-3 py-2.5 transition-colors [@media(max-height:720px)]:py-1.5 duration-300 active:bg-white/[0.08] ${on ? "bg-white/[0.06]" : ""}`}
+                    >
+                      <span
+                        className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors [@media(max-height:720px)]:h-10 [@media(max-height:720px)]:w-10 duration-300 ${
+                          on ? "bg-brand text-white" : "bg-white/[0.07] text-white/70 group-active:bg-brand group-active:text-white"
+                        }`}
+                      >
+                        <Icon size={19} strokeWidth={1.8} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-lg font-semibold leading-tight tracking-[-0.02em]">{link.name}</span>
+                        <span className="mt-0.5 block truncate text-[13px] text-white/45">{m.desc[link.id as keyof typeof m.desc] ?? ""}</span>
+                      </span>
+                      <ChevronRight size={18} className={`shrink-0 transition-transform duration-300 group-active:translate-x-0.5 ${on ? "text-brand-soft" : "text-white/25"}`} />
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+
+            {/* Services: swipeable cards */}
+            <div
+              className={`mt-7 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${isOpen ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}`}
+              style={{ transitionDelay: isOpen ? `${160 + navLinks.length * 40}ms` : "0ms" }}
+            >
+              <p className="px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40">{m.explore}</p>
+              <div className="-mx-5 mt-3 flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-px-5 px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {services.map((sv) => {
+                  const tier = sv.tierIndex !== null ? t.pricing.tiers[sv.tierIndex] : undefined
+                  return (
+                    <Link
+                      key={sv.slug}
+                      href={localePath(lang, PATHS.service(sv.slug))}
+                      onClick={() => setIsOpen(false)}
+                      className="flex w-[44%] shrink-0 snap-start flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-colors active:bg-white/[0.1]"
+                    >
+                      <span className="text-sm font-semibold leading-snug">{sv.copy[lang].name}</span>
+                      <span className="mt-3 text-xs text-white/45">
+                        {tier ? `${t.pricing.from} ${t.pricing.currency} ${tier.price}` : pui[lang].service.custom}
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
+          {/* Contact dock (thumb zone) */}
           <div
-            className={`mt-auto pt-8 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${isOpen ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
-            style={{ transitionDelay: isOpen ? `${220 + navLinks.length * 45}ms` : "0ms" }}
+            className={`relative shrink-0 rounded-t-[28px] bg-white px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 text-ink shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] ${
+              isOpen ? "translate-y-0" : "translate-y-full"
+            }`}
+            style={{ transitionDelay: isOpen ? "220ms" : "0ms" }}
           >
-            <div className="grid grid-cols-2 gap-2.5">
-              <a
-                href={consult}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-track="mobile_menu"
-                className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-[#25D366] text-sm font-semibold text-white shadow-[0_12px_30px_-12px_rgba(37,211,102,0.7)]"
-              >
-                <MessageCircle size={18} /> {m.chat}
-              </a>
-              <Link
-                href={`${localePath(lang, PATHS.brief)}#brief`}
-                onClick={() => setIsOpen(false)}
-                className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-ink text-sm font-semibold text-white"
-              >
-                <FileText size={17} /> {m.brief}
-              </Link>
-            </div>
-            <div className="mt-5 flex items-center justify-between">
-              <p className="inline-flex items-center gap-2 text-xs text-ink/55">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping-soft absolute h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                {m.available}
-              </p>
-              <div className="flex items-center gap-1.5">
+            {/* Fade above the dock hints that the list scrolls on short screens. */}
+            <div className="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping-soft absolute h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold leading-tight">{m.consult}</p>
+                <p className="mt-0.5 truncate text-xs text-ink/50">{m.hours}</p>
+              </div>
+              <div className="flex gap-1.5">
                 {[
                   { href: settings.instagram, icon: Instagram, label: "Instagram" },
                   { href: settings.facebook, icon: Facebook, label: "Facebook" },
@@ -322,12 +365,42 @@ export default function Header() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label}
-                      className="grid h-9 w-9 place-items-center rounded-full border border-ink/[0.08] text-ink/55"
+                      className="grid h-9 w-9 place-items-center rounded-full bg-ink/[0.05] text-ink/60"
                     >
                       <Icon size={15} />
                     </a>
                   ))}
               </div>
+            </div>
+            <a
+              href={consult}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-track="mobile_menu"
+              className="group mt-4 flex h-14 items-center justify-between rounded-2xl bg-[#25D366] pl-5 pr-2 text-[15px] font-semibold text-white shadow-[0_14px_30px_-14px_rgba(37,211,102,0.9)] transition-transform active:scale-[0.98]"
+            >
+              <span className="inline-flex items-center gap-2.5">
+                <MessageCircle size={20} /> {m.chat}
+              </span>
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/20">
+                <ArrowUpRight size={18} />
+              </span>
+            </a>
+            <div className="mt-2.5 grid grid-cols-2 gap-2.5">
+              <Link
+                href={`${localePath(lang, PATHS.brief)}#brief`}
+                onClick={() => setIsOpen(false)}
+                className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-ink text-sm font-medium text-white transition-transform active:scale-[0.98]"
+              >
+                <FileText size={16} /> {m.brief}
+              </Link>
+              <Link
+                href={localePath(lang, PATHS.calculator)}
+                onClick={() => setIsOpen(false)}
+                className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-ink/10 text-sm font-medium text-ink transition-transform active:scale-[0.98]"
+              >
+                <Calculator size={16} /> {m.calc}
+              </Link>
             </div>
           </div>
         </div>
