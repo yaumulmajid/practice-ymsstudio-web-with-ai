@@ -392,3 +392,14 @@
 .prose-yms img, .prose-yms video, .prose-yms iframe, .prose-yms figure, .prose-yms picture { max-width: 100%; height: auto; }
 .prose-yms table { display: block; overflow-x: auto; }
 .prose-yms pre { overflow-x: auto; max-width: 100%; }
+
+/* Blog list: cards ease in when the page or search changes (staggered via --d). */
+.blog-in {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  animation: fade-up 0.6s var(--ease-out-soft) forwards;
+  animation-delay: var(--d, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .blog-in { opacity: 1; transform: none; animation: none; }
+}

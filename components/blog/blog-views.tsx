@@ -5,25 +5,16 @@ import Image from "next/image"
 import Link from "next/link"
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
 import { RichText } from "@payloadcms/richtext-lexical/react"
-import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, Eye } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Eyebrow, Reveal } from "@/components/motion"
 import BlogCta from "@/components/blog/blog-cta"
-import ViewCounter from "@/components/blog/view-counter"
-import { getPost, getPosts, type PostMeta } from "@/lib/content"
-import { blogPagePath, blogPath, homePath, ui, type Lang } from "@/lib/i18n"
+import BlogList from "@/components/blog/blog-list"
+import { Meta, PostCard } from "@/components/blog/blog-cards"
+import { getPost, getPosts } from "@/lib/content"
+import { blogPath, homePath, ui, type Lang } from "@/lib/i18n"
 import { SITE } from "@/lib/seo"
-
-const formatDate = (date: string, lang: Lang) =>
-  date
-    ? new Date(`${date}T00:00:00Z`).toLocaleDateString(ui[lang].blog.dateLocale, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        timeZone: "UTC",
-      })
-    : ""
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
@@ -35,158 +26,10 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
-const ART = [
-  { bg: "bg-ink", glow: "bg-brand/50", text: "text-white", sub: "text-white/40" },
-  { bg: "bg-brand-soft", glow: "bg-brand/30", text: "text-brand-deep", sub: "text-brand-deep/45" },
-  { bg: "bg-[#e9edf2]", glow: "bg-white", text: "text-ink", sub: "text-ink/35" },
-]
-
-/** Cover image, or a typographic placeholder when the post has none. */
-function Cover({ post, i, large = false }: { post: PostMeta; i: number; large?: boolean }) {
-  if (post.cover) {
-    return (
-      <div className="relative h-full overflow-hidden rounded-[22px] bg-ink/5">
-        <Image
-          src={post.cover}
-          alt={post.coverAlt}
-          fill
-          sizes={large ? "(max-width: 1024px) 100vw, 640px" : "(max-width: 768px) 100vw, 400px"}
-          className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]"
-        />
-      </div>
-    )
-  }
-  const a = ART[i % ART.length]
-  return (
-    <div className={`relative flex h-full flex-col justify-between overflow-hidden rounded-[22px] p-5 sm:p-6 ${a.bg}`} aria-hidden="true">
-      <div className={`animate-drift absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl ${a.glow}`} />
-      <span className={`relative text-[11px] font-medium uppercase tracking-[0.2em] ${a.sub}`}>YMS · {post.category}</span>
-      <span
-        className={`relative font-serif italic leading-[0.95] tracking-[-0.02em] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-1 ${a.text} ${
-          large ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"
-        }`}
-      >
-        {post.category || "Blog"}
-      </span>
-    </div>
-  )
-}
-
-/** Category, date, reading time and read count. `live` refreshes and counts the read (article page). */
-function Meta({ post, lang, className = "", live = false }: { post: PostMeta; lang: Lang; className?: string; live?: boolean }) {
+/** Blog index. The list (search + pagination) is client-side; the page number comes from the URL (/blog/page/n). */
+export async function BlogIndex({ lang }: { lang: Lang }) {
   const t = ui[lang].blog
-  return (
-    <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink/45 ${className}`}>
-      {post.category && <span className="rounded-full bg-brand-soft px-2.5 py-1 font-medium text-brand-deep">{post.category}</span>}
-      <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
-      <span className="inline-flex items-center gap-1">
-        <Clock size={12} /> {post.minutes} {t.minRead}
-      </span>
-      {live ? (
-        <ViewCounter slug={post.slug} initial={post.views} label={t.views} locale={t.dateLocale} />
-      ) : (
-        post.views > 0 && (
-          <span className="inline-flex items-center gap-1">
-            <Eye size={12} /> {post.views.toLocaleString(t.dateLocale)} {t.views}
-          </span>
-        )
-      )}
-    </div>
-  )
-}
-
-function PostCard({ post, lang, i }: { post: PostMeta; lang: Lang; i: number }) {
-  return (
-    <Reveal delay={(i % 3) * 100} className="h-full">
-      <Link
-        href={blogPath(lang, post.slug)}
-        className="group flex h-full flex-col rounded-[28px] border border-ink/[0.07] bg-white p-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(11,18,32,0.2)]"
-      >
-        <div className="aspect-[16/10]">
-          <Cover post={post} i={i + 1} />
-        </div>
-        <div className="flex flex-1 flex-col p-4 pt-5">
-          <Meta post={post} lang={lang} />
-          <h3 className="mt-4 text-lg font-semibold leading-snug sm:text-xl tracking-[-0.02em] text-ink">{post.title}</h3>
-          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/55">{post.excerpt}</p>
-          <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-ink">
-            {ui[lang].blog.read}
-            <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
-          </span>
-        </div>
-      </Link>
-    </Reveal>
-  )
-}
-
-/**
- * Pagination: page 1 = 1 featured post + 6 cards (two rows of three on desktop);
- * every following page = 6 cards (same grid, no featured post).
- */
-export const BLOG_FIRST_PAGE = 7
-export const BLOG_PER_PAGE = 6
-
-export function blogPageCount(total: number) {
-  return 1 + Math.ceil(Math.max(0, total - BLOG_FIRST_PAGE) / BLOG_PER_PAGE)
-}
-
-function pagePosts(posts: PostMeta[], page: number) {
-  if (page <= 1) return posts.slice(0, BLOG_FIRST_PAGE)
-  const start = BLOG_FIRST_PAGE + (page - 2) * BLOG_PER_PAGE
-  return posts.slice(start, start + BLOG_PER_PAGE)
-}
-
-/** Page numbers with gaps, e.g. 1 … 4 5 6 … 12. */
-function pageItems(current: number, total: number): (number | null)[] {
-  const keep = new Set([1, total, current - 1, current, current + 1])
-  const out: (number | null)[] = []
-  for (let n = 1; n <= total; n++) {
-    if (keep.has(n)) out.push(n)
-    else if (out[out.length - 1] !== null) out.push(null)
-  }
-  return out
-}
-
-function Pagination({ lang, page, total }: { lang: Lang; page: number; total: number }) {
-  if (total <= 1) return null
-  const t = ui[lang].blog
-  const pill = "inline-flex h-11 items-center gap-2 rounded-full border border-ink/[0.08] bg-white px-4 text-sm font-medium text-ink transition-colors hover:border-ink/20"
-  return (
-    <nav aria-label={t.pages} className="mt-14 flex flex-wrap items-center justify-center gap-2 md:mt-16">
-      {page > 1 && (
-        <Link href={blogPagePath(lang, page - 1)} rel="prev" className={pill}>
-          <ArrowLeft size={15} /> <span className="hidden sm:inline">{t.prev}</span>
-        </Link>
-      )}
-      {pageItems(page, total).map((n, i) =>
-        n === null ? (
-          <span key={`gap-${i}`} className="px-1 text-ink/35">…</span>
-        ) : n === page ? (
-          <span key={n} aria-current="page" className="grid h-11 min-w-11 place-items-center rounded-full bg-ink px-3 text-sm font-semibold text-white">
-            {n}
-          </span>
-        ) : (
-          <Link key={n} href={blogPagePath(lang, n)} aria-label={`${t.page} ${n}`} className="grid h-11 min-w-11 place-items-center rounded-full px-3 text-sm font-medium text-ink/60 transition-colors hover:bg-ink/[0.05] hover:text-ink">
-            {n}
-          </Link>
-        ),
-      )}
-      {page < total && (
-        <Link href={blogPagePath(lang, page + 1)} rel="next" className={pill}>
-          <span className="hidden sm:inline">{t.next}</span> <ArrowRight size={15} />
-        </Link>
-      )}
-    </nav>
-  )
-}
-
-export async function BlogIndex({ lang, page = 1 }: { lang: Lang; page?: number }) {
-  const t = ui[lang].blog
-  const all = await getPosts(lang)
-  const total = blogPageCount(all.length)
-  const posts = pagePosts(all, page)
-  const featured: PostMeta | undefined = page === 1 ? posts[0] : undefined
-  const rest = page === 1 ? posts.slice(1) : posts
+  const posts = await getPosts(lang)
 
   return (
     <Shell>
@@ -198,54 +41,14 @@ export async function BlogIndex({ lang, page = 1 }: { lang: Lang; page?: number 
             </Reveal>
             <Reveal as="h1" delay={80} className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-5xl md:text-6xl lg:text-7xl">
               {t.titleA} <em className="font-serif font-normal italic text-brand">{t.titleEm}</em>
-              {page > 1 && <span className="sr-only">{` — ${t.page} ${page}`}</span>}
             </Reveal>
-            {page > 1 && (
-              <p className="mt-4 text-sm font-medium text-ink/45">
-                {t.page} {page} / {total}
-              </p>
-            )}
           </div>
           <Reveal as="p" delay={160} className="max-w-md text-base leading-relaxed text-ink/55 md:justify-self-end">
             {t.text}
           </Reveal>
         </div>
 
-        {all.length === 0 && <p className="mt-16 text-ink/50">{t.empty}</p>}
-
-        {featured && (
-          <Reveal delay={200} className="mt-14 md:mt-20">
-            <Link
-              href={blogPath(lang, featured.slug)}
-              className="group grid grid-cols-1 overflow-hidden rounded-[32px] border border-ink/[0.07] bg-white p-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:shadow-[0_40px_80px_-40px_rgba(11,18,32,0.25)] md:grid-cols-[1.1fr_1fr]"
-            >
-              <div className="aspect-[16/9] min-w-0 md:self-center">
-                <Cover post={featured} i={0} large />
-              </div>
-              <div className="flex min-w-0 flex-col p-5 sm:p-8 md:p-10">
-                <Meta post={featured} lang={lang} />
-                <h2 className="mt-5 text-2xl font-semibold leading-[1.12] tracking-[-0.03em] text-ink sm:text-3xl lg:text-4xl">{featured.title}</h2>
-                <p className="mt-4 text-base leading-relaxed text-ink/55">{featured.excerpt}</p>
-                <span className="mt-auto inline-flex w-fit items-center gap-2 pt-8 text-sm font-medium text-ink">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover:rotate-45">
-                    <ArrowUpRight size={16} />
-                  </span>
-                  {t.read}
-                </span>
-              </div>
-            </Link>
-          </Reveal>
-        )}
-
-        {rest.length > 0 && (
-          <div className={`${featured ? "mt-6" : "mt-14 md:mt-20"} grid grid-cols-1 gap-6 md:grid-cols-2 ${rest.length > 2 ? "lg:grid-cols-3" : ""}`}>
-            {rest.map((post, i) => (
-              <PostCard key={post.slug} post={post} lang={lang} i={i} />
-            ))}
-          </div>
-        )}
-
-        <Pagination lang={lang} page={page} total={total} />
+        <BlogList posts={posts} lang={lang} />
       </section>
     </Shell>
   )
@@ -324,7 +127,9 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
           <h2 className="text-xl font-semibold tracking-[-0.03em] text-ink sm:text-2xl lg:text-3xl">{t.more}</h2>
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             {others.map((p, i) => (
-              <PostCard key={p.slug} post={p} lang={lang} i={i} />
+              <Reveal key={p.slug} delay={(i % 2) * 100} className="h-full">
+                <PostCard post={p} lang={lang} i={i} />
+              </Reveal>
             ))}
           </div>
         </section>

@@ -132,6 +132,12 @@ export type Dict = {
     next: string
     page: string
     pages: string
+    searchLabel: string
+    searchPlaceholder: string
+    /** {n} = number of results, {q} = query */
+    results: string
+    noResults: string
+    clear: string
     ctaTitle: string
     ctaText: string
     ctaButton: string
@@ -164,6 +170,11 @@ export const ui = {
       next: "Berikutnya",
       page: "Halaman",
       pages: "Halaman artikel",
+      searchLabel: "Cari artikel",
+      searchPlaceholder: "Cari artikel, mis. SEO atau biaya…",
+      results: "{n} artikel untuk “{q}”",
+      noResults: "Tidak ada artikel yang cocok. Coba kata kunci lain.",
+      clear: "Hapus pencarian",
       ctaTitle: "Butuh website untuk bisnis Anda?",
       ctaText: "Konsultasi gratis — kami bantu pilih solusi yang tepat beserta estimasi biayanya.",
       ctaButton: "Chat via WhatsApp",
@@ -193,6 +204,11 @@ export const ui = {
       next: "Next",
       page: "Page",
       pages: "Article pages",
+      searchLabel: "Search articles",
+      searchPlaceholder: "Search articles, e.g. SEO or cost…",
+      results: "{n} articles for “{q}”",
+      noResults: "No matching articles. Try another keyword.",
+      clear: "Clear search",
       ctaTitle: "Need a website for your business?",
       ctaText: "Free consultation — we'll recommend the right solution and an estimated cost.",
       ctaButton: "Chat on WhatsApp",
