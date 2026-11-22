@@ -212,18 +212,6 @@ export default function Header() {
             </span>
           </a>
 
-          <a
-            href={consult}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={m.chat}
-            data-track="header_icon"
-            className={`grid h-10 w-10 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_8px_20px_-8px_rgba(37,211,102,0.8)] transition-all duration-500 sm:hidden ${
-              isOpen ? "pointer-events-none scale-75 opacity-0" : "scale-100 opacity-100"
-            }`}
-          >
-            <MessageCircle size={18} />
-          </a>
           <button
             className={`relative inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-3 text-[13px] font-medium transition-colors duration-500 md:hidden ${
               isOpen ? "bg-ink text-white" : "bg-ink/[0.06] text-ink"
