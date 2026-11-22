@@ -19,7 +19,7 @@ export default function CTA() {
 
         <div className="relative mx-auto max-w-3xl">
           <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/45">{c.kicker}</p>
-          <h2 className="mt-6 text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-7xl">
+          <h2 className="mt-6 text-3xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-7xl">
             {c.line1}
             <br />
             {c.line2A} <em className="font-serif font-normal italic text-brand-soft/90">{c.line2Em}</em>

@@ -202,7 +202,7 @@ export default function Hero() {
             <span className="fade-up block text-sm font-semibold uppercase tracking-[0.2em] text-brand" style={d(60)}>
               {t.hero.kicker}
             </span>
-            <span className="mt-5 block text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-[5rem]">
+            <span className="mt-5 block text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl md:text-6xl lg:text-[5rem]">
               <span className="line-mask">
                 <span style={d(140)}>{t.hero.line1}</span>
               </span>

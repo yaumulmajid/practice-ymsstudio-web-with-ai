@@ -132,7 +132,7 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
             <Reveal>
               <Eyebrow index="YMS">{t.label}</Eyebrow>
             </Reveal>
-            <Reveal as="h1" delay={80} className="mt-5 text-5xl font-semibold leading-[1] tracking-[-0.045em] text-ink md:text-7xl">
+            <Reveal as="h1" delay={80} className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-5xl md:text-6xl lg:text-7xl">
               {t.titleA} <em className="font-serif font-normal italic text-brand">{t.titleEm}</em>
             </Reveal>
           </div>
@@ -154,7 +154,7 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
               </div>
               <div className="flex flex-col p-5 sm:p-8 md:p-10">
                 <Meta post={featured} lang={lang} />
-                <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-[-0.035em] text-ink sm:text-4xl">{featured.title}</h2>
+                <h2 className="mt-5 text-2xl font-semibold leading-[1.12] tracking-[-0.03em] text-ink sm:text-3xl lg:text-4xl">{featured.title}</h2>
                 <p className="mt-4 text-base leading-relaxed text-ink/55">{featured.excerpt}</p>
                 <span className="mt-auto inline-flex w-fit items-center gap-2 pt-8 text-sm font-medium text-ink">
                   <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover:rotate-45">
@@ -226,7 +226,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
         <Reveal delay={60}>
           <Meta post={post} lang={lang} className="mt-10" live />
         </Reveal>
-        <Reveal as="h1" delay={120} className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-6xl">
+        <Reveal as="h1" delay={120} className="mt-6 text-[1.875rem] font-semibold leading-[1.12] tracking-[-0.035em] text-ink sm:text-5xl lg:text-6xl">
           {post.title}
         </Reveal>
         <Reveal as="p" delay={180} className="mt-6 text-lg leading-relaxed text-ink/55 sm:text-xl">
@@ -249,7 +249,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
 
       {others.length > 0 && (
         <section className="mx-auto mt-24 max-w-6xl px-5 pb-24 sm:px-8 md:pb-32">
-          <h2 className="text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">{t.more}</h2>
+          <h2 className="text-xl font-semibold tracking-[-0.03em] text-ink sm:text-2xl lg:text-3xl">{t.more}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {others.map((p, i) => (
               <PostCard key={p.slug} post={p} lang={lang} i={i} />

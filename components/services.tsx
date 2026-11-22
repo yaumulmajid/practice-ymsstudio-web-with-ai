@@ -76,7 +76,7 @@ export default function Services() {
         <div className="mt-24 grid gap-10 md:grid-cols-[0.8fr_1.2fr]">
           <Reveal>
             <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink/40">{s.processLabel}</p>
-            <h3 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-ink">
+            <h3 className="mt-4 text-2xl font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-3xl">
               {s.processTitleA} <em className="font-serif font-normal italic text-brand">{s.processTitleEm}</em>
             </h3>
           </Reveal>

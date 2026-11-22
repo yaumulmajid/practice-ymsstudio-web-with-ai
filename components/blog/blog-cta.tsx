@@ -11,7 +11,7 @@ export default function BlogCta({ title, text, button }: { title: string; text: 
   return (
     <Reveal className="relative mt-16 overflow-hidden rounded-[28px] bg-ink p-8 text-white sm:p-10">
       <div className="animate-drift pointer-events-none absolute -bottom-24 -right-20 h-72 w-72 rounded-full bg-brand/40 blur-3xl" aria-hidden="true" />
-      <p className="relative text-2xl font-semibold leading-tight tracking-[-0.03em] sm:text-3xl">{title}</p>
+      <p className="relative text-xl font-semibold leading-tight tracking-[-0.03em] sm:text-2xl lg:text-3xl">{title}</p>
       <p className="relative mt-3 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">{text}</p>
       <a
         href={wa(t.wa.general)}

@@ -40,7 +40,7 @@ export default function Reviews() {
             <figure className="relative flex h-full flex-col overflow-hidden rounded-[28px] bg-ink p-8 text-white sm:p-10">
               <div className="animate-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/35 blur-3xl" aria-hidden="true" />
               <Quote size={36} className="relative text-brand" aria-hidden="true" />
-              <blockquote className="relative mt-6 text-2xl font-medium leading-snug tracking-[-0.02em] sm:text-3xl">“{first.quote}”</blockquote>
+              <blockquote className="relative mt-6 text-xl font-medium leading-snug tracking-[-0.02em] sm:text-2xl lg:text-3xl">“{first.quote}”</blockquote>
               <figcaption className="relative mt-auto flex flex-wrap items-center justify-between gap-4 pt-10">
                 <div className="flex items-center gap-3">
                   <span className="grid h-12 w-12 place-items-center rounded-full bg-white/10 text-sm font-semibold">{initials(first.name)}</span>

@@ -59,7 +59,7 @@ export default function Pricing() {
                     <span className={`text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{p.from}</span>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>{p.currency}</span>
-                      <span className="text-5xl font-semibold tracking-[-0.045em]">{tier.price}</span>
+                      <span className="text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">{tier.price}</span>
                     </div>
                   </div>
                   <p className={`relative mt-3 inline-flex items-center gap-1.5 text-xs ${dark ? "text-white/55" : "text-ink/50"}`}>

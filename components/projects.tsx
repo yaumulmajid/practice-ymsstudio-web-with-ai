@@ -45,7 +45,7 @@ export default function Projects() {
                         {String(i + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
                       </span>
                     </div>
-                    <h3 className={`mt-8 text-3xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-4xl ${th.text}`}>{p.title}</h3>
+                    <h3 className={`mt-8 text-2xl font-semibold leading-[1.1] tracking-[-0.03em] sm:text-3xl lg:text-4xl ${th.text}`}>{p.title}</h3>
                     <p className={`mt-4 max-w-sm text-sm leading-relaxed sm:text-base ${th.sub}`}>{p.description}</p>
                     <div className="mt-6 flex flex-wrap gap-2">
                       {p.tags.map((tag) => (
