@@ -1,13 +1,17 @@
 "use client"
 
+import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { Reveal } from "@/components/motion"
-import { useT, useWa } from "@/components/lang"
+import { useLang, useT, useWa } from "@/components/lang"
+import { localePath, PATHS } from "@/lib/i18n"
+import { pui } from "@/lib/pages-ui"
 
 export default function CTA() {
   const t = useT()
   const wa = useWa()
   const c = t.cta
+  const lang = useLang()
 
   return (
     <section className="px-3 pt-3 sm:px-5 sm:pt-5">
@@ -37,6 +41,14 @@ export default function CTA() {
               <ArrowUpRight size={18} />
             </span>
           </a>
+          <p className="mt-5">
+            <Link
+              href={`${localePath(lang, PATHS.brief)}#brief`}
+              className="text-sm font-medium text-white/60 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+            >
+              {pui[lang].ctaBrief}
+            </Link>
+          </p>
         </div>
       </Reveal>
     </section>

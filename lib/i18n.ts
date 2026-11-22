@@ -15,7 +15,8 @@ export const PATHS = {
   privacy: "/kebijakan-privasi",
   terms: "/syarat-layanan",
   calculator: "/kalkulator-biaya",
-  brief: "/mulai-proyek",
+  /** Contact page with the project brief form (the old /mulai-proyek redirects here). */
+  brief: "/kontak",
   local: "/jasa-website-bekasi",
   service: (slug: string) => `/layanan/${slug}`,
   project: (slug: string) => `/karya/${slug}`,
@@ -71,7 +72,7 @@ export type Settings = {
 
 export type Dict = {
   meta: { title: string; description: string; ogLocale: string }
-  nav: { work: string; services: string; reviews: string; pricing: string; faq: string; blog: string; cta: string; open: string; close: string }
+  nav: { work: string; services: string; reviews: string; pricing: string; faq: string; blog: string; contact: string; cta: string; open: string; close: string }
   hero: {
     skip: string
     badge: string
@@ -168,7 +169,7 @@ export type Dict = {
 export const ui = {
   id: {
     ogLocale: "id_ID",
-    nav: { work: "Karya", services: "Layanan", reviews: "Review", pricing: "Harga", faq: "FAQ", blog: "Blog", cta: "Mulai Proyek", open: "Buka menu", close: "Tutup menu" },
+    nav: { work: "Karya", services: "Layanan", reviews: "Review", pricing: "Harga", faq: "FAQ", blog: "Blog", contact: "Kontak", cta: "Mulai Proyek", open: "Buka menu", close: "Tutup menu" },
     hero: { skip: "Langsung ke Paket & Harga", open: "Buka", visit: "Kunjungi" },
     work: { visit: "Kunjungi website" },
     reviews: { visit: "Lihat website" },
@@ -202,7 +203,7 @@ export const ui = {
   },
   en: {
     ogLocale: "en_US",
-    nav: { work: "Work", services: "Services", reviews: "Reviews", pricing: "Pricing", faq: "FAQ", blog: "Blog", cta: "Start a Project", open: "Open menu", close: "Close menu" },
+    nav: { work: "Work", services: "Services", reviews: "Reviews", pricing: "Pricing", faq: "FAQ", blog: "Blog", contact: "Contact", cta: "Start a Project", open: "Open menu", close: "Close menu" },
     hero: { skip: "Skip to Pricing", open: "Open", visit: "Visit" },
     work: { visit: "Visit website" },
     reviews: { visit: "View website" },

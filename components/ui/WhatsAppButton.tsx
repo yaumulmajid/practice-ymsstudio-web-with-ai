@@ -22,7 +22,7 @@ export default function WhatsAppButton() {
       rel="noopener noreferrer"
       data-track="floating_button"
       aria-label="Chat WhatsApp"
-      className={`group fixed bottom-5 right-5 z-50 flex items-center gap-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:bottom-6 sm:right-6 ${
+      className={`group fixed bottom-5 right-5 z-50 flex items-center gap-3 [[data-menu=open]_&]:pointer-events-none [[data-menu=open]_&]:opacity-0 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] sm:bottom-6 sm:right-6 ${
         show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
       }`}
     >
