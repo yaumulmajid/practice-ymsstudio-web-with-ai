@@ -4,6 +4,7 @@
 // sends a GA4 "whatsapp_click" event and the Google Ads WhatsApp conversion.
 // gtag itself is loaded in site-document.tsx.
 import { useEffect } from "react"
+import { CONSENT_EVENT, readConsent, type Consent } from "@/lib/consent"
 
 /** Google Ads conversion for WhatsApp chats (same label the floating button used before). */
 export const ADS_WA_CONVERSION = "AW-17737646735/hlfWCMHqi9obEI-F_IlC"
@@ -15,27 +16,42 @@ export const ATTRIBUTION_KEY = "yms_attribution"
 
 export type Attribution = { source?: string; medium?: string; campaign?: string; gclid?: string; referrer?: string; landing?: string; at?: string }
 
+/** This visit's entry point, read once on the first page (later pages lose the URL tags). */
+function currentTouch(): Attribution {
+  const q = new URLSearchParams(window.location.search)
+  let ref = ""
+  try {
+    ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : ""
+  } catch {
+    /* malformed referrer */
+  }
+  const external = ref && ref !== window.location.hostname.replace(/^www\./, "") ? ref : ""
+  return {
+    source: q.get("utm_source") || undefined,
+    medium: q.get("utm_medium") || undefined,
+    campaign: q.get("utm_campaign") || undefined,
+    gclid: q.get("gclid") || undefined,
+    referrer: external || undefined,
+    landing: window.location.pathname,
+  }
+}
+
 /**
  * Remembers the latest *marketing* touch (UTM tags, a Google Ads click, or an external
  * referrer) for 90 days. Plain internal navigation and direct visits never overwrite it.
+ * Only with analytics consent; without it any stored value is removed.
  */
-function rememberAttribution() {
+function rememberAttribution(touch: Attribution, consent: Consent | null) {
   try {
-    const q = new URLSearchParams(window.location.search)
-    const ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : ""
-    const external = ref && ref !== window.location.hostname.replace(/^www\./, "") ? ref : ""
-    const next: Attribution = {
-      source: q.get("utm_source") || undefined,
-      medium: q.get("utm_medium") || undefined,
-      campaign: q.get("utm_campaign") || undefined,
-      gclid: q.get("gclid") || undefined,
-      referrer: external || undefined,
+    if (!consent?.analytics) {
+      localStorage.removeItem(ATTRIBUTION_KEY)
+      return
     }
     const saved = JSON.parse(localStorage.getItem(ATTRIBUTION_KEY) || "null") as Attribution | null
     const expired = !saved?.at || Date.now() - Date.parse(saved.at) > 90 * 864e5
-    const isTouch = next.source || next.gclid || next.referrer
+    const isTouch = touch.source || touch.gclid || touch.referrer
     if (isTouch || !saved || expired) {
-      localStorage.setItem(ATTRIBUTION_KEY, JSON.stringify({ ...next, landing: window.location.pathname, at: new Date().toISOString() }))
+      localStorage.setItem(ATTRIBUTION_KEY, JSON.stringify({ ...touch, at: new Date().toISOString() }))
     }
   } catch {
     /* storage blocked (private mode) — attribution is optional */
@@ -43,7 +59,14 @@ function rememberAttribution() {
 }
 
 export default function Analytics() {
-  useEffect(rememberAttribution, [])
+  useEffect(() => {
+    // Read the entry point now; store it now or as soon as the visitor accepts analytics.
+    const touch = currentTouch()
+    rememberAttribution(touch, readConsent())
+    const onConsent = (e: Event) => rememberAttribution(touch, (e as CustomEvent<Consent>).detail)
+    window.addEventListener(CONSENT_EVENT, onConsent)
+    return () => window.removeEventListener(CONSENT_EVENT, onConsent)
+  }, [])
   useEffect(() => {
     function onClick(e: MouseEvent) {
       const link = (e.target as HTMLElement | null)?.closest?.("a[href]") as HTMLAnchorElement | null

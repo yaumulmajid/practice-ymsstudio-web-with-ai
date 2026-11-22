@@ -6,6 +6,7 @@ import { LangSwitch, Logo, useNavLinks } from "@/components/header"
 import { useLang, useSettings, useT, useWa } from "@/components/lang"
 import { homePath, localePath, PATHS } from "@/lib/i18n"
 import { LOCAL_CITIES, LOCAL_SHORT, services } from "@/lib/page-content/services"
+import { openConsentSettings } from "@/lib/consent"
 import { pui } from "@/lib/pages-ui"
 
 export default function Footer() {
@@ -148,13 +149,16 @@ export default function Footer() {
           <p>
             © {year} YMS Web Studio. {f.rights}
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
             <Link href={localePath(lang, PATHS.privacy)} className="transition-colors hover:text-ink">
               {f.privacy}
             </Link>
             <Link href={localePath(lang, PATHS.terms)} className="transition-colors hover:text-ink">
               {f.terms}
             </Link>
+            <button type="button" onClick={openConsentSettings} className="transition-colors hover:text-ink">
+              {u.footer.cookies}
+            </button>
           </div>
         </div>
       </div>

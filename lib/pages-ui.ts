@@ -5,7 +5,22 @@ import type { Lang } from "@/lib/i18n"
 
 export const pui = {
   id: {
-    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Bekasi", alsoIn: "Juga di" },
+    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Bekasi", alsoIn: "Juga di", cookies: "Pengaturan cookie" },
+    cookie: {
+      title: "Kami memakai cookie",
+      text: "Cookie analitik dan iklan (Google) membantu kami memahami kunjungan dan mengukur iklan. Website tetap bisa dipakai tanpa cookie ini.",
+      policy: "Kebijakan Privasi",
+      accept: "Terima semua",
+      reject: "Tolak",
+      settings: "Atur",
+      save: "Simpan pilihan",
+      necessary: "Wajib",
+      necessaryText: "Menyimpan pilihan cookie Anda. Selalu aktif.",
+      analytics: "Analitik",
+      analyticsText: "Statistik kunjungan (Google Analytics) dan sumber kunjungan untuk brief yang Anda kirim.",
+      marketing: "Iklan",
+      marketingText: "Mengukur hasil iklan Google Ads, termasuk klik ke WhatsApp.",
+    },
     menu: {
       label: "Menu",
       explore: "Layanan populer",
@@ -164,7 +179,22 @@ export const pui = {
     },
   },
   en: {
-    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Bekasi", alsoIn: "Also in" },
+    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Bekasi", alsoIn: "Also in", cookies: "Cookie settings" },
+    cookie: {
+      title: "We use cookies",
+      text: "Analytics and advertising cookies (Google) help us understand visits and measure our ads. The website works without them.",
+      policy: "Privacy Policy",
+      accept: "Accept all",
+      reject: "Reject",
+      settings: "Customise",
+      save: "Save choices",
+      necessary: "Necessary",
+      necessaryText: "Stores your cookie choice. Always on.",
+      analytics: "Analytics",
+      analyticsText: "Visit statistics (Google Analytics) and the traffic source of briefs you send.",
+      marketing: "Advertising",
+      marketingText: "Measures Google Ads results, including clicks to WhatsApp.",
+    },
     menu: {
       label: "Menu",
       explore: "Popular services",

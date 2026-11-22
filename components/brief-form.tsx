@@ -7,6 +7,7 @@ import Link from "next/link"
 import { ArrowUpRight, Calculator, CheckCircle2, Loader2, X } from "lucide-react"
 import { ATTRIBUTION_KEY } from "@/components/analytics"
 import { useLang, useWa } from "@/components/lang"
+import { CONSENT_EVENT } from "@/lib/consent"
 import { submitLead, type LeadState } from "@/lib/lead-action"
 import { localePath, PATHS } from "@/lib/i18n"
 import { services } from "@/lib/page-content/services"
@@ -45,11 +46,18 @@ export default function BriefForm() {
     const e = q.get("estimate")
     if (e) setEstimate(e.slice(0, 1500))
     setSource(window.location.pathname)
-    try {
-      setAttribution(localStorage.getItem(ATTRIBUTION_KEY) || "")
-    } catch {
-      /* storage blocked */
+    const readAttribution = () => {
+      try {
+        setAttribution(localStorage.getItem(ATTRIBUTION_KEY) || "")
+      } catch {
+        /* storage blocked */
+      }
     }
+    readAttribution()
+    // Analytics (lib/consent) stores the visit source only after consent, which may come later.
+    const onConsent = () => window.setTimeout(readAttribution, 0)
+    window.addEventListener(CONSENT_EVENT, onConsent)
+    return () => window.removeEventListener(CONSENT_EVENT, onConsent)
   }, [])
 
   useEffect(() => {

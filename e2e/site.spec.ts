@@ -3,6 +3,64 @@ import { pui } from "@/lib/pages-ui"
 
 const id = pui.id
 
+// Most tests start with cookies already accepted so the banner doesn't cover the page.
+test.beforeEach(async ({ context, baseURL }) => {
+  await context.addCookies([{ name: "yms_consent", value: "v1.a1.m1", url: baseURL! }])
+})
+
+test.describe("cookie consent", () => {
+  test.beforeEach(async ({ context }) => {
+    await context.clearCookies()
+  })
+
+  const consentState = (page: import("@playwright/test").Page) =>
+    page.evaluate(() => {
+      const updates = ((window as unknown as { dataLayer: IArguments[] }).dataLayer || []).filter((a) => a[0] === "consent").map((a) => [a[1], a[2]])
+      return updates[updates.length - 1] as [string, Record<string, string>]
+    })
+
+  test("Google tags start denied and the banner records a rejection", async ({ page }) => {
+    const c = id.cookie
+    await page.goto("/")
+    const banner = page.getByTestId("cookie-banner")
+    await expect(banner).toBeVisible()
+    expect((await consentState(page))[1].ad_storage).toBe("denied")
+
+    await banner.getByRole("button", { name: c.reject }).click()
+    await expect(banner).toBeHidden()
+    const [, state] = await consentState(page)
+    expect(state.analytics_storage).toBe("denied")
+    expect(await page.evaluate(() => document.cookie)).toContain("yms_consent=v1.a0.m0")
+
+    await page.reload()
+    await expect(page.getByTestId("cookie-banner")).toBeHidden()
+  })
+
+  test("custom choice from the footer link is applied on the next visit", async ({ page }) => {
+    const c = id.cookie
+    await page.goto("/kontak")
+    await page.getByTestId("cookie-banner").getByRole("button", { name: c.accept }).click()
+    expect((await consentState(page))[1].ad_storage).toBe("granted")
+
+    await page.getByRole("button", { name: id.footer.cookies }).click()
+    const banner = page.getByTestId("cookie-banner")
+    await banner.getByText(c.marketing, { exact: true }).click()
+    await banner.getByRole("button", { name: c.save }).click()
+    expect(await page.evaluate(() => document.cookie)).toContain("yms_consent=v1.a1.m0")
+
+    await page.reload()
+    const [, state] = await consentState(page)
+    expect(state.analytics_storage).toBe("granted")
+    expect(state.ad_storage).toBe("denied")
+  })
+
+  test("no visit source is stored without analytics consent", async ({ page }) => {
+    await page.goto("/?utm_source=playwright")
+    await page.getByTestId("cookie-banner").getByRole("button", { name: id.cookie.reject }).click()
+    expect(await page.evaluate(() => localStorage.getItem("yms_attribution"))).toBeNull()
+  })
+})
+
 test.describe("pages", () => {
   test("home loads in both languages and the language switch works", async ({ page }) => {
     await page.goto("/")

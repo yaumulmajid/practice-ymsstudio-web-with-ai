@@ -49,7 +49,8 @@ export const privacy: Record<Lang, LegalPage> = {
             "WhatsApp (Meta) saat Anda memilih menghubungi kami lewat WhatsApp.",
             "Penyedia server/hosting tempat website dan database kami berjalan.",
           ],
-          "Anda dapat menolak atau menghapus cookie melalui pengaturan browser, atau memakai add-on penonaktifan Google Analytics. Website tetap dapat dipakai tanpa cookie analitik.",
+          "Saat pertama berkunjung, Anda dapat memilih cookie mana yang diizinkan lewat banner cookie: Wajib (menyimpan pilihan Anda), Analitik (Google Analytics dan sumber kunjungan untuk brief), dan Iklan (Google Ads). Sebelum Anda memilih, layanan Google berjalan tanpa cookie. Pilihan bisa diubah kapan saja lewat tautan \"Pengaturan cookie\" di bagian bawah website.",
+          "Anda juga dapat menghapus cookie melalui pengaturan browser. Website tetap dapat dipakai tanpa cookie analitik dan iklan.",
         ],
       },
       {
@@ -120,7 +121,8 @@ export const privacy: Record<Lang, LegalPage> = {
             "WhatsApp (Meta) when you choose to contact us on WhatsApp.",
             "The server/hosting provider that runs our website and database.",
           ],
-          "You can refuse or delete cookies in your browser settings, or use the Google Analytics opt-out add-on. The website still works without analytics cookies.",
+          "On your first visit, the cookie banner lets you choose which cookies to allow: Necessary (stores your choice), Analytics (Google Analytics and the traffic source of briefs), and Advertising (Google Ads). Until you choose, Google services run without cookies. You can change your choice at any time via the \"Cookie settings\" link at the bottom of the website.",
+          "You can also delete cookies in your browser settings. The website still works without analytics and advertising cookies.",
         ],
       },
       {

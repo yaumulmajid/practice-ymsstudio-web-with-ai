@@ -3,6 +3,8 @@ import { Suspense } from "react"
 import { Inter, Instrument_Serif } from "next/font/google"
 import WhatsAppButton from "@/components/ui/WhatsAppButton"
 import Analytics from "@/components/analytics"
+import CookieConsent from "@/components/cookie-consent"
+import { consentDefaultScript } from "@/lib/consent"
 import { LangProvider } from "@/components/lang"
 import type { Lang } from "@/lib/i18n"
 import { buildStructuredData } from "@/lib/seo"
@@ -40,6 +42,8 @@ export default async function SiteDocument({ lang, children }: { lang: Lang; chi
         <link rel="apple-touch-icon" href="/apple-touch-icon.webp" />
         <meta name="theme-color" content="#F7F9FB" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
+        {/* Google Consent Mode v2: must run before any Google tag. */}
+        <script dangerouslySetInnerHTML={{ __html: consentDefaultScript }} />
         {/* FAQPage markup is added on the home page only (where the FAQ is visible). */}
         {Object.entries(structuredData).filter(([k]) => k !== "faq").map(([, data], i) => (
           <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
@@ -53,6 +57,7 @@ export default async function SiteDocument({ lang, children }: { lang: Lang; chi
             <WhatsAppButton />
           </Suspense>
           <Analytics />
+          <CookieConsent />
         </LangProvider>
 
         <script defer src="https://www.googletagmanager.com/gtag/js?id=AW-17737646735" />
