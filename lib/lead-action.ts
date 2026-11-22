@@ -23,6 +23,26 @@ function rateLimited(ip: string) {
 
 const field = (form: FormData, name: string, max: number) => String(form.get(name) ?? "").trim().slice(0, max)
 
+/** Visit attribution saved by components/analytics.tsx (JSON in a hidden field). */
+function attribution(form: FormData) {
+  let a: Record<string, unknown> = {}
+  try {
+    const parsed = JSON.parse(String(form.get("attribution") || "{}"))
+    if (parsed && typeof parsed === "object") a = parsed
+  } catch {
+    /* ignore malformed input */
+  }
+  const str = (k: string, max: number) => (typeof a[k] === "string" ? (a[k] as string).trim().slice(0, max) : "")
+  const ads = Boolean(str("gclid", 200))
+  return {
+    utmSource: str("source", 100) || (ads ? "google" : ""),
+    utmMedium: str("medium", 100) || (ads ? "cpc" : ""),
+    utmCampaign: str("campaign", 150),
+    referrer: str("referrer", 200),
+    landingPage: str("landing", 300),
+  }
+}
+
 /** Indonesian numbers: "0812…" / "+62 812…" → "62812…". */
 function normalizePhone(raw: string) {
   let digits = raw.replace(/\D/g, "")
@@ -62,7 +82,10 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
         budget: field(form, "budget", 60),
         timeline: field(form, "timeline", 60),
         message: field(form, "message", 3000),
+        estimate: field(form, "estimate", 1500),
         sourcePage: field(form, "sourcePage", 300),
+        ...attribution(form),
+        status: "new",
         lang,
       },
       overrideAccess: true,

@@ -1,4 +1,4 @@
-// Service landing pages (/layanan/<slug>) and the local page (/jasa-website-bekasi), ID + EN.
+// Service landing pages (/layanan/<slug>) and the local pages (/jasa-website-<city>), ID + EN.
 // Prices, timelines and package features come from the CMS pricing section (tierIndex);
 // a service without a tier (custom web app) shows the CMS "custom" block instead.
 import type { Lang } from "@/lib/i18n"
@@ -275,8 +275,24 @@ export const services: Service[] = [
 
 export const getService = (slug: string) => services.find((s) => s.slug === slug)
 
-/** Local SEO page: web design for Bekasi & Cikarang. */
-export const local: Record<Lang, ServiceCopy & { areas: string[]; areasTitle: string; remote: string }> = {
+/** Local SEO pages: /jasa-website-<city>. The studio is in Cikarang (Bekasi Regency). */
+export const LOCAL_CITIES = ["bekasi", "jakarta", "karawang", "depok"] as const
+export type LocalCity = (typeof LOCAL_CITIES)[number]
+/** Short city names for links between local pages (kept separate so client bundles stay small). */
+export const LOCAL_SHORT: Record<LocalCity, string> = { bekasi: "Bekasi", jakarta: "Jakarta", karawang: "Karawang", depok: "Depok" }
+
+export type LocalCopy = ServiceCopy & { areas: string[]; areasTitle: string; remote: string }
+
+export type LocalPage = {
+  city: LocalCity
+  /** Small label above the page title. */
+  label: string
+  /** Cities for the Service structured data (areaServed). */
+  areaServed: string[]
+  copy: Record<Lang, LocalCopy>
+}
+
+const bekasi: Record<Lang, LocalCopy> = {
   id: {
     name: "Jasa Website Bekasi",
     title: "Jasa pembuatan website di",
@@ -338,4 +354,202 @@ export const local: Record<Lang, ServiceCopy & { areas: string[]; areasTitle: st
       { q: "Can you help my business show up on Google Maps?", a: "Yes. The company profile and online store packages include Google Business Profile setup, which is what puts your business on Google Maps." },
     ],
   },
+}
+
+const jakarta: Record<Lang, LocalCopy> = {
+  id: {
+    name: "Jasa Website Jakarta",
+    title: "Jasa pembuatan website untuk bisnis di",
+    em: "Jakarta",
+    description:
+      "Jasa pembuatan website untuk UMKM, startup, dan perusahaan di Jakarta: landing page, company profile, toko online, dan web app. Desain custom, SEO, mulai Rp 2 juta.",
+    intro:
+      "Studio kami ada di Cikarang, sekitar satu jam dari Jakarta lewat Tol Jakarta–Cikampek. Sebagian besar klien Jakarta bekerja sama dengan kami sepenuhnya online: brief lewat WhatsApp, presentasi desain lewat video call, dan revisi langsung di link preview.",
+    areasTitle: "Wilayah Jakarta yang kami layani",
+    areas: ["Jakarta Timur", "Jakarta Selatan", "Jakarta Pusat", "Jakarta Utara", "Jakarta Barat", "Seluruh Jabodetabek"],
+    remote:
+      "Semua tahap bisa dilakukan jarak jauh. Bila Anda lebih suka bertemu langsung, kami bisa menjadwalkan pertemuan di Jakarta, terutama di wilayah timur.",
+    forWho: [
+      "UMKM dan toko di Jakarta yang ingin tampil profesional dan dihubungi pelanggan lewat WhatsApp.",
+      "Startup yang butuh landing page cepat untuk validasi produk atau kampanye iklan.",
+      "Perusahaan jasa dan konsultan yang butuh company profile untuk meyakinkan calon klien korporat.",
+      "Brand yang ingin berjualan langsung lewat toko online sendiri, bukan hanya marketplace.",
+    ],
+    benefits: [
+      { title: "Harga lebih bersahabat", text: "Kualitas agency dengan harga studio: paket mulai Rp 2 juta dengan rincian yang jelas sejak awal." },
+      { title: "Proses online yang rapi", text: "Brief, desain, revisi, dan serah terima berjalan lewat WhatsApp dan link preview, tanpa harus bolak-balik bertemu." },
+      { title: "Siap untuk iklan", text: "Halaman cepat, mobile-friendly, dan sudah terpasang tracking konversi untuk Google Ads dan Meta Ads." },
+      { title: "SEO sejak awal", text: "Struktur halaman, metadata, dan data terstruktur disiapkan agar bisnis Anda bisa bersaing di pencarian Jakarta." },
+    ],
+    faqs: [
+      { q: "Apakah harus bertemu langsung?", a: "Tidak. Sebagian besar klien Jakarta bekerja sama dengan kami secara online. Pertemuan langsung tetap bisa dijadwalkan bila dibutuhkan." },
+      { q: "Berapa biaya pembuatan website di Jakarta?", a: "Harga kami sama untuk semua kota: mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
+      { q: "Berapa lama pengerjaannya?", a: "Landing page biasanya selesai dalam 1–2 minggu, company profile 2–3 minggu, dan toko online 3–5 minggu, tergantung kesiapan materi." },
+      { q: "Bagaimana sistem pembayarannya?", a: "Pembayaran dibagi dua: uang muka di awal proyek dan pelunasan setelah website disetujui, sebelum dipindahkan ke domain Anda." },
+    ],
+  },
+  en: {
+    name: "Web Design in Jakarta",
+    title: "Web design & development for businesses in",
+    em: "Jakarta",
+    description:
+      "Website design and development for small businesses, startups, and companies in Jakarta: landing pages, company profiles, online stores, and web apps. Custom design, SEO, from IDR 2 million.",
+    intro:
+      "Our studio is in Cikarang, about an hour from Jakarta via the Jakarta–Cikampek toll road. Most of our Jakarta clients work with us entirely online: the brief over WhatsApp, design presentations over video call, and revisions on a live preview link.",
+    areasTitle: "Parts of Jakarta we serve",
+    areas: ["East Jakarta", "South Jakarta", "Central Jakarta", "North Jakarta", "West Jakarta", "All of Greater Jakarta"],
+    remote: "Every step can be done remotely. If you prefer to meet in person, we can schedule a meeting in Jakarta, especially in the east of the city.",
+    forWho: [
+      "Small businesses and shops in Jakarta that want to look professional and get customers messaging them on WhatsApp.",
+      "Startups that need a fast landing page to validate a product or run an ad campaign.",
+      "Service firms and consultants that need a company profile to win over corporate clients.",
+      "Brands that want to sell through their own online store, not only through marketplaces.",
+    ],
+    benefits: [
+      { title: "Friendlier pricing", text: "Agency-quality work at studio prices: packages from IDR 2 million with clear details from the start." },
+      { title: "A tidy online process", text: "Brief, design, revisions, and handover run over WhatsApp and preview links, with no need for repeated meetings." },
+      { title: "Ready for ads", text: "Fast, mobile-friendly pages with conversion tracking set up for Google Ads and Meta Ads." },
+      { title: "SEO from day one", text: "Page structure, metadata, and structured data are set up so your business can compete in Jakarta searches." },
+    ],
+    faqs: [
+      { q: "Do we need to meet in person?", a: "No. Most of our Jakarta clients work with us online. In-person meetings can still be scheduled when needed." },
+      { q: "How much does a website cost in Jakarta?", a: "Our prices are the same for every city: from IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
+      { q: "How long does it take?", a: "A landing page usually takes 1–2 weeks, a company profile 2–3 weeks, and an online store 3–5 weeks, depending on how ready your content is." },
+      { q: "How does payment work?", a: "Payment is split in two: a down payment at the start and the balance once you approve the website, before it moves to your domain." },
+    ],
+  },
+}
+
+const karawang: Record<Lang, LocalCopy> = {
+  id: {
+    name: "Jasa Website Karawang",
+    title: "Jasa pembuatan website di",
+    em: "Karawang",
+    description:
+      "Jasa pembuatan website di Karawang untuk UMKM, vendor industri, dan perusahaan: company profile, landing page, toko online, dan web app. Dekat dari Cikarang, mulai Rp 2 juta.",
+    intro:
+      "Karawang bertetangga langsung dengan Cikarang, tempat studio kami berada. Kami membantu UMKM, vendor, dan perusahaan di sekitar kawasan industri Karawang punya website yang meyakinkan calon klien dan mudah ditemukan di Google.",
+    areasTitle: "Area Karawang yang kami layani",
+    areas: ["Karawang Barat", "Karawang Timur", "Telukjambe", "Klari", "Cikampek", "Kawasan industri KIIC & Suryacipta"],
+    remote: "Karena lokasinya dekat, pertemuan langsung di Karawang mudah dijadwalkan. Konsultasi lewat WhatsApp atau video call juga bisa.",
+    forWho: [
+      "Vendor dan supplier pabrik yang butuh company profile untuk pengajuan vendor dan tender.",
+      "UMKM dan toko lokal di Karawang yang ingin muncul di Google Maps dan pencarian Google.",
+      "Jasa lokal (katering, bengkel, kontraktor, klinik) yang ingin pelanggan langsung menghubungi lewat WhatsApp.",
+      "Perusahaan yang butuh halaman rekrutmen atau informasi untuk karyawan dan mitra.",
+    ],
+    benefits: [
+      { title: "Siap untuk tender", text: "Company profile yang menampilkan legalitas, sertifikasi, kapasitas, dan daftar klien dengan rapi, dalam Bahasa Indonesia dan Inggris." },
+      { title: "Tim yang dekat", text: "Dari Cikarang ke Karawang hanya sebentar, jadi pertemuan dan pengambilan foto lokasi mudah diatur." },
+      { title: "SEO lokal", text: "Google Business Profile dan halaman yang dioptimalkan untuk pencarian seperti \"jasa ... Karawang\"." },
+      { title: "Harga transparan", text: "Paket mulai Rp 2 juta dengan rincian jelas, tanpa biaya tersembunyi." },
+    ],
+    faqs: [
+      { q: "Apakah bisa bertemu langsung di Karawang?", a: "Bisa. Studio kami di Cikarang Timur, dekat dengan Karawang, jadi pertemuan langsung mudah dijadwalkan bila dibutuhkan." },
+      { q: "Berapa biaya pembuatan website di Karawang?", a: "Paket kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
+      { q: "Apakah website bisa dua bahasa?", a: "Bisa. Banyak vendor industri membutuhkan versi Bahasa Inggris untuk klien asing; fitur ini bisa ditambahkan ke paket company profile." },
+      { q: "Apakah bisa membantu muncul di Google Maps?", a: "Bisa. Paket company profile dan toko online sudah termasuk setup Google Business Profile, yang menentukan tampilnya bisnis Anda di Google Maps." },
+    ],
+  },
+  en: {
+    name: "Web Design in Karawang",
+    title: "Web design & development in",
+    em: "Karawang",
+    description:
+      "Website design and development in Karawang for small businesses, industrial vendors, and companies: company profiles, landing pages, online stores, and web apps. Close to Cikarang, from IDR 2 million.",
+    intro:
+      "Karawang borders Cikarang, where our studio is. We help small businesses, vendors, and companies around Karawang's industrial estates get a website that wins over prospects and is easy to find on Google.",
+    areasTitle: "Parts of Karawang we serve",
+    areas: ["West Karawang", "East Karawang", "Telukjambe", "Klari", "Cikampek", "KIIC & Suryacipta industrial estates"],
+    remote: "Because we're close by, in-person meetings in Karawang are easy to arrange. Consultations over WhatsApp or video call work too.",
+    forWho: [
+      "Factory vendors and suppliers that need a company profile for vendor registration and tenders.",
+      "Small businesses and local shops in Karawang that want to show up on Google Maps and Google Search.",
+      "Local services (caterers, workshops, contractors, clinics) that want customers to reach out on WhatsApp.",
+      "Companies that need a careers page or information for employees and partners.",
+    ],
+    benefits: [
+      { title: "Tender-ready", text: "A company profile that presents your legal documents, certifications, capacity, and client list clearly, in Indonesian and English." },
+      { title: "A team nearby", text: "Cikarang to Karawang is a short trip, so meetings and on-site photos are easy to arrange." },
+      { title: "Local SEO", text: "Google Business Profile and pages optimised for searches like \"... service Karawang\"." },
+      { title: "Transparent pricing", text: "Packages from IDR 2 million with clear details and no hidden fees." },
+    ],
+    faqs: [
+      { q: "Can we meet in person in Karawang?", a: "Yes. Our studio is in East Cikarang, close to Karawang, so in-person meetings are easy to schedule when needed." },
+      { q: "How much does a website cost in Karawang?", a: "Our packages start at IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
+      { q: "Can the website be bilingual?", a: "Yes. Many industrial vendors need an English version for foreign clients; it can be added to the company profile package." },
+      { q: "Can you help us show up on Google Maps?", a: "Yes. The company profile and online store packages include Google Business Profile setup, which is what puts your business on Google Maps." },
+    ],
+  },
+}
+
+const depok: Record<Lang, LocalCopy> = {
+  id: {
+    name: "Jasa Website Depok",
+    title: "Jasa pembuatan website untuk bisnis di",
+    em: "Depok",
+    description:
+      "Jasa pembuatan website untuk UMKM, kursus, klinik, dan bisnis jasa di Depok: landing page, company profile, toko online, dan web app. Proses online, mulai Rp 2 juta.",
+    intro:
+      "Kami melayani bisnis di Depok sepenuhnya secara online dari studio kami di Cikarang. Dari konsultasi sampai website live, semuanya berjalan lewat WhatsApp, video call, dan link preview yang bisa Anda buka kapan saja.",
+    areasTitle: "Area Depok yang kami layani",
+    areas: ["Margonda", "Beji", "Cinere", "Sawangan", "Cimanggis", "Seluruh Depok (online)"],
+    remote:
+      "Semua tahap dilakukan jarak jauh, jadi Anda tidak perlu meluangkan waktu untuk perjalanan. Untuk proyek yang lebih besar, pertemuan langsung bisa didiskusikan.",
+    forWho: [
+      "UMKM kuliner, fashion, dan produk lokal di Depok yang ingin tampil profesional di luar media sosial.",
+      "Lembaga kursus, bimbel, dan sekolah yang butuh website informasi dan pendaftaran.",
+      "Klinik dan praktik dokter yang ingin pasien bisa melihat layanan dan membuat janji lewat WhatsApp.",
+      "Bisnis jasa yang ingin muncul saat dicari di Google.",
+    ],
+    benefits: [
+      { title: "Proses 100% online", text: "Brief, desain, revisi, dan serah terima lewat WhatsApp dan link preview, tanpa perlu bertemu." },
+      { title: "Form & WhatsApp", text: "Form pendaftaran, janji temu, atau pemesanan yang langsung terhubung ke WhatsApp Anda." },
+      { title: "SEO lokal", text: "Google Business Profile dan halaman yang disiapkan untuk pencarian seperti \"jasa ... Depok\"." },
+      { title: "Harga transparan", text: "Paket mulai Rp 2 juta dengan rincian jelas, tanpa biaya tersembunyi." },
+    ],
+    faqs: [
+      { q: "Bagaimana kerja sama kalau lokasinya berjauhan?", a: "Semuanya berjalan online: brief lewat WhatsApp, presentasi desain lewat video call, dan revisi langsung di link preview. Anda bisa memantau progres kapan saja." },
+      { q: "Berapa biaya pembuatan website di Depok?", a: "Harga kami sama untuk semua kota: mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
+      { q: "Apakah bisa dibuatkan form pendaftaran online?", a: "Bisa. Form pendaftaran atau janji temu bisa dikirim ke WhatsApp dan email Anda, cocok untuk kursus, sekolah, dan klinik." },
+      { q: "Apakah ada dukungan setelah website live?", a: "Ada. Kami membantu lewat WhatsApp setelah website online, dan tersedia opsi maintenance bulanan bila Anda ingin kami yang mengurus pembaruan." },
+    ],
+  },
+  en: {
+    name: "Web Design in Depok",
+    title: "Web design & development for businesses in",
+    em: "Depok",
+    description:
+      "Website design and development for small businesses, courses, clinics, and service businesses in Depok: landing pages, company profiles, online stores, and web apps. Fully online, from IDR 2 million.",
+    intro:
+      "We serve businesses in Depok entirely online from our studio in Cikarang. From the first consultation to launch, everything runs over WhatsApp, video calls, and a preview link you can open any time.",
+    areasTitle: "Parts of Depok we serve",
+    areas: ["Margonda", "Beji", "Cinere", "Sawangan", "Cimanggis", "All of Depok (online)"],
+    remote: "Every step is done remotely, so you don't have to spend time travelling. For larger projects, an in-person meeting can be discussed.",
+    forWho: [
+      "Food, fashion, and local product businesses in Depok that want a professional presence beyond social media.",
+      "Course providers, tutoring centres, and schools that need an information and enrolment website.",
+      "Clinics and practices that want patients to see their services and book over WhatsApp.",
+      "Service businesses that want to show up on Google.",
+    ],
+    benefits: [
+      { title: "100% online process", text: "Brief, design, revisions, and handover over WhatsApp and preview links, with no meetings needed." },
+      { title: "Forms & WhatsApp", text: "Enrolment, appointment, or order forms that go straight to your WhatsApp." },
+      { title: "Local SEO", text: "Google Business Profile and pages set up for searches like \"... service Depok\"." },
+      { title: "Transparent pricing", text: "Packages from IDR 2 million with clear details and no hidden fees." },
+    ],
+    faqs: [
+      { q: "How do we work together from a distance?", a: "Everything runs online: the brief over WhatsApp, design presentations over video call, and revisions on a live preview link. You can check progress any time." },
+      { q: "How much does a website cost in Depok?", a: "Our prices are the same for every city: from IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
+      { q: "Can you build an online enrolment form?", a: "Yes. Enrolment or appointment forms can be sent to your WhatsApp and email, which suits courses, schools, and clinics." },
+      { q: "Is there support after launch?", a: "Yes. We help over WhatsApp once the website is live, and monthly maintenance is available if you'd like us to handle updates." },
+    ],
+  },
+}
+
+export const locals: Record<LocalCity, LocalPage> = {
+  bekasi: { city: "bekasi", label: "Bekasi · Cikarang", areaServed: ["Bekasi", "Cikarang"], copy: bekasi },
+  jakarta: { city: "jakarta", label: "Jakarta", areaServed: ["Jakarta"], copy: jakarta },
+  karawang: { city: "karawang", label: "Karawang", areaServed: ["Karawang"], copy: karawang },
+  depok: { city: "depok", label: "Depok", areaServed: ["Depok"], copy: depok },
 }

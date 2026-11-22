@@ -22,6 +22,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip the CMS (/admin, /api), Next internals and files (sitemap.xml, robots.txt, images...).
-  matcher: ["/((?!admin|api|_next|.*\\..*).*)"],
+  // Skip the CMS (/admin, /api), Next internals and files (sitemap.xml, robots.txt, images...),
+  // except the Indonesian blog feed, which lives under [lang] like the other pages.
+  matcher: ["/((?!admin|api|_next|.*\\..*).*)", "/blog/feed.xml"],
 }

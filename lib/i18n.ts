@@ -17,7 +17,8 @@ export const PATHS = {
   calculator: "/kalkulator-biaya",
   /** Contact page with the project brief form (the old /mulai-proyek redirects here). */
   brief: "/kontak",
-  local: "/jasa-website-bekasi",
+  /** Local SEO page per city (lib/page-content/services.ts → LOCAL_CITIES). */
+  local: (city: string) => `/jasa-website-${city}`,
   service: (slug: string) => `/layanan/${slug}`,
   project: (slug: string) => `/karya/${slug}`,
 } as const

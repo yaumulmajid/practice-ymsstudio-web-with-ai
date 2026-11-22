@@ -32,8 +32,7 @@ export const generateMetadata = async ({ params }: Props) => {
   if (!isLang(lang)) return {}
   const { project } = await find(lang, slug)
   if (!project) return {}
-  const image = project.image ? { url: `${SITE}${project.image}`, width: 1600, height: 1000, alt: project.title } : undefined
-  return pageMetadata({ lang, path: PATHS.project(slug), title: `${project.title} · ${pui[lang].caseStudy.label}`, description: project.description, image })
+  return pageMetadata({ lang, path: PATHS.project(slug), title: `${project.title} · ${pui[lang].caseStudy.label}`, description: project.description, generatedImage: true })
 }
 
 const relatedService = (p: Project) => services.find((s) => s.projects[0] === p.slug) ?? services.find((s) => s.projects.includes(p.slug))

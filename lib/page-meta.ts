@@ -14,6 +14,7 @@ export function pageMetadata({
   description,
   image,
   noindex = false,
+  generatedImage = false,
 }: {
   lang: Lang
   path: string
@@ -21,6 +22,8 @@ export function pageMetadata({
   description: string
   image?: { url: string; width: number; height: number; alt?: string }
   noindex?: boolean
+  /** The route has its own opengraph-image.tsx (which Next adds to the metadata). */
+  generatedImage?: boolean
 }): Metadata {
   const url = absUrl(lang, path)
   const img = image ?? { url: OG_IMAGE, width: 1200, height: 630 }
@@ -31,8 +34,8 @@ export function pageMetadata({
       canonical: url,
       languages: { "id-ID": absUrl("id", path), "en-US": absUrl("en", path), "x-default": absUrl("id", path) },
     },
-    openGraph: { title, description, url, type: "website", siteName: "YMS Studio", locale: ui[lang].ogLocale, images: [img] },
-    twitter: { card: "summary_large_image", title, description, images: [img.url] },
+    openGraph: { title, description, url, type: "website", siteName: "YMS Studio", locale: ui[lang].ogLocale, ...(generatedImage ? {} : { images: [img] }) },
+    twitter: { card: "summary_large_image", title, description, ...(generatedImage ? {} : { images: [img.url] }) },
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }

@@ -10,7 +10,7 @@ export default function BlogCta({ title, text, button }: { title: string; text: 
   const wa = useWa()
   return (
     <Reveal className="relative mt-16 overflow-hidden rounded-[28px] bg-ink p-8 text-white sm:p-10">
-      <div className="animate-drift pointer-events-none absolute -bottom-24 -right-20 h-72 w-72 rounded-full bg-brand/40 blur-3xl" aria-hidden="true" />
+      <div className="animate-drift pointer-events-none absolute -bottom-36 -right-32 h-96 w-96 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.4),transparent)]" aria-hidden="true" />
       <p className="relative text-xl font-semibold leading-tight tracking-[-0.03em] sm:text-2xl lg:text-3xl">{title}</p>
       <p className="relative mt-3 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">{text}</p>
       <a

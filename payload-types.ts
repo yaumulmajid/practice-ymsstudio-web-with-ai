@@ -323,7 +323,7 @@ export interface Post {
   createdAt: string;
 }
 /**
- * Brief yang dikirim calon klien lewat form di website. Centang "Sudah ditindaklanjuti" setelah dihubungi.
+ * Brief yang dikirim calon klien lewat form di website. Perbarui "Status" setiap kali ada perkembangan; filter daftar ini per status atau sumber.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leads".
@@ -338,7 +338,23 @@ export interface Lead {
   budget?: string | null;
   timeline?: string | null;
   message?: string | null;
-  handled?: boolean | null;
+  /**
+   * Terisi otomatis bila calon klien datang dari kalkulator biaya.
+   */
+  estimate?: string | null;
+  /**
+   * Hanya terlihat di CMS.
+   */
+  notes?: string | null;
+  status: 'new' | 'contacted' | 'proposal' | 'won' | 'lost';
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  /**
+   * Mis. google.com, instagram.com. Kosong = langsung / tidak diketahui.
+   */
+  referrer?: string | null;
+  landingPage?: string | null;
   sourcePage?: string | null;
   lang?: string | null;
   updatedAt: string;
@@ -542,7 +558,14 @@ export interface LeadsSelect<T extends boolean = true> {
   budget?: T;
   timeline?: T;
   message?: T;
-  handled?: T;
+  estimate?: T;
+  notes?: T;
+  status?: T;
+  utmSource?: T;
+  utmMedium?: T;
+  utmCampaign?: T;
+  referrer?: T;
+  landingPage?: T;
   sourcePage?: T;
   lang?: T;
   updatedAt?: T;

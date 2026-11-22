@@ -19,9 +19,9 @@ export const formatDate = (date: string, lang: Lang) =>
     : ""
 
 const ART = [
-  { bg: "bg-ink", glow: "bg-brand/50", text: "text-white", sub: "text-white/40" },
-  { bg: "bg-brand-soft", glow: "bg-brand/30", text: "text-brand-deep", sub: "text-brand-deep/45" },
-  { bg: "bg-[#e9edf2]", glow: "bg-white", text: "text-ink", sub: "text-ink/35" },
+  { bg: "bg-ink", glow: "bg-[radial-gradient(closest-side,rgba(42,142,158,0.5),transparent)]", text: "text-white", sub: "text-white/40" },
+  { bg: "bg-brand-soft", glow: "bg-[radial-gradient(closest-side,rgba(42,142,158,0.3),transparent)]", text: "text-brand-deep", sub: "text-brand-deep/45" },
+  { bg: "bg-[#e9edf2]", glow: "bg-[radial-gradient(closest-side,#ffffff,transparent)]", text: "text-ink", sub: "text-ink/35" },
 ]
 
 /** Cover image, or a typographic placeholder when the post has none. Fills its (aspect-ratio) parent. */
@@ -43,7 +43,7 @@ export function Cover({ post, i, large = false }: { post: PostMeta; i: number; l
   const a = ART[i % ART.length]
   return (
     <div className={`relative flex h-full flex-col justify-between overflow-hidden rounded-[22px] p-5 sm:p-6 ${a.bg}`} aria-hidden="true">
-      <div className={`animate-drift absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl ${a.glow}`} />
+      <div className={`animate-drift absolute -right-28 -top-28 h-80 w-80 rounded-full ${a.glow}`} />
       <span className={`relative text-[11px] font-medium uppercase tracking-[0.2em] ${a.sub}`}>YMS · {post.category}</span>
       <span
         className={`relative font-serif italic leading-[0.95] tracking-[-0.02em] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-1 ${a.text} ${

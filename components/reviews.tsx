@@ -41,7 +41,7 @@ export default function Reviews() {
           {/* Featured review */}
           <Reveal className="md:col-span-2 lg:row-span-2">
             <figure className="relative flex h-full flex-col overflow-hidden rounded-[28px] bg-ink p-8 text-white sm:p-10">
-              <div className="animate-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/35 blur-3xl" aria-hidden="true" />
+              <div className="animate-drift pointer-events-none absolute -right-36 -top-36 h-96 w-96 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.35),transparent)]" aria-hidden="true" />
               <Quote size={36} className="relative text-brand" aria-hidden="true" />
               <blockquote className="relative mt-6 text-xl font-medium leading-snug tracking-[-0.02em] sm:text-2xl lg:text-3xl">“{first.quote}”</blockquote>
               <figcaption className="relative mt-auto flex flex-wrap items-center justify-between gap-4 pt-10">

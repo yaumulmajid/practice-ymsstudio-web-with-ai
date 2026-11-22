@@ -5,7 +5,7 @@ import type { Lang } from "@/lib/i18n"
 
 export const pui = {
   id: {
-    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Bekasi" },
+    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Bekasi", alsoIn: "Juga di" },
     menu: {
       label: "Menu",
       explore: "Layanan populer",
@@ -59,6 +59,7 @@ export const pui = {
       ctaCalc: "Hitung estimasi biaya",
       custom: "Harga sesuai kebutuhan",
       other: "Layanan lainnya",
+      otherAreas: "Area lainnya",
     },
     calc: {
       label: "Kalkulator",
@@ -130,6 +131,8 @@ export const pui = {
       errEmail: "Format email belum benar.",
       errRate: "Terlalu banyak percobaan. Silakan coba lagi nanti atau chat kami via WhatsApp.",
       errServer: "Maaf, brief gagal terkirim. Silakan coba lagi atau chat kami via WhatsApp.",
+      estimateLabel: "Dari kalkulator biaya",
+      estimateRemove: "Hapus ringkasan kalkulator",
       side: ["Balasan dalam 1×24 jam kerja", "Konsultasi & estimasi gratis", "Tanpa kewajiban order"],
     },
     caseStudy: {
@@ -161,7 +164,7 @@ export const pui = {
     },
   },
   en: {
-    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Bekasi" },
+    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Bekasi", alsoIn: "Also in" },
     menu: {
       label: "Menu",
       explore: "Popular services",
@@ -215,6 +218,7 @@ export const pui = {
       ctaCalc: "Estimate the cost",
       custom: "Priced to your needs",
       other: "Other services",
+      otherAreas: "Other areas",
     },
     calc: {
       label: "Calculator",
@@ -286,6 +290,8 @@ export const pui = {
       errEmail: "Please check the email format.",
       errRate: "Too many attempts. Please try again later or chat with us on WhatsApp.",
       errServer: "Sorry, the brief couldn't be sent. Please try again or chat with us on WhatsApp.",
+      estimateLabel: "From the cost calculator",
+      estimateRemove: "Remove calculator summary",
       side: ["Reply within one business day", "Free consultation & estimate", "No obligation to order"],
     },
     caseStudy: {

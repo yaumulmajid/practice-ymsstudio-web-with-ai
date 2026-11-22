@@ -19,6 +19,7 @@ const rowsOf = (doc: Lead): [string, unknown][] => [
   ['Budget', doc.budget],
   ['Target selesai', doc.timeline],
   ['Halaman', doc.sourcePage],
+  ['Sumber', [doc.utmSource, doc.utmMedium, doc.utmCampaign].filter(Boolean).join(' / ') || doc.referrer],
 ]
 
 async function sendWhatsApp(doc: Lead, req: Parameters<CollectionAfterChangeHook>[0]['req']) {
@@ -38,6 +39,7 @@ async function sendWhatsApp(doc: Lead, req: Parameters<CollectionAfterChangeHook
       .filter(([, v]) => v)
       .map(([k, v]) => `*${k}:* ${String(v)}`),
     ...(doc.message ? ['', String(doc.message).slice(0, 1500)] : []),
+    ...(doc.estimate ? ['', '*Dari kalkulator biaya:*', String(doc.estimate)] : []),
     '',
     `Balas klien: https://wa.me/${String(doc.whatsapp || '').replace(/\D/g, '')}`,
     `Buka di CMS: ${siteUrl()}/admin/collections/leads/${doc.id}`,
@@ -67,6 +69,7 @@ async function sendEmail(doc: Lead, req: Parameters<CollectionAfterChangeHook>[0
         .join('')}
     </table>
     <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${esc(doc.message)}</p>
+    ${doc.estimate ? `<p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap"><b>Dari kalkulator biaya:</b><br>${esc(doc.estimate)}</p>` : ''}
     <p style="font-family:sans-serif;font-size:13px"><a href="${siteUrl()}/admin/collections/leads/${doc.id}">Buka di CMS</a></p>`
   await req.payload.sendEmail({ to, subject: `Brief baru: ${doc.name}${doc.business ? ` (${doc.business})` : ''}`, html })
 }

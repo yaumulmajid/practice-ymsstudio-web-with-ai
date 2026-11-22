@@ -1,10 +1,11 @@
 "use client"
 
-// Project brief form (/mulai-proyek). Submits to a server action; on success offers to
+// Project brief form (/kontak). Submits to a server action; on success offers to
 // continue on WhatsApp with the brief pre-filled.
 import { useActionState, useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, CheckCircle2, Loader2 } from "lucide-react"
+import { ArrowUpRight, Calculator, CheckCircle2, Loader2, X } from "lucide-react"
+import { ATTRIBUTION_KEY } from "@/components/analytics"
 import { useLang, useWa } from "@/components/lang"
 import { submitLead, type LeadState } from "@/lib/lead-action"
 import { localePath, PATHS } from "@/lib/i18n"
@@ -30,14 +31,25 @@ export default function BriefForm() {
   const [preset, setPreset] = useState("")
   const [summary, setSummary] = useState("")
   const [source, setSource] = useState("")
+  const [estimate, setEstimate] = useState("")
+  const [attribution, setAttribution] = useState("")
   const [clientError, setClientError] = useState<LeadState["error"]>()
   const formRef = useRef<HTMLFormElement>(null)
 
-  // ?service=… from the calculator or a service page pre-selects the service.
+  // ?service=… (calculator or a service page) pre-selects the service;
+  // ?estimate=… carries the calculator answers into the brief.
   useEffect(() => {
-    const s = new URLSearchParams(window.location.search).get("service")
-    if (s) setPreset(s)
-    setSource(window.location.pathname + window.location.search)
+    const q = new URLSearchParams(window.location.search)
+    const s = q.get("service")
+    if (s) setPreset(s.slice(0, 80))
+    const e = q.get("estimate")
+    if (e) setEstimate(e.slice(0, 1500))
+    setSource(window.location.pathname)
+    try {
+      setAttribution(localStorage.getItem(ATTRIBUTION_KEY) || "")
+    } catch {
+      /* storage blocked */
+    }
   }, [])
 
   useEffect(() => {
@@ -84,12 +96,12 @@ export default function BriefForm() {
         const v = (k: string) => String(f.get(k) ?? "").trim()
         // Validate here first: React resets the form after a server action, so catching
         // mistakes before submitting keeps what the visitor typed.
-        const digits = v("whatsapp").replace(/D/g, "")
+        const digits = v("whatsapp").replace(/\D/g, "").replace(/^0/, "62")
         const err: LeadState["error"] = !v("name") || !digits
           ? "required"
           : digits.length < 9 || digits.length > 15
             ? "phone"
-            : v("email") && !/^[^s@]+@[^s@]+.[^s@]+$/.test(v("email"))
+            : v("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email"))
               ? "email"
               : undefined
         setClientError(err)
@@ -105,6 +117,7 @@ export default function BriefForm() {
             v("budget") && `${b.budget}: ${v("budget")}`,
             v("timeline") && `${b.timeline}: ${v("timeline")}`,
             v("message") && `\n${v("message")}`,
+            estimate && `\n${b.estimateLabel}:\n${estimate}`,
           ]
             .filter(Boolean)
             .join("\n"),
@@ -116,6 +129,21 @@ export default function BriefForm() {
       <input type="hidden" name="lang" value={lang} />
       <input type="hidden" name="startedAt" value={startedAt} />
       <input type="hidden" name="sourcePage" value={source} />
+      <input type="hidden" name="attribution" value={attribution} />
+      <input type="hidden" name="estimate" value={estimate} />
+
+      {estimate && (
+        <div data-testid="brief-estimate" className="mb-6 flex gap-3 rounded-2xl bg-brand-soft p-4 text-sm text-ink/75">
+          <Calculator size={18} className="mt-0.5 shrink-0 text-brand-deep" />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-ink">{b.estimateLabel}</p>
+            <p className="mt-1 whitespace-pre-line leading-relaxed">{estimate}</p>
+          </div>
+          <button type="button" onClick={() => setEstimate("")} aria-label={b.estimateRemove} className="self-start rounded-full p-1 text-ink/40 transition-colors hover:text-ink">
+            <X size={16} />
+          </button>
+        </div>
+      )}
       {/* Honeypot: hidden from people, filled by bots. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label>

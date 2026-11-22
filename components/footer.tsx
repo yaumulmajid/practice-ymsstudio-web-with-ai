@@ -5,7 +5,7 @@ import Link from "next/link"
 import { LangSwitch, Logo, useNavLinks } from "@/components/header"
 import { useLang, useSettings, useT, useWa } from "@/components/lang"
 import { homePath, localePath, PATHS } from "@/lib/i18n"
-import { services } from "@/lib/page-content/services"
+import { LOCAL_CITIES, LOCAL_SHORT, services } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
 
 export default function Footer() {
@@ -62,9 +62,20 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href={localePath(lang, PATHS.local)} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                <Link href={localePath(lang, PATHS.local("bekasi"))} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                   {u.footer.local}
                 </Link>
+              </li>
+              <li className="flex flex-wrap items-center gap-x-1.5 text-sm text-ink/45">
+                {u.footer.alsoIn}
+                {LOCAL_CITIES.filter((c) => c !== "bekasi").map((c, i) => (
+                  <span key={c} className="inline-flex items-center gap-1.5">
+                    {i > 0 && <span aria-hidden="true">·</span>}
+                    <Link href={localePath(lang, PATHS.local(c))} className="text-ink/70 transition-colors duration-300 hover:text-brand">
+                      {LOCAL_SHORT[c]}
+                    </Link>
+                  </span>
+                ))}
               </li>
             </ul>
           </div>

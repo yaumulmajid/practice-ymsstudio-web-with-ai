@@ -250,8 +250,8 @@ export default function Header() {
         }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="animate-drift absolute -right-32 -top-40 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.18),transparent)] blur-2xl" />
-          <div className="absolute -bottom-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.1),transparent)] blur-2xl" />
+          <div className="animate-drift absolute -right-32 -top-40 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.18),transparent)]" />
+          <div className="absolute -bottom-40 -left-32 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.1),transparent)]" />
         </div>
 
         <div className="relative flex h-[100dvh] flex-col">

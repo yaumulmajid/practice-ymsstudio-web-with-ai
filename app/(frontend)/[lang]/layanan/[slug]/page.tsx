@@ -16,7 +16,7 @@ export const generateMetadata = async ({ params }: Props) => {
   const service = getService(slug)
   if (!isLang(lang) || !service) return {}
   const c = service.copy[lang]
-  return pageMetadata({ lang, path: PATHS.service(slug), title: `${c.title} ${c.em}`.replace(/^./, (x) => x.toUpperCase()), description: c.description })
+  return pageMetadata({ lang, path: PATHS.service(slug), title: `${c.title} ${c.em}`.replace(/^./, (x) => x.toUpperCase()), description: c.description, generatedImage: true })
 }
 
 export default async function Page({ params }: Props) {

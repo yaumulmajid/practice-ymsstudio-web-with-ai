@@ -2,7 +2,7 @@
 import type { MetadataRoute } from "next"
 import { getPosts, getSite } from "@/lib/content"
 import { blogPath, homePath, localePath, PATHS } from "@/lib/i18n"
-import { services } from "@/lib/page-content/services"
+import { LOCAL_CITIES, services } from "@/lib/page-content/services"
 import { SITE } from "@/lib/seo"
 
 const abs = (path: string) => `${SITE}${path === "/" ? "" : path}`
@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   const content: MetadataRoute.Sitemap = [
     ...services.flatMap((s) => shared(PATHS.service(s.slug), 0.9)),
-    ...shared(PATHS.local, 0.9),
+    ...LOCAL_CITIES.flatMap((c) => shared(PATHS.local(c), c === "bekasi" ? 0.9 : 0.8)),
     ...shared(PATHS.calculator, 0.7),
     ...shared(PATHS.brief, 0.6),
     ...site.projects.flatMap((p) => shared(PATHS.project(p.slug), 0.6)),

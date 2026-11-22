@@ -8,6 +8,7 @@ import Link from "next/link"
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Clock, RotateCcw } from "lucide-react"
 import { useLang, useT, useWa } from "@/components/lang"
 import { localePath, PATHS } from "@/lib/i18n"
+import { services } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
 
 type TypeKey = "landing" | "profile" | "store" | "app" | "unsure"
@@ -56,15 +57,17 @@ export default function CostCalculator() {
   const canNext = (step === 0 && type) || (step === 1 && pages) || step === 2 || (step === 3 && time)
 
   const packageName = tier?.name ?? (lang === "id" ? "Web App Custom" : "Custom Web App")
-  const waText = [
-    c.waIntro,
+  const answers = [
     `• ${c.q1} ${type ? c.types[type] : "-"}`,
     `• ${c.q2} ${pages ? c.pages[pages] : "-"}`,
     `• ${c.q3} ${features.length ? features.map((f) => c.features[f]).join(", ") : "-"}`,
     `• ${c.q4} ${time ? c.timelines[time] : "-"}`,
     `→ ${packageName}${tier ? ` (${c.startsAt.toLowerCase()} ${t.pricing.currency} ${tier.price})` : ""}`,
   ].join("\n")
-  const briefHref = `${localePath(lang, PATHS.brief)}?service=${encodeURIComponent(packageName)}`
+  const waText = `${c.waIntro}\n${answers}`
+  // The brief form's service options are the service-page names, so pass the matching one.
+  const serviceName = services.find((s) => s.slug === (tierIndex !== null ? SERVICE_SLUGS[tierIndex] : "jasa-web-app"))?.copy[lang].name ?? packageName
+  const briefHref = `${localePath(lang, PATHS.brief)}?${new URLSearchParams({ service: serviceName, estimate: answers })}#brief`
 
   function choose<T>(setter: (v: T) => void, v: T) {
     setter(v)

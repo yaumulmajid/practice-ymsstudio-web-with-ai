@@ -406,3 +406,10 @@
 
 /* Article headings are TOC targets: keep them clear of the fixed header. */
 .prose-yms h2[id], .prose-yms h3[id] { scroll-margin-top: 112px; }
+
+/* Decorative drifting glows cost a lot of main-thread time on phones; keep them still there. */
+@media (max-width: 767px) {
+  .animate-drift {
+    animation: none;
+  }
+}

@@ -81,3 +81,21 @@ npm run generate:importmap                 # bila menambah komponen admin
 ```
 
 Commit file migrasinya. Production menjalankannya otomatis saat deploy.
+
+## Brief Proyek (leads)
+
+Setiap brief dari form `/kontak` masuk ke **Masuk → Brief Proyek**:
+
+- **Status**: Baru → Sudah dihubungi → Penawaran dikirim → Deal / Batal. Daftar bisa difilter per status.
+- **Sumber**: `utm_source` / `utm_medium` / `utm_campaign`, situs asal (mis. google.com), dan halaman pertama yang dibuka. Diambil dari kunjungan pemasaran terakhir (maks. 90 hari). Klik Google Ads tanpa UTM tercatat sebagai `google / cpc`.
+  Pakai tautan dengan UTM di bio Instagram atau iklan, mis. `https://ymsstudio.id/?utm_source=instagram&utm_medium=bio`.
+- **Jawaban kalkulator biaya**: terisi bila calon klien datang dari tombol "Isi brief lengkap" di kalkulator.
+- **Catatan internal**: hanya terlihat di CMS.
+
+## Tes end-to-end
+
+```bash
+npm run build && npm run test:e2e          # menjalankan server production lokal (butuh database)
+BASE_URL=https://ymsstudio.id npm run test:e2e   # cek situs live (hanya membaca)
+E2E_WRITE=1 npm run test:e2e               # termasuk mengirim brief sungguhan (menulis ke database)
+```

@@ -7,6 +7,7 @@ export function buildStructuredData(site: SiteData) {
   const faqs = site.dict.faq.items
   const { settings } = site
   const social = [settings.instagram, settings.facebook].filter(Boolean)
+  const rated = site.dict.reviews.items.filter((r) => r.rating >= 1 && r.rating <= 5 && r.name)
   return {
   organization: {
     "@context": "https://schema.org",
@@ -75,11 +76,24 @@ export function buildStructuredData(site: SiteData) {
       "Website",
       "Jasa Website",
     ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "50",
-    },
+    // Rating from the reviews actually published in the CMS (never a made-up count).
+    ...(rated.length
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: (rated.reduce((sum, r) => sum + r.rating, 0) / rated.length).toFixed(1),
+            reviewCount: String(rated.length),
+            bestRating: "5",
+            worstRating: "1",
+          },
+          review: rated.slice(0, 5).map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.name },
+            reviewBody: r.quote,
+            reviewRating: { "@type": "Rating", ratingValue: String(r.rating), bestRating: "5", worstRating: "1" },
+          })),
+        }
+      : {}),
   },
   service: {
     "@context": "https://schema.org",

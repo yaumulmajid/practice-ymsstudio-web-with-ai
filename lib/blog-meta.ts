@@ -6,6 +6,8 @@ import { OG_IMAGE, SITE } from "@/lib/seo"
 
 const other = (lang: Lang): Lang => (lang === "id" ? "en" : "id")
 const hreflang = (lang: Lang) => (lang === "id" ? "id-ID" : "en-US")
+/** <link rel="alternate" type="application/rss+xml"> for feed readers. */
+const feed = (lang: Lang) => ({ "application/rss+xml": [{ url: `${SITE}${blogPath(lang)}/feed.xml`, title: "YMS Studio Blog" }] })
 
 /** Blog index; page 2+ gets its own title and self-canonical (no hreflang: page counts can differ per language). */
 export function blogIndexMetadata(lang: Lang, page = 1): Metadata {
@@ -18,9 +20,10 @@ export function blogIndexMetadata(lang: Lang, page = 1): Metadata {
     description: page > 1 ? `${t.text} (${t.page} ${page})` : t.text,
     alternates:
       page > 1
-        ? { canonical: url }
+        ? { canonical: url, types: feed(lang) }
         : {
             canonical: url,
+            types: feed(lang),
             languages: { "id-ID": `${SITE}${blogPath("id")}`, "en-US": `${SITE}${blogPath("en")}`, "x-default": `${SITE}${blogPath("id")}` },
           },
     openGraph: {
@@ -40,14 +43,12 @@ export async function blogPostMetadata(lang: Lang, slug: string): Promise<Metada
   if (!post) return {}
   const url = `${SITE}${blogPath(lang, slug)}`
   const translated = (await getPosts(other(lang))).some((p) => p.slug === slug)
-  const image = post.cover
-    ? { url: `${SITE}${post.cover}`, width: 1600, height: 900, alt: post.coverAlt }
-    : { url: OG_IMAGE, width: 1200, height: 630, alt: post.title }
   return {
     title: `${post.title} | YMS Studio`,
     description: post.excerpt,
     alternates: {
       canonical: url,
+      types: feed(lang),
       languages: translated
         ? {
             [hreflang(lang)]: url,
@@ -66,8 +67,8 @@ export async function blogPostMetadata(lang: Lang, slug: string): Promise<Metada
       section: post.category || undefined,
       siteName: "YMS Studio",
       locale: ui[lang].ogLocale,
-      images: [image],
+      // Image: the generated card from blog/[slug]/opengraph-image.tsx.
     },
-    twitter: { card: "summary_large_image", title: post.title, description: post.excerpt, images: [image.url] },
+    twitter: { card: "summary_large_image", title: post.title, description: post.excerpt },
   }
 }

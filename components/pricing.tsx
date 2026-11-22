@@ -50,7 +50,7 @@ export default function Pricing() {
                       : "border border-ink/[0.07] bg-white text-ink hover:shadow-[0_30px_60px_-30px_rgba(11,18,32,0.18)]"
                   }`}
                 >
-                  {dark && <div className="animate-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/40 blur-3xl" aria-hidden="true" />}
+                  {dark && <div className="animate-drift pointer-events-none absolute -right-36 -top-36 h-96 w-96 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.4),transparent)]" aria-hidden="true" />}
 
                   <div className="relative flex items-center justify-between">
                     <h3 className="text-lg font-semibold tracking-tight">{tier.name}</h3>

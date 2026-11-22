@@ -1,4 +1,4 @@
-// Service landing page (/layanan/<slug>) and the local page (/jasa-website-bekasi).
+// Service landing page (/layanan/<slug>) and the local pages (/jasa-website-<city>).
 // Copy comes from lib/page-content/services.ts; prices, timelines, features and the
 // process steps come from the CMS so they never drift from the home page.
 import Image from "next/image"
@@ -10,7 +10,7 @@ import { Breadcrumbs, JsonLd, PageHero, Shell } from "@/components/page-shell"
 import { getSite } from "@/lib/content"
 import { localePath, PATHS, tierMessage, waLink, type Lang, type Project, type Tier } from "@/lib/i18n"
 import { absUrl, breadcrumbLd, crumbs, faqLd } from "@/lib/page-meta"
-import { local, services, type Service, type ServiceCopy } from "@/lib/page-content/services"
+import { LOCAL_CITIES, LOCAL_SHORT, locals, services, type LocalCity, type LocalCopy, type Service, type ServiceCopy } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
 
 /** "2jt" → 2000000, "3,5jt" → 3500000 (for structured data). */
@@ -70,15 +70,16 @@ function Faqs({ items, title }: { items: { q: string; a: string }[]; title: stri
   )
 }
 
-type Props = { lang: Lang } & ({ kind: "service"; service: Service } | { kind: "local" })
+type Props = { lang: Lang } & ({ kind: "service"; service: Service } | { kind: "local"; city: LocalCity })
 
 export default async function ServiceView(props: Props) {
   const { lang } = props
   const u = pui[lang]
   const site = await getSite(lang)
   const t = site.dict
-  const copy: ServiceCopy = props.kind === "service" ? props.service.copy[lang] : local[lang]
-  const path = props.kind === "service" ? PATHS.service(props.service.slug) : PATHS.local
+  const localCopy: LocalCopy | undefined = props.kind === "local" ? locals[props.city].copy[lang] : undefined
+  const copy: ServiceCopy = props.kind === "service" ? props.service.copy[lang] : localCopy!
+  const path = props.kind === "service" ? PATHS.service(props.service.slug) : PATHS.local(props.city)
   const tier: Tier | undefined = props.kind === "service" && props.service.tierIndex !== null ? t.pricing.tiers[props.service.tierIndex] : undefined
   const isCustom = props.kind === "service" && props.service.tierIndex === null
 
@@ -90,7 +91,7 @@ export default async function ServiceView(props: Props) {
 
   const waText = tier ? tierMessage(t.wa.tier, tier.name, tier.price) : isCustom ? t.wa.custom : t.wa.general
   const wa = waLink(site.settings.waNumber, waText)
-  const trail = props.kind === "service" ? [{ name: copy.name, path }] : [{ name: copy.name, path }]
+  const trail = [{ name: copy.name, path }]
   const price = tier ? priceToNumber(tier.price) : undefined
 
   const serviceLd = {
@@ -101,7 +102,7 @@ export default async function ServiceView(props: Props) {
     description: copy.description,
     url: absUrl(lang, path),
     provider: { "@type": "LocalBusiness", "@id": "https://ymsstudio.id/#services", name: "YMS Studio", url: "https://ymsstudio.id" },
-    areaServed: props.kind === "local" ? [{ "@type": "City", name: "Bekasi" }, { "@type": "City", name: "Cikarang" }] : { "@type": "Country", name: "Indonesia" },
+    areaServed: props.kind === "local" ? locals[props.city].areaServed.map((name) => ({ "@type": "City", name })) : { "@type": "Country", name: "Indonesia" },
     ...(price ? { offers: { "@type": "Offer", price: String(price), priceCurrency: "IDR", url: absUrl(lang, path), availability: "https://schema.org/InStock" } } : {}),
   }
 
@@ -116,7 +117,7 @@ export default async function ServiceView(props: Props) {
 
         {/* Hero + price card */}
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
-          <PageHero label={props.kind === "local" ? "Bekasi · Cikarang" : u.service.label} title={copy.title} em={copy.em} text={copy.intro}>
+          <PageHero label={props.kind === "local" ? locals[props.city].label : u.service.label} title={copy.title} em={copy.em} text={copy.intro}>
             <Reveal delay={220} className="mt-8 flex flex-wrap gap-3">
               <a href={wa} target="_blank" rel="noopener noreferrer" className={btnDark}>
                 {u.service.ctaWa}
@@ -153,19 +154,19 @@ export default async function ServiceView(props: Props) {
             </Reveal>
           )}
 
-          {props.kind === "local" && (
+          {localCopy && (
             <Reveal delay={200} className="rounded-[28px] bg-ink p-7 text-white">
               <p className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-white/45">
-                <MapPin size={14} /> {local[lang].areasTitle}
+                <MapPin size={14} /> {localCopy.areasTitle}
               </p>
               <ul className="mt-5 flex flex-wrap gap-2">
-                {local[lang].areas.map((a) => (
+                {localCopy.areas.map((a) => (
                   <li key={a} className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-white/80">
                     {a}
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 text-sm leading-relaxed text-white/55">{local[lang].remote}</p>
+              <p className="mt-5 text-sm leading-relaxed text-white/55">{localCopy.remote}</p>
             </Reveal>
           )}
         </div>
@@ -217,7 +218,7 @@ export default async function ServiceView(props: Props) {
             </ul>
           </section>
         )}
-        {props.kind === "local" && (
+        {localCopy && (
           <section className="mt-24">
             <Reveal>
               <Eyebrow index="03">{u.service.label}</Eyebrow>
@@ -292,9 +293,23 @@ export default async function ServiceView(props: Props) {
                     {s.copy[lang].name}
                   </Link>
                 ))}
-              <Link href={localePath(lang, PATHS.local)} className={btnLight}>
-                <MapPin size={15} /> {local[lang].name}
+              <Link href={localePath(lang, PATHS.local("bekasi"))} className={btnLight}>
+                <MapPin size={15} /> {locals.bekasi.copy[lang].name}
               </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Other areas */}
+        {props.kind === "local" && (
+          <section className="mt-20">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-ink/40">{u.service.otherAreas}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {LOCAL_CITIES.filter((c) => c !== props.city).map((c) => (
+                <Link key={c} href={localePath(lang, PATHS.local(c))} className={btnLight}>
+                  <MapPin size={15} /> {LOCAL_SHORT[c]}
+                </Link>
+              ))}
             </div>
           </section>
         )}

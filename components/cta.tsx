@@ -17,7 +17,7 @@ export default function CTA() {
     <section className="px-3 pt-3 sm:px-5 sm:pt-5">
       <Reveal className="relative mx-auto max-w-[1400px] overflow-hidden rounded-[32px] bg-ink px-6 py-24 text-center sm:py-36">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="animate-drift absolute left-1/2 top-full h-[560px] w-[960px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.55),transparent)] blur-2xl" />
+          <div className="animate-drift absolute left-1/2 top-full h-[560px] w-[960px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.55),transparent)]" />
           <div className="noise absolute inset-0 opacity-[0.07] mix-blend-overlay" />
         </div>
 

@@ -181,8 +181,8 @@ export default function Hero() {
       {/* Background */}
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="bg-grid absolute inset-0" />
-        <div className="animate-drift absolute -top-48 left-[10%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.16),transparent)] blur-2xl" />
-        <div className="animate-drift absolute -top-24 right-[5%] h-[460px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgba(59,130,246,0.10),transparent)] blur-2xl [animation-delay:-9s]" />
+        <div className="animate-drift absolute -top-48 left-[10%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(42,142,158,0.16),transparent)]" />
+        <div className="animate-drift absolute -top-24 right-[5%] h-[460px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgba(59,130,246,0.10),transparent)] [animation-delay:-9s]" />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8">

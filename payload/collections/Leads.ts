@@ -3,8 +3,16 @@ import type { CollectionConfig } from 'payload'
 import { isStaff } from '../access'
 import { notifyNewLead } from '../hooks/notifyLead'
 
+export const LEAD_STATUSES = [
+  { label: 'Baru', value: 'new' },
+  { label: 'Sudah dihubungi', value: 'contacted' },
+  { label: 'Penawaran dikirim', value: 'proposal' },
+  { label: 'Deal', value: 'won' },
+  { label: 'Batal / tidak lanjut', value: 'lost' },
+]
+
 /**
- * Project briefs sent from the website form (/mulai-proyek). Created by a server action
+ * Project briefs sent from the website form (/kontak). Created by a server action
  * (overrideAccess), so the public cannot read or write this collection through the API.
  */
 export const Leads: CollectionConfig = {
@@ -14,8 +22,10 @@ export const Leads: CollectionConfig = {
   admin: {
     group: 'Masuk',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'business', 'service', 'whatsapp', 'handled', 'createdAt'],
-    description: 'Brief yang dikirim calon klien lewat form di website. Centang "Sudah ditindaklanjuti" setelah dihubungi.',
+    defaultColumns: ['name', 'business', 'service', 'status', 'utmSource', 'createdAt'],
+    listSearchableFields: ['name', 'business', 'whatsapp', 'email'],
+    description:
+      'Brief yang dikirim calon klien lewat form di website. Perbarui "Status" setiap kali ada perkembangan; filter daftar ini per status atau sumber.',
   },
   access: { read: isStaff, create: isStaff, update: isStaff, delete: isStaff },
   hooks: { afterChange: [notifyNewLead] },
@@ -43,7 +53,34 @@ export const Leads: CollectionConfig = {
       ],
     },
     { name: 'message', label: 'Cerita / kebutuhan', type: 'textarea' },
-    { name: 'handled', label: 'Sudah ditindaklanjuti', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
+    {
+      name: 'estimate',
+      label: 'Jawaban kalkulator biaya',
+      type: 'textarea',
+      admin: { readOnly: true, description: 'Terisi otomatis bila calon klien datang dari kalkulator biaya.' },
+    },
+    { name: 'notes', label: 'Catatan internal', type: 'textarea', admin: { description: 'Hanya terlihat di CMS.' } },
+
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      required: true,
+      defaultValue: 'new',
+      options: LEAD_STATUSES,
+      index: true,
+      admin: { position: 'sidebar' },
+    },
+    { name: 'utmSource', label: 'Sumber (utm_source)', type: 'text', index: true, admin: { position: 'sidebar', readOnly: true } },
+    { name: 'utmMedium', label: 'Medium (utm_medium)', type: 'text', admin: { position: 'sidebar', readOnly: true } },
+    { name: 'utmCampaign', label: 'Kampanye (utm_campaign)', type: 'text', admin: { position: 'sidebar', readOnly: true } },
+    {
+      name: 'referrer',
+      label: 'Datang dari situs',
+      type: 'text',
+      admin: { position: 'sidebar', readOnly: true, description: 'Mis. google.com, instagram.com. Kosong = langsung / tidak diketahui.' },
+    },
+    { name: 'landingPage', label: 'Halaman pertama dibuka', type: 'text', admin: { position: 'sidebar', readOnly: true } },
     { name: 'sourcePage', label: 'Dikirim dari halaman', type: 'text', admin: { position: 'sidebar', readOnly: true } },
     { name: 'lang', label: 'Bahasa', type: 'text', admin: { position: 'sidebar', readOnly: true } },
   ],
