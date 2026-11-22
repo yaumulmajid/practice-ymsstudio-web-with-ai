@@ -7,6 +7,8 @@ export const LANGS: Lang[] = ["id", "en"]
 export const isLang = (v: unknown): v is Lang => v === "id" || v === "en"
 export const homePath = (lang: Lang) => (lang === "id" ? "/" : "/en")
 export const blogPath = (lang: Lang, slug?: string) => `${lang === "id" ? "" : "/en"}/blog${slug ? `/${slug}` : ""}`
+/** Blog index page n (page 1 is the plain /blog URL). */
+export const blogPagePath = (lang: Lang, page: number) => (page > 1 ? `${blogPath(lang)}/page/${page}` : blogPath(lang))
 
 type Item = { title: string; text: string }
 
@@ -126,6 +128,10 @@ export type Dict = {
     back: string
     more: string
     empty: string
+    prev: string
+    next: string
+    page: string
+    pages: string
     ctaTitle: string
     ctaText: string
     ctaButton: string
@@ -154,6 +160,10 @@ export const ui = {
       back: "Semua artikel",
       more: "Artikel lainnya",
       empty: "Belum ada artikel.",
+      prev: "Sebelumnya",
+      next: "Berikutnya",
+      page: "Halaman",
+      pages: "Halaman artikel",
       ctaTitle: "Butuh website untuk bisnis Anda?",
       ctaText: "Konsultasi gratis — kami bantu pilih solusi yang tepat beserta estimasi biayanya.",
       ctaButton: "Chat via WhatsApp",
@@ -179,6 +189,10 @@ export const ui = {
       back: "All articles",
       more: "More articles",
       empty: "No articles yet.",
+      prev: "Previous",
+      next: "Next",
+      page: "Page",
+      pages: "Article pages",
       ctaTitle: "Need a website for your business?",
       ctaText: "Free consultation — we'll recommend the right solution and an estimated cost.",
       ctaButton: "Chat on WhatsApp",

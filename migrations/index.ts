@@ -5,6 +5,7 @@ import * as migration_20261121_115330_seed_content from './20261121_115330_seed_
 import * as migration_20261121_115400_blog_covers from './20261121_115400_blog_covers';
 import * as migration_20261121_120000_admin_password from './20261121_120000_admin_password';
 import * as migration_20261121_121400_post_ai_search from './20261121_121400_post_ai_search';
+import * as migration_20261122_090000_post_mcp_motion from './20261122_090000_post_mcp_motion';
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20261121_121400_post_ai_search.up,
     down: migration_20261121_121400_post_ai_search.down,
     name: '20261121_121400_post_ai_search',
+  },
+  {
+    up: migration_20261122_090000_post_mcp_motion.up,
+    down: migration_20261122_090000_post_mcp_motion.down,
+    name: '20261122_090000_post_mcp_motion',
   },
 ];

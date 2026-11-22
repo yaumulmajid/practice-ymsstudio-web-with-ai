@@ -5,14 +5,14 @@ import Image from "next/image"
 import Link from "next/link"
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
 import { RichText } from "@payloadcms/richtext-lexical/react"
-import { ArrowLeft, ArrowUpRight, Clock, Eye } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, Eye } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Eyebrow, Reveal } from "@/components/motion"
 import BlogCta from "@/components/blog/blog-cta"
 import ViewCounter from "@/components/blog/view-counter"
 import { getPost, getPosts, type PostMeta } from "@/lib/content"
-import { blogPath, homePath, ui, type Lang } from "@/lib/i18n"
+import { blogPagePath, blogPath, homePath, ui, type Lang } from "@/lib/i18n"
 import { SITE } from "@/lib/seo"
 
 const formatDate = (date: string, lang: Lang) =>
@@ -119,10 +119,74 @@ function PostCard({ post, lang, i }: { post: PostMeta; lang: Lang; i: number }) 
   )
 }
 
-export async function BlogIndex({ lang }: { lang: Lang }) {
+/**
+ * Pagination: page 1 = 1 featured post + 6 cards (two rows of three on desktop);
+ * every following page = 6 cards (same grid, no featured post).
+ */
+export const BLOG_FIRST_PAGE = 7
+export const BLOG_PER_PAGE = 6
+
+export function blogPageCount(total: number) {
+  return 1 + Math.ceil(Math.max(0, total - BLOG_FIRST_PAGE) / BLOG_PER_PAGE)
+}
+
+function pagePosts(posts: PostMeta[], page: number) {
+  if (page <= 1) return posts.slice(0, BLOG_FIRST_PAGE)
+  const start = BLOG_FIRST_PAGE + (page - 2) * BLOG_PER_PAGE
+  return posts.slice(start, start + BLOG_PER_PAGE)
+}
+
+/** Page numbers with gaps, e.g. 1 … 4 5 6 … 12. */
+function pageItems(current: number, total: number): (number | null)[] {
+  const keep = new Set([1, total, current - 1, current, current + 1])
+  const out: (number | null)[] = []
+  for (let n = 1; n <= total; n++) {
+    if (keep.has(n)) out.push(n)
+    else if (out[out.length - 1] !== null) out.push(null)
+  }
+  return out
+}
+
+function Pagination({ lang, page, total }: { lang: Lang; page: number; total: number }) {
+  if (total <= 1) return null
   const t = ui[lang].blog
-  const posts = await getPosts(lang)
-  const [featured, ...rest] = posts
+  const pill = "inline-flex h-11 items-center gap-2 rounded-full border border-ink/[0.08] bg-white px-4 text-sm font-medium text-ink transition-colors hover:border-ink/20"
+  return (
+    <nav aria-label={t.pages} className="mt-14 flex flex-wrap items-center justify-center gap-2 md:mt-16">
+      {page > 1 && (
+        <Link href={blogPagePath(lang, page - 1)} rel="prev" className={pill}>
+          <ArrowLeft size={15} /> <span className="hidden sm:inline">{t.prev}</span>
+        </Link>
+      )}
+      {pageItems(page, total).map((n, i) =>
+        n === null ? (
+          <span key={`gap-${i}`} className="px-1 text-ink/35">…</span>
+        ) : n === page ? (
+          <span key={n} aria-current="page" className="grid h-11 min-w-11 place-items-center rounded-full bg-ink px-3 text-sm font-semibold text-white">
+            {n}
+          </span>
+        ) : (
+          <Link key={n} href={blogPagePath(lang, n)} aria-label={`${t.page} ${n}`} className="grid h-11 min-w-11 place-items-center rounded-full px-3 text-sm font-medium text-ink/60 transition-colors hover:bg-ink/[0.05] hover:text-ink">
+            {n}
+          </Link>
+        ),
+      )}
+      {page < total && (
+        <Link href={blogPagePath(lang, page + 1)} rel="next" className={pill}>
+          <span className="hidden sm:inline">{t.next}</span> <ArrowRight size={15} />
+        </Link>
+      )}
+    </nav>
+  )
+}
+
+export async function BlogIndex({ lang, page = 1 }: { lang: Lang; page?: number }) {
+  const t = ui[lang].blog
+  const all = await getPosts(lang)
+  const total = blogPageCount(all.length)
+  const posts = pagePosts(all, page)
+  const featured: PostMeta | undefined = page === 1 ? posts[0] : undefined
+  const rest = page === 1 ? posts.slice(1) : posts
 
   return (
     <Shell>
@@ -134,14 +198,20 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
             </Reveal>
             <Reveal as="h1" delay={80} className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-5xl md:text-6xl lg:text-7xl">
               {t.titleA} <em className="font-serif font-normal italic text-brand">{t.titleEm}</em>
+              {page > 1 && <span className="sr-only">{` — ${t.page} ${page}`}</span>}
             </Reveal>
+            {page > 1 && (
+              <p className="mt-4 text-sm font-medium text-ink/45">
+                {t.page} {page} / {total}
+              </p>
+            )}
           </div>
           <Reveal as="p" delay={160} className="max-w-md text-base leading-relaxed text-ink/55 md:justify-self-end">
             {t.text}
           </Reveal>
         </div>
 
-        {!featured && <p className="mt-16 text-ink/50">{t.empty}</p>}
+        {all.length === 0 && <p className="mt-16 text-ink/50">{t.empty}</p>}
 
         {featured && (
           <Reveal delay={200} className="mt-14 md:mt-20">
@@ -168,12 +238,14 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
         )}
 
         {rest.length > 0 && (
-          <div className={`mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 ${rest.length > 2 ? "lg:grid-cols-3" : ""}`}>
+          <div className={`${featured ? "mt-6" : "mt-14 md:mt-20"} grid grid-cols-1 gap-6 md:grid-cols-2 ${rest.length > 2 ? "lg:grid-cols-3" : ""}`}>
             {rest.map((post, i) => (
               <PostCard key={post.slug} post={post} lang={lang} i={i} />
             ))}
           </div>
         )}
+
+        <Pagination lang={lang} page={page} total={total} />
       </section>
     </Shell>
   )

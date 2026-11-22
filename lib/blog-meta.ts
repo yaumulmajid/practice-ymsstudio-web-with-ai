@@ -1,23 +1,28 @@
 // Metadata for the blog routes (/blog, /blog/[slug] and their /en twins).
 import type { Metadata } from "next"
 import { getPost, getPosts } from "@/lib/content"
-import { blogPath, ui, type Lang } from "@/lib/i18n"
+import { blogPagePath, blogPath, ui, type Lang } from "@/lib/i18n"
 import { OG_IMAGE, SITE } from "@/lib/seo"
 
 const other = (lang: Lang): Lang => (lang === "id" ? "en" : "id")
 const hreflang = (lang: Lang) => (lang === "id" ? "id-ID" : "en-US")
 
-export function blogIndexMetadata(lang: Lang): Metadata {
+/** Blog index; page 2+ gets its own title and self-canonical (no hreflang: page counts can differ per language). */
+export function blogIndexMetadata(lang: Lang, page = 1): Metadata {
   const t = ui[lang].blog
-  const title = `Blog — ${t.titleA} ${t.titleEm} | YMS Studio`
-  const url = `${SITE}${blogPath(lang)}`
+  const suffix = page > 1 ? ` — ${t.page} ${page}` : ""
+  const title = `Blog — ${t.titleA} ${t.titleEm}${suffix} | YMS Studio`
+  const url = `${SITE}${blogPagePath(lang, page)}`
   return {
     title,
-    description: t.text,
-    alternates: {
-      canonical: url,
-      languages: { "id-ID": `${SITE}${blogPath("id")}`, "en-US": `${SITE}${blogPath("en")}`, "x-default": `${SITE}${blogPath("id")}` },
-    },
+    description: page > 1 ? `${t.text} (${t.page} ${page})` : t.text,
+    alternates:
+      page > 1
+        ? { canonical: url }
+        : {
+            canonical: url,
+            languages: { "id-ID": `${SITE}${blogPath("id")}`, "en-US": `${SITE}${blogPath("en")}`, "x-default": `${SITE}${blogPath("id")}` },
+          },
     openGraph: {
       title,
       description: t.text,
