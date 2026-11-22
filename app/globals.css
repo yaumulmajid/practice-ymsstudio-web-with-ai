@@ -388,3 +388,7 @@
 .prose-yms table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
 .prose-yms th, .prose-yms td { border-bottom: 1px solid rgb(11 18 32 / 0.08); padding: 0.7em 0.8em 0.7em 0; text-align: left; vertical-align: top; }
 .prose-yms th { color: #0b1220; font-weight: 600; }
+.prose-yms { overflow-wrap: anywhere; }
+.prose-yms img, .prose-yms video, .prose-yms iframe, .prose-yms figure, .prose-yms picture { max-width: 100%; height: auto; }
+.prose-yms table { display: block; overflow-x: auto; }
+.prose-yms pre { overflow-x: auto; max-width: 100%; }

@@ -45,7 +45,7 @@ const ART = [
 function Cover({ post, i, large = false }: { post: PostMeta; i: number; large?: boolean }) {
   if (post.cover) {
     return (
-      <div className="relative h-full min-h-[220px] overflow-hidden rounded-[22px] bg-ink/5">
+      <div className="relative h-full overflow-hidden rounded-[22px] bg-ink/5">
         <Image
           src={post.cover}
           alt={post.coverAlt}
@@ -58,12 +58,12 @@ function Cover({ post, i, large = false }: { post: PostMeta; i: number; large?: 
   }
   const a = ART[i % ART.length]
   return (
-    <div className={`relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[22px] p-6 ${a.bg}`} aria-hidden="true">
+    <div className={`relative flex h-full flex-col justify-between overflow-hidden rounded-[22px] p-5 sm:p-6 ${a.bg}`} aria-hidden="true">
       <div className={`animate-drift absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl ${a.glow}`} />
       <span className={`relative text-[11px] font-medium uppercase tracking-[0.2em] ${a.sub}`}>YMS · {post.category}</span>
       <span
         className={`relative font-serif italic leading-[0.95] tracking-[-0.02em] transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-1 ${a.text} ${
-          large ? "text-5xl sm:text-6xl" : "text-4xl"
+          large ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"
         }`}
       >
         {post.category || "Blog"}
@@ -107,7 +107,7 @@ function PostCard({ post, lang, i }: { post: PostMeta; lang: Lang; i: number }) 
         </div>
         <div className="flex flex-1 flex-col p-4 pt-5">
           <Meta post={post} lang={lang} />
-          <h3 className="mt-4 text-xl font-semibold leading-snug tracking-[-0.02em] text-ink">{post.title}</h3>
+          <h3 className="mt-4 text-lg font-semibold leading-snug sm:text-xl tracking-[-0.02em] text-ink">{post.title}</h3>
           <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/55">{post.excerpt}</p>
           <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-ink">
             {ui[lang].blog.read}
@@ -127,7 +127,7 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
   return (
     <Shell>
       <section className="mx-auto max-w-6xl px-5 pb-24 sm:px-8 md:pb-32">
-        <div className="grid gap-6 md:grid-cols-2 md:items-end">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-end">
           <div>
             <Reveal>
               <Eyebrow index="YMS">{t.label}</Eyebrow>
@@ -147,12 +147,12 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
           <Reveal delay={200} className="mt-14 md:mt-20">
             <Link
               href={blogPath(lang, featured.slug)}
-              className="group grid overflow-hidden rounded-[32px] border border-ink/[0.07] bg-white p-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:shadow-[0_40px_80px_-40px_rgba(11,18,32,0.25)] md:grid-cols-[1.1fr_1fr]"
+              className="group grid grid-cols-1 overflow-hidden rounded-[32px] border border-ink/[0.07] bg-white p-3 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] hover:shadow-[0_40px_80px_-40px_rgba(11,18,32,0.25)] md:grid-cols-[1.1fr_1fr]"
             >
-              <div className="aspect-[16/9] md:self-center">
+              <div className="aspect-[16/9] min-w-0 md:self-center">
                 <Cover post={featured} i={0} large />
               </div>
-              <div className="flex flex-col p-5 sm:p-8 md:p-10">
+              <div className="flex min-w-0 flex-col p-5 sm:p-8 md:p-10">
                 <Meta post={featured} lang={lang} />
                 <h2 className="mt-5 text-2xl font-semibold leading-[1.12] tracking-[-0.03em] text-ink sm:text-3xl lg:text-4xl">{featured.title}</h2>
                 <p className="mt-4 text-base leading-relaxed text-ink/55">{featured.excerpt}</p>
@@ -168,7 +168,7 @@ export async function BlogIndex({ lang }: { lang: Lang }) {
         )}
 
         {rest.length > 0 && (
-          <div className={`mt-6 grid gap-6 md:grid-cols-2 ${rest.length > 2 ? "lg:grid-cols-3" : ""}`}>
+          <div className={`mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 ${rest.length > 2 ? "lg:grid-cols-3" : ""}`}>
             {rest.map((post, i) => (
               <PostCard key={post.slug} post={post} lang={lang} i={i} />
             ))}
@@ -250,7 +250,7 @@ export async function BlogArticle({ lang, slug }: { lang: Lang; slug: string }) 
       {others.length > 0 && (
         <section className="mx-auto mt-24 max-w-6xl px-5 pb-24 sm:px-8 md:pb-32">
           <h2 className="text-xl font-semibold tracking-[-0.03em] text-ink sm:text-2xl lg:text-3xl">{t.more}</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             {others.map((p, i) => (
               <PostCard key={p.slug} post={p} lang={lang} i={i} />
             ))}
