@@ -11,6 +11,7 @@ import * as migration_20261122_142035_lead_pipeline from './20261122_142035_lead
 import * as migration_20261123_090000_project_woodnest from './20261123_090000_project_woodnest';
 import * as migration_20261123_100000_woodnest_mockup from './20261123_100000_woodnest_mockup';
 import * as migration_20261123_110000_post_instagram_marketplace from './20261123_110000_post_instagram_marketplace';
+import * as migration_20261123_120000_project_hidden from './20261123_120000_project_hidden';
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20261123_110000_post_instagram_marketplace.up,
     down: migration_20261123_110000_post_instagram_marketplace.down,
     name: '20261123_110000_post_instagram_marketplace',
+  },
+  {
+    up: migration_20261123_120000_project_hidden.up,
+    down: migration_20261123_120000_project_hidden.down,
+    name: '20261123_120000_project_hidden',
   },
 ];

@@ -84,10 +84,11 @@ export default async function ServiceView(props: Props) {
   const isCustom = props.kind === "service" && props.service.tierIndex === null
 
   const wanted = props.kind === "service" ? props.service.projects : site.projects.map((p) => p.slug)
-  const projects = wanted
+  const picked = wanted
     .map((slug) => site.projects.find((p) => p.slug === slug))
     .filter((p): p is Project => Boolean(p))
-    .slice(0, 3)
+  // A listed project may be hidden in the CMS: top up with other projects so there are still three.
+  const projects = [...picked, ...site.projects.filter((p) => !picked.includes(p))].slice(0, 3)
 
   const waText = tier ? tierMessage(t.wa.tier, tier.name, tier.price) : isCustom ? t.wa.custom : t.wa.general
   const wa = waLink(site.settings.waNumber, waText)

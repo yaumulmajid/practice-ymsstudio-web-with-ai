@@ -47,7 +47,15 @@ export const getSite = cache(async (lang: Lang): Promise<SiteData> => {
   const [home, site, projectDocs, reviewDocs, ...slugLists] = await Promise.all([
     payload.findGlobal({ slug: "home-page", depth: 0, context: { lang } }) as Promise<any>,
     payload.findGlobal({ slug: "site-settings", depth: 0, context: { lang } }) as Promise<any>,
-    payload.find({ collection: "projects", depth: 1, limit: 100, sort: "sortOrder", pagination: false, context: { lang } }),
+    payload.find({
+      collection: "projects",
+      where: { hidden: { not_equals: true } },
+      depth: 1,
+      limit: 100,
+      sort: "sortOrder",
+      pagination: false,
+      context: { lang },
+    }),
     payload.find({ collection: "reviews", depth: 0, limit: 100, sort: "sortOrder", pagination: false, context: { lang } }),
     ...LANGS.map((l) => getPosts(l)),
   ])

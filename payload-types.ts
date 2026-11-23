@@ -176,6 +176,7 @@ export interface Project {
    */
   sortOrder?: number | null;
   showInHero?: boolean | null;
+  hidden?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -505,6 +506,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   slug?: T;
   sortOrder?: T;
   showInHero?: T;
+  hidden?: T;
   updatedAt?: T;
   createdAt?: T;
 }

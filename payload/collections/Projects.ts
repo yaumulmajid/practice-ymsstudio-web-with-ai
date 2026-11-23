@@ -11,7 +11,7 @@ export const Projects: CollectionConfig = {
   admin: {
     group: 'Konten',
     useAsTitle: 'client',
-    defaultColumns: ['client', 'url', 'showInHero', 'sortOrder'],
+    defaultColumns: ['client', 'url', 'showInHero', 'hidden', 'sortOrder'],
     description:
       'Website di section Karya. Centang "Tampilkan di Hero" untuk showcase paling atas. Isi bagian Studi Kasus agar halaman detail project (/karya/slug) lebih lengkap.',
   },
@@ -53,5 +53,12 @@ export const Projects: CollectionConfig = {
     slugField('client'),
     sortOrderField,
     { name: 'showInHero', label: 'Tampilkan di Hero', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
+    {
+      name: 'hidden',
+      label: 'Sembunyikan dari website',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: { position: 'sidebar', description: 'Misalnya saat website klien sedang tidak bisa dibuka. Data tetap tersimpan.' },
+    },
   ],
 }
