@@ -2,7 +2,7 @@
 
 A web project built with Next.js and TypeScript, deployed on Vercel.
 
-**Live site:** https://ymsstudio.vercel.app
+**Live site:** https://ymsstudio.id
 
 ## Tech Stack
 
