@@ -78,7 +78,7 @@ function Showcase() {
           href={current.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative block aspect-[16/10] overflow-hidden rounded-[20px] bg-[#e8ebef] sm:aspect-[16/9]"
+          className="group relative block aspect-[10/7] overflow-hidden rounded-[20px] bg-[#e8ebef] sm:aspect-[16/9]"
           aria-label={`${t.hero.visit} ${domain(current.url)}`}
         >
           {projects.map((p, i) => (
@@ -95,8 +95,8 @@ function Showcase() {
               }`}
             />
           ))}
-          {/* Caption */}
-          <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3 sm:inset-x-5 sm:bottom-5">
+          {/* Caption over the image (tablet & desktop) */}
+          <div className="absolute inset-x-5 bottom-5 hidden items-end justify-between gap-3 sm:flex">
             <div key={current.url} className="fade-up rounded-2xl bg-white/85 px-4 py-3 shadow-lg ring-1 ring-ink/[0.05] backdrop-blur-md" style={d(150)}>
               <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-brand">{current.category}</p>
               <p className="mt-0.5 text-sm font-semibold text-ink sm:text-base">{current.title}</p>
@@ -105,6 +105,23 @@ function Showcase() {
               <ArrowUpRight size={18} />
             </span>
           </div>
+        </a>
+
+        {/* Caption below the image (mobile), so it never covers the screenshot */}
+        <a
+          href={current.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between gap-3 px-2 pb-1 pt-3 sm:hidden"
+          aria-label={`${t.hero.visit} ${domain(current.url)}`}
+        >
+          <div key={current.url} className="fade-up min-w-0" style={d(0)}>
+            <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-brand">{current.category}</p>
+            <p className="mt-0.5 truncate text-sm font-semibold text-ink">{current.title}</p>
+          </div>
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white">
+            <ArrowUpRight size={16} />
+          </span>
         </a>
       </div>
 
