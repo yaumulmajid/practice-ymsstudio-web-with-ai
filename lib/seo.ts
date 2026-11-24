@@ -48,16 +48,16 @@ export function buildStructuredData(site: SiteData) {
     priceRange: "Rp 2.000.000 - Rp 6.000.000",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Blok A5 No 29, Jl. Wimbledon Raya, Jatireja, Cikarang Timur",
-      addressLocality: "Bekasi",
+      streetAddress: "Graha Asri, Jl. Citanduy Timur 1A, Lavender Hijau Blok UU No. 6, Simpangan, Cikarang Utara",
+      addressLocality: "Kabupaten Bekasi",
       addressRegion: "Jawa Barat",
-      postalCode: "17533",
+      postalCode: "17534",
       addressCountry: "ID",
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: -6.23827,
-      longitude: 106.975571,
+      latitude: -6.2788885,
+      longitude: 107.1836068,
     },
     ...(settings.mapsUrl ? { hasMap: settings.mapsUrl } : {}),
     openingHoursSpecification: [

@@ -360,11 +360,11 @@ const cikarang: Record<Lang, LocalCopy> = {
     title: "Jasa pembuatan website di",
     em: "Cikarang",
     description:
-      "Jasa pembuatan website di Cikarang untuk UMKM, vendor kawasan industri, dan perusahaan: company profile, landing page, toko online, dan web app. Studio di Cikarang Timur, mulai Rp 2 juta.",
+      "Jasa pembuatan website di Cikarang untuk UMKM, vendor kawasan industri, dan perusahaan: company profile, landing page, toko online, dan web app. Studio di Cikarang Utara, mulai Rp 2 juta.",
     intro:
-      "Studio YMS Studio ada di Cikarang Timur. Kami membuat website untuk UMKM, vendor pabrik, dan perusahaan di Cikarang dan kawasan industrinya, mulai dari Jababeka, Lippo Cikarang, sampai MM2100, supaya bisnis Anda terlihat meyakinkan dan mudah ditemukan lewat Google.",
+      "Studio YMS Studio ada di Cikarang Utara. Kami membuat website untuk UMKM, vendor pabrik, dan perusahaan di Cikarang dan kawasan industrinya, mulai dari Jababeka, Lippo Cikarang, sampai MM2100, supaya bisnis Anda terlihat meyakinkan dan mudah ditemukan lewat Google.",
     areasTitle: "Area yang kami layani",
-    areas: ["Cikarang Timur", "Cikarang Utara", "Cikarang Selatan", "Cikarang Barat", "Cikarang Pusat", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "Seluruh Indonesia (online)"],
+    areas: ["Cikarang Utara", "Cikarang Timur", "Cikarang Selatan", "Cikarang Barat", "Cikarang Pusat", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "Seluruh Indonesia (online)"],
     remote:
       "Karena satu kota, pertemuan langsung di Cikarang mudah diatur. Konsultasi juga bisa lewat WhatsApp atau video call kalau lebih praktis.",
     forWho: [
@@ -374,13 +374,13 @@ const cikarang: Record<Lang, LocalCopy> = {
       "Perusahaan yang lebih nyaman bekerja sama dengan tim yang bisa ditemui langsung.",
     ],
     benefits: [
-      { title: "Studio di Cikarang", text: "Kami berkantor di Jatireja, Cikarang Timur. Rapat, pengambilan foto lokasi, atau serah terima bisa dilakukan tatap muka." },
+      { title: "Studio di Cikarang", text: "Kami berkantor di Simpangan, Cikarang Utara. Rapat, pengambilan foto lokasi, atau serah terima bisa dilakukan tatap muka." },
       { title: "Paham bisnis industri", text: "Company profile yang menonjolkan sertifikasi, kapasitas produksi, dan daftar klien, yang biasa diminta oleh bagian purchasing pabrik." },
       { title: "SEO lokal", text: "Halaman, data terstruktur, dan Google Business Profile disiapkan agar bisnis Anda muncul untuk pencarian seperti \"jasa ... Cikarang\"." },
       { title: "Harga transparan", text: "Paket mulai Rp 2 juta dengan rincian jelas, tanpa biaya tersembunyi, plus dukungan via WhatsApp setelah website live." },
     ],
     faqs: [
-      { q: "Di mana lokasi YMS Studio?", a: "Kami berlokasi di Jatireja, Cikarang Timur, Kabupaten Bekasi, Jawa Barat. Lokasinya bisa dilihat di Google Maps melalui tautan di footer website." },
+      { q: "Di mana lokasi YMS Studio?", a: "Kami berlokasi di Graha Asri, Simpangan, Cikarang Utara, Kabupaten Bekasi, Jawa Barat. Lokasinya bisa dilihat di Google Maps melalui tautan di footer website." },
       { q: "Berapa biaya pembuatan website di Cikarang?", a: "Paket kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
       { q: "Apakah bisa bertemu langsung?", a: "Bisa. Untuk klien di Cikarang dan sekitarnya, kami bisa datang ke kantor Anda atau bertemu di lokasi yang disepakati." },
       { q: "Apakah bisa membuat company profile untuk vendor pabrik?", a: "Bisa. Kami menyusun halaman profil perusahaan, produk atau layanan, sertifikasi, galeri proyek, dan daftar klien, juga versi bahasa Inggris bila dibutuhkan untuk klien asing di kawasan industri." },
@@ -392,11 +392,11 @@ const cikarang: Record<Lang, LocalCopy> = {
     title: "Web design & development in",
     em: "Cikarang",
     description:
-      "Website design and development in Cikarang for small businesses, industrial-estate vendors, and companies: company profiles, landing pages, online stores, and web apps. Studio in East Cikarang, from IDR 2 million.",
+      "Website design and development in Cikarang for small businesses, industrial-estate vendors, and companies: company profiles, landing pages, online stores, and web apps. Studio in North Cikarang, from IDR 2 million.",
     intro:
-      "YMS Studio is based in East Cikarang. We build websites for small businesses, factory vendors, and companies in Cikarang and its industrial estates, from Jababeka and Lippo Cikarang to MM2100, so your business looks credible and is easy to find on Google.",
+      "YMS Studio is based in North Cikarang. We build websites for small businesses, factory vendors, and companies in Cikarang and its industrial estates, from Jababeka and Lippo Cikarang to MM2100, so your business looks credible and is easy to find on Google.",
     areasTitle: "Areas we serve",
-    areas: ["East Cikarang", "North Cikarang", "South Cikarang", "West Cikarang", "Central Cikarang", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "All of Indonesia (online)"],
+    areas: ["North Cikarang", "East Cikarang", "South Cikarang", "West Cikarang", "Central Cikarang", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "All of Indonesia (online)"],
     remote: "We're in the same town, so in-person meetings in Cikarang are easy to arrange. Consultations can also happen over WhatsApp or video call if that's easier.",
     forWho: [
       "Vendors and suppliers in Cikarang's industrial estates (Jababeka, MM2100, EJIP, Delta Silicon, GIIC) that need a company profile for tenders and prospects.",
@@ -405,13 +405,13 @@ const cikarang: Record<Lang, LocalCopy> = {
       "Companies that prefer working with a team they can meet in person.",
     ],
     benefits: [
-      { title: "A studio in Cikarang", text: "Our office is in Jatireja, East Cikarang. Meetings, on-site photos, and handover can happen face to face." },
+      { title: "A studio in Cikarang", text: "Our office is in Simpangan, North Cikarang. Meetings, on-site photos, and handover can happen face to face." },
       { title: "We know industrial buyers", text: "Company profiles that highlight certifications, production capacity, and client lists, the things factory purchasing teams ask for." },
       { title: "Local SEO", text: "Pages, structured data, and Google Business Profile are set up so you appear for searches like \"... service Cikarang\"." },
       { title: "Transparent pricing", text: "Packages from IDR 2 million with clear details and no hidden fees, plus WhatsApp support once your site is live." },
     ],
     faqs: [
-      { q: "Where is YMS Studio located?", a: "We're in Jatireja, East Cikarang, Bekasi Regency, West Java. You can find us on Google Maps via the link in the website footer." },
+      { q: "Where is YMS Studio located?", a: "We're in Graha Asri, Simpangan, North Cikarang, Bekasi Regency, West Java. You can find us on Google Maps via the link in the website footer." },
       { q: "How much does a website cost in Cikarang?", a: "Our packages start at IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
       { q: "Can we meet in person?", a: "Yes. For clients in and around Cikarang, we can come to your office or meet at a place that suits you." },
       { q: "Can you build a company profile for a factory vendor?", a: "Yes. We put together the company profile, products or services, certifications, project gallery, and client list, with an English version if you work with foreign clients in the industrial estates." },
@@ -446,7 +446,7 @@ const bekasi: Record<Lang, LocalCopy> = {
       { title: "Dukungan setelah live", text: "Bantuan teknis via WhatsApp setelah website online, plus opsi maintenance bulanan." },
     ],
     faqs: [
-      { q: "Di mana lokasi YMS Studio?", a: "Kami berlokasi di Jatireja, Cikarang Timur, Kabupaten Bekasi, Jawa Barat. Lokasinya bisa dilihat di Google Maps melalui tautan di footer website." },
+      { q: "Di mana lokasi YMS Studio?", a: "Kami berlokasi di Graha Asri, Simpangan, Cikarang Utara, Kabupaten Bekasi, Jawa Barat. Lokasinya bisa dilihat di Google Maps melalui tautan di footer website." },
       { q: "Apakah melayani klien di luar Bekasi?", a: "Ya. Kami melayani klien di seluruh Indonesia secara online; seluruh proses dari konsultasi hingga serah terima bisa dilakukan jarak jauh." },
       { q: "Berapa biaya pembuatan website di Bekasi?", a: "Paket kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
       { q: "Apakah bisa membantu bisnis muncul di Google Maps?", a: "Bisa. Paket company profile dan toko online sudah termasuk setup Google Business Profile, yang menentukan tampilnya bisnis Anda di Google Maps." },
@@ -476,7 +476,7 @@ const bekasi: Record<Lang, LocalCopy> = {
       { title: "Support after launch", text: "Technical help over WhatsApp once your website is live, plus optional monthly maintenance." },
     ],
     faqs: [
-      { q: "Where is YMS Studio located?", a: "We're in Jatireja, East Cikarang, Bekasi Regency, West Java. You can find us on Google Maps via the link in the website footer." },
+      { q: "Where is YMS Studio located?", a: "We're in Graha Asri, Simpangan, North Cikarang, Bekasi Regency, West Java. You can find us on Google Maps via the link in the website footer." },
       { q: "Do you work with clients outside Bekasi?", a: "Yes. We serve clients across Indonesia online; the whole process from consultation to handover can be done remotely." },
       { q: "How much does a website cost in Bekasi?", a: "Our packages start at IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
       { q: "Can you help my business show up on Google Maps?", a: "Yes. The company profile and online store packages include Google Business Profile setup, which is what puts your business on Google Maps." },
@@ -573,7 +573,7 @@ const karawang: Record<Lang, LocalCopy> = {
       { title: "Harga transparan", text: "Paket mulai Rp 2 juta dengan rincian jelas, tanpa biaya tersembunyi." },
     ],
     faqs: [
-      { q: "Apakah bisa bertemu langsung di Karawang?", a: "Bisa. Studio kami di Cikarang Timur, dekat dengan Karawang, jadi pertemuan langsung mudah dijadwalkan bila dibutuhkan." },
+      { q: "Apakah bisa bertemu langsung di Karawang?", a: "Bisa. Studio kami di Cikarang Utara, dekat dengan Karawang, jadi pertemuan langsung mudah dijadwalkan bila dibutuhkan." },
       { q: "Berapa biaya pembuatan website di Karawang?", a: "Paket kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
       { q: "Apakah website bisa dua bahasa?", a: "Bisa. Banyak vendor industri membutuhkan versi Bahasa Inggris untuk klien asing; fitur ini bisa ditambahkan ke paket company profile." },
       { q: "Apakah bisa membantu muncul di Google Maps?", a: "Bisa. Paket company profile dan toko online sudah termasuk setup Google Business Profile, yang menentukan tampilnya bisnis Anda di Google Maps." },
@@ -603,7 +603,7 @@ const karawang: Record<Lang, LocalCopy> = {
       { title: "Transparent pricing", text: "Packages from IDR 2 million with clear details and no hidden fees." },
     ],
     faqs: [
-      { q: "Can we meet in person in Karawang?", a: "Yes. Our studio is in East Cikarang, close to Karawang, so in-person meetings are easy to schedule when needed." },
+      { q: "Can we meet in person in Karawang?", a: "Yes. Our studio is in North Cikarang, close to Karawang, so in-person meetings are easy to schedule when needed." },
       { q: "How much does a website cost in Karawang?", a: "Our packages start at IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
       { q: "Can the website be bilingual?", a: "Yes. Many industrial vendors need an English version for foreign clients; it can be added to the company profile package." },
       { q: "Can you help us show up on Google Maps?", a: "Yes. The company profile and online store packages include Google Business Profile setup, which is what puts your business on Google Maps." },
