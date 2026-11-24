@@ -62,6 +62,14 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              {/* Service pages beyond the CMS footer labels (e.g. white label). */}
+              {services.slice(f.services.length).map((sv) => (
+                <li key={sv.slug}>
+                  <Link href={localePath(lang, PATHS.service(sv.slug))} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                    {sv.copy[lang].name}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link href={localePath(lang, PATHS.local("cikarang"))} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                   {u.footer.local}

@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight, Calculator, Check, Clock } from "lucide-react
 import { Reveal, SectionHead } from "@/components/motion"
 import { localePath, PATHS, tierMessage } from "@/lib/i18n"
 import { pui } from "@/lib/pages-ui"
+import { usdApprox } from "@/lib/price"
 import { useLang, useT, useWa } from "@/components/lang"
 
 export default function Pricing() {
@@ -64,6 +65,9 @@ export default function Pricing() {
                       <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>{p.currency}</span>
                       <span className="text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">{tier.price}</span>
                     </div>
+                    {lang === "en" && usdApprox(tier.price) && (
+                      <p className={`mt-1 text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{usdApprox(tier.price)} at current rates</p>
+                    )}
                   </div>
                   <p className={`relative mt-3 inline-flex items-center gap-1.5 text-xs ${dark ? "text-white/55" : "text-ink/50"}`}>
                     <Clock size={12} /> {tier.timeline}

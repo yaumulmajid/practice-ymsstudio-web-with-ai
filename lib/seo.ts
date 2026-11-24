@@ -6,6 +6,7 @@ import type { SiteData } from "@/lib/content"
 export function buildStructuredData(site: SiteData) {
   const faqs = site.dict.faq.items
   const { settings } = site
+  const en = site.lang === "en"
   const social = [settings.instagram, settings.facebook].filter(Boolean)
   const rated = site.dict.reviews.items.filter((r) => r.rating >= 1 && r.rating <= 5 && r.name)
   return {
@@ -21,7 +22,8 @@ export function buildStructuredData(site: SiteData) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     url: "https://ymsstudio.id",
-    name: "YMS Studio — Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
+    name: en ? "YMS Studio — Web Design & Development Company in Indonesia" : "YMS Studio — Jasa Website UMKM Profesional (Desain Custom & Bergaransi)",
+    inLanguage: en ? "en-US" : "id-ID",
     publisher: {
       "@type": "Organization",
       name: "YMS Studio",
@@ -35,12 +37,13 @@ export function buildStructuredData(site: SiteData) {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://ymsstudio.id/#services",
-    name: "YMS Studio - Jasa Pembuatan Website UMKM",
+    name: en ? "YMS Studio - Web Design & Development Company in Indonesia" : "YMS Studio - Jasa Pembuatan Website UMKM",
     url: "https://ymsstudio.id",
     image: "https://ymsstudio.id/logo.webp",
     logo: "https://ymsstudio.id/logo.webp",
-    description:
-      "Jasa pembuatan website profesional untuk UMKM Indonesia. Cepat, mobile-friendly, SEO-ready, mulai Rp 2 juta, dan bergaransi.",
+    description: en
+      ? "Web design and development studio in Cikarang, Indonesia: landing pages, company profiles, online stores, custom web apps, and white-label work for agencies. Fast, mobile-friendly, SEO-ready, from IDR 2 million."
+      : "Jasa pembuatan website profesional untuk UMKM Indonesia. Cepat, mobile-friendly, SEO-ready, mulai Rp 2 juta, dan bergaransi.",
     telephone: `+${settings.waNumber}`,
     priceRange: "Rp 2.000.000 - Rp 6.000.000",
     address: {
@@ -66,7 +69,9 @@ export function buildStructuredData(site: SiteData) {
       },
     ],
     sameAs: [...social, `https://wa.me/${settings.waNumber}`],
-    serviceType: [
+    serviceType: en
+      ? ["Web Design", "Web Development", "Landing Page Design", "Company Profile Website", "Online Store Development", "Custom Web App Development", "WordPress Development", "Next.js Development", "White-Label Web Development"]
+      : [
       "Jasa Website UMKM",
       "Jasa Landing Page",
       "Jasa Toko Online",
@@ -76,6 +81,8 @@ export function buildStructuredData(site: SiteData) {
       "Website",
       "Jasa Website",
     ],
+    areaServed: [{ "@type": "Country", name: "Indonesia" }, { "@type": "Place", name: en ? "Worldwide (remote)" : "Seluruh dunia (online)" }],
+    knowsLanguage: ["id", "en"],
     // Rating from the reviews actually published in the CMS (never a made-up count).
     ...(rated.length
       ? {
@@ -98,7 +105,7 @@ export function buildStructuredData(site: SiteData) {
   service: {
     "@context": "https://schema.org",
     "@type": "Service",
-    serviceType: "Jasa Pembuatan Website UMKM",
+    serviceType: en ? "Web Design & Development" : "Jasa Pembuatan Website UMKM",
     provider: {
       "@type": "LocalBusiness",
       name: "YMS Studio",
@@ -108,8 +115,9 @@ export function buildStructuredData(site: SiteData) {
       "@type": "Country",
       name: "Indonesia",
     },
-    description:
-      "Jasa pembuatan website profesional untuk UMKM Indonesia. Termasuk landing page, toko online, company profile mulai Rp 2 juta.",
+    description: en
+      ? "Professional web design and development from Indonesia: landing pages, online stores, and company profiles from IDR 2 million, plus custom web apps."
+      : "Jasa pembuatan website profesional untuk UMKM Indonesia. Termasuk landing page, toko online, company profile mulai Rp 2 juta.",
     offers: {
       "@type": "Offer",
       price: "2000000",
@@ -144,7 +152,7 @@ export function buildMetadata(site: SiteData): Metadata {
     keywords:
       lang === "id"
         ? ["website UMKM", "jasa website UMKM", "jasa pembuatan website", "jasa website profesional", "jasa toko online", "jasa company profile", "jasa landing page", "YMS Studio"]
-        : ["web design Indonesia", "website development Indonesia", "small business website", "online store development", "company profile website", "landing page design", "YMS Studio"],
+        : ["web design Indonesia", "web development company Indonesia", "web developer Indonesia", "outsource web development Indonesia", "white label web development", "web design Cikarang", "web design Jakarta", "YMS Studio"],
     authors: [{ name: "YMS Studio" }],
     creator: "YMS Studio",
     publisher: "YMS Studio",

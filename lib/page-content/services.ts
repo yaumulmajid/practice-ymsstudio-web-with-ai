@@ -62,7 +62,7 @@ export const services: Service[] = [
       en: {
         name: "Landing Page",
         title: "Landing page",
-        em: "design",
+        em: "design in Indonesia",
         description:
           "Landing page design for small businesses and ad campaigns: custom design, fast, mobile-friendly, basic SEO, and a WhatsApp button. Ready in 5–7 business days.",
         intro:
@@ -123,7 +123,7 @@ export const services: Service[] = [
       en: {
         name: "Company Profile",
         title: "Company profile",
-        em: "websites",
+        em: "websites in Indonesia",
         description:
           "Professional company profile website design: up to 6 pages + blog, a CMS to edit your own content, full SEO, Google Business Profile setup, and business email.",
         intro:
@@ -184,7 +184,7 @@ export const services: Service[] = [
       en: {
         name: "Online Store",
         title: "Online store",
-        em: "development",
+        em: "development in Indonesia",
         description:
           "Online store website development: product catalogue, cart & checkout, payment gateway (Midtrans/Xendit), automatic shipping rates, WhatsApp orders, and an admin dashboard.",
         intro:
@@ -245,7 +245,7 @@ export const services: Service[] = [
       en: {
         name: "Custom Web App",
         title: "Custom web app",
-        em: "development",
+        em: "development in Indonesia",
         description:
           "Custom web app and system development: information systems, booking & reservations, member portals, dashboards, and API integrations, built around your business workflow.",
         intro:
@@ -267,6 +267,68 @@ export const services: Service[] = [
           { q: "How long does it take?", a: "It depends on scope. A simple MVP can take a few weeks; larger systems are delivered module by module so you can start using them sooner." },
           { q: "Do I get the source code?", a: "Yes. Once paid in full, the source code and design created for you belong to you, as set out in our terms of service." },
           { q: "Is there support after launch?", a: "There's a support period for bug fixes, and we offer maintenance plans for further feature development." },
+        ],
+      },
+    },
+  },
+  {
+    slug: "jasa-website-white-label",
+    tierIndex: null,
+    projects: ["lan-ri", "loopnet", "ibrahima-place"],
+    copy: {
+      id: {
+        name: "White Label & Klien Luar Negeri",
+        title: "Jasa website",
+        em: "white label untuk agensi",
+        description:
+          "Jasa pembuatan website white label untuk agensi digital, freelancer, dan klien luar negeri: Anda tetap memegang klien, kami mengerjakan desain dan development tanpa mencantumkan nama kami. Bisa dengan NDA, komunikasi dalam bahasa Indonesia atau Inggris.",
+        intro:
+          "Untuk agensi dan freelancer yang kebanjiran proyek, serta bisnis di luar negeri yang ingin bekerja sama dengan studio di Indonesia. Kami mengerjakan landing page, company profile, toko online, dan web app atas nama brand Anda, dengan alur kerja dan komunikasi yang jelas dari brief sampai serah terima.",
+        forWho: [
+          "Agensi digital dan freelancer yang butuh tim produksi tambahan tanpa merekrut karyawan baru.",
+          "Agensi luar negeri (misalnya Singapura, Malaysia, Australia) yang mencari partner development di Indonesia.",
+          "Perusahaan asing di Indonesia yang butuh website dwibahasa Indonesia–Inggris.",
+          "Startup dan bisnis luar negeri yang ingin membuat website atau web app dengan biaya lebih efisien.",
+        ],
+        benefits: [
+          { title: "Tanpa nama kami", text: "Website diserahkan atas nama brand Anda. Tidak ada kredit atau link YMS Studio, dan NDA bisa ditandatangani sebelum proyek dimulai." },
+          { title: "Komunikasi dua bahasa", text: "Brief, update progres, dan dokumentasi bisa dalam bahasa Indonesia atau Inggris, lewat email, WhatsApp, Slack, atau video call." },
+          { title: "Next.js & WordPress", text: "Kami bisa bekerja di repository, hosting, dan alur deploy milik Anda atau klien Anda, sesuai standar tim Anda." },
+          { title: "Penawaran per proyek", text: "Harga dihitung dari lingkup pekerjaan dan dikirim sebelum mulai, dalam Rupiah atau dolar AS." },
+        ],
+        faqs: [
+          { q: "Apa itu website white label?", a: "Kami yang mengerjakan websitenya, tetapi Anda yang menyerahkan ke klien atas nama brand Anda. Klien Anda tidak perlu tahu bahwa pengerjaannya dibantu oleh kami." },
+          { q: "Apakah bisa menandatangani NDA?", a: "Bisa. NDA ditandatangani sebelum Anda membagikan detail klien atau proyek." },
+          { q: "Berapa biayanya?", a: "Paket standar kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Proyek white label dan web app dihitung per lingkup pekerjaan." },
+          { q: "Bagaimana sistem pembayarannya?", a: "Uang muka di awal proyek dan pelunasan setelah website disetujui, sebelum serah terima. Mata uang dan metode pembayaran disepakati di penawaran." },
+        ],
+      },
+      en: {
+        name: "Outsourced Web Development",
+        title: "Outsource web development to",
+        em: "Indonesia",
+        description:
+          "Outsource web design and development to a studio in Indonesia: white-label builds for agencies, plus landing pages, company profiles, online stores, and custom web apps in Next.js or WordPress. English communication, NDA available, quotes in USD or IDR.",
+        intro:
+          "For agencies with more projects than hands, and for businesses abroad that want a reliable development partner in Indonesia. We build landing pages, company profiles, online stores, and web apps under your brand, with a clear process and clear communication from brief to handover.",
+        forWho: [
+          "Digital agencies and freelancers that need extra production capacity without hiring.",
+          "Agencies in Singapore, Malaysia, Australia, and beyond looking for a development partner in Indonesia.",
+          "Foreign companies operating in Indonesia that need a bilingual English–Indonesian website.",
+          "Startups and businesses abroad that want a website or web app built cost-effectively.",
+        ],
+        benefits: [
+          { title: "White label", text: "The site is delivered under your brand, with no YMS Studio credit or link. We're happy to sign an NDA before the project starts." },
+          { title: "Clear communication in English", text: "Briefs, progress updates, and documentation in English, over email, Slack, WhatsApp, or video call. We work on UTC+7, which overlaps with Asia-Pacific business hours and European mornings." },
+          { title: "Next.js & WordPress", text: "We can work in your repository, hosting, and deployment pipeline, following your team's standards." },
+          { title: "Fixed quotes", text: "Each project is quoted from its scope before work begins, in US dollars or Indonesian rupiah." },
+        ],
+        faqs: [
+          { q: "How much does it cost to outsource a website to Indonesia?", a: "Our standard packages start at IDR 2 million for a landing page (about US$120), IDR 3.5 million for a company profile (about US$210), and IDR 6 million for an online store (about US$365), at current exchange rates. White-label and custom web app projects are quoted per scope." },
+          { q: "What does white label mean here?", a: "We build the website, and you deliver it to your client under your own brand. There's no YMS Studio credit on the site, and your client doesn't need to know we were involved." },
+          { q: "Which time zone do you work in?", a: "We're in Indonesia (UTC+7). That overlaps fully with Singapore, Malaysia, and Australia, and with European mornings. Updates are shared on a live preview link, so you can review progress whenever suits you." },
+          { q: "Will you sign an NDA?", a: "Yes. We sign an NDA before you share client or project details." },
+          { q: "How does payment work?", a: "A down payment at the start and the balance once you approve the website, before handover. The currency and payment method are agreed in the quote." },
         ],
       },
     },

@@ -12,15 +12,7 @@ import { localePath, PATHS, tierMessage, waLink, type Lang, type Project, type T
 import { absUrl, breadcrumbLd, crumbs, faqLd } from "@/lib/page-meta"
 import { LOCAL_CITIES, LOCAL_SHORT, locals, services, type LocalCity, type LocalCopy, type Service, type ServiceCopy } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
-
-/** "2jt" → 2000000, "3,5jt" → 3500000 (for structured data). */
-export function priceToNumber(price: string): number | undefined {
-  const m = price.replace(/\s/g, "").match(/^([\d.,]+)(jt|juta|rb|ribu)?$/i)
-  if (!m) return undefined
-  const n = Number(m[1].replace(/\./g, "").replace(",", "."))
-  const unit = m[2]?.toLowerCase()
-  return Math.round(n * (unit?.startsWith("j") ? 1_000_000 : unit?.startsWith("r") ? 1_000 : 1))
-}
+import { priceToNumber, usdApprox } from "@/lib/price"
 
 const btnDark =
   "group inline-flex items-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep"
@@ -145,6 +137,7 @@ export default async function ServiceView(props: Props) {
                   <span className="text-2xl">{u.service.custom}</span>
                 )}
               </p>
+              {tier && lang === "en" && usdApprox(tier.price) && <p className="mt-1 text-sm text-ink/45">{usdApprox(tier.price)} at current rates</p>}
               {tier?.timeline && (
                 <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink/55">
                   <Clock size={15} /> {u.service.timeline}: {tier.timeline}
