@@ -176,6 +176,9 @@ export interface Project {
    */
   sortOrder?: number | null;
   showInHero?: boolean | null;
+  /**
+   * Misalnya saat website klien sedang tidak bisa dibuka. Data tetap tersimpan.
+   */
   hidden?: boolean | null;
   updatedAt: string;
   createdAt: string;

@@ -5,7 +5,7 @@ import type { Lang } from "@/lib/i18n"
 
 export const pui = {
   id: {
-    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Bekasi", alsoIn: "Juga di", cookies: "Pengaturan cookie" },
+    footer: { legalLabel: "Legal", toolsLabel: "Mulai", calculator: "Kalkulator biaya", brief: "Kontak & brief proyek", local: "Jasa website Cikarang", alsoIn: "Juga di", cookies: "Pengaturan cookie" },
     cookie: {
       title: "Kami memakai cookie",
       text: "Cookie analitik dan iklan (Google) membantu kami memahami kunjungan dan mengukur iklan. Website tetap bisa dipakai tanpa cookie ini.",
@@ -179,7 +179,7 @@ export const pui = {
     },
   },
   en: {
-    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Bekasi", alsoIn: "Also in", cookies: "Cookie settings" },
+    footer: { legalLabel: "Legal", toolsLabel: "Get started", calculator: "Cost calculator", brief: "Contact & project brief", local: "Web design in Cikarang", alsoIn: "Also in", cookies: "Cookie settings" },
     cookie: {
       title: "We use cookies",
       text: "Analytics and advertising cookies (Google) help us understand visits and measure our ads. The website works without them.",

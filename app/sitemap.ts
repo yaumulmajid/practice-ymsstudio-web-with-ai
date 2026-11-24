@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   const content: MetadataRoute.Sitemap = [
     ...services.flatMap((s) => shared(PATHS.service(s.slug), 0.9)),
-    ...LOCAL_CITIES.flatMap((c) => shared(PATHS.local(c), c === "bekasi" ? 0.9 : 0.8)),
+    ...LOCAL_CITIES.flatMap((c) => shared(PATHS.local(c), c === "cikarang" || c === "bekasi" ? 0.9 : 0.8)),
     ...shared(PATHS.calculator, 0.7),
     ...shared(PATHS.brief, 0.6),
     ...site.projects.flatMap((p) => shared(PATHS.project(p.slug), 0.6)),

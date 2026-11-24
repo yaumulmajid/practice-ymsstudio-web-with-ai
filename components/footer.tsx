@@ -63,13 +63,13 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href={localePath(lang, PATHS.local("bekasi"))} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
+                <Link href={localePath(lang, PATHS.local("cikarang"))} className="text-sm text-ink/70 transition-colors duration-300 hover:text-brand">
                   {u.footer.local}
                 </Link>
               </li>
               <li className="flex flex-wrap items-center gap-x-1.5 text-sm text-ink/45">
                 {u.footer.alsoIn}
-                {LOCAL_CITIES.filter((c) => c !== "bekasi").map((c, i) => (
+                {LOCAL_CITIES.filter((c) => c !== "cikarang").map((c, i) => (
                   <span key={c} className="inline-flex items-center gap-1.5">
                     {i > 0 && <span aria-hidden="true">·</span>}
                     <Link href={localePath(lang, PATHS.local(c))} className="text-ink/70 transition-colors duration-300 hover:text-brand">

@@ -294,8 +294,8 @@ export default async function ServiceView(props: Props) {
                     {s.copy[lang].name}
                   </Link>
                 ))}
-              <Link href={localePath(lang, PATHS.local("bekasi"))} className={btnLight}>
-                <MapPin size={15} /> {locals.bekasi.copy[lang].name}
+              <Link href={localePath(lang, PATHS.local("cikarang"))} className={btnLight}>
+                <MapPin size={15} /> {locals.cikarang.copy[lang].name}
               </Link>
             </div>
           </section>

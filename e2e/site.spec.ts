@@ -74,11 +74,11 @@ test.describe("pages", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "id")
   })
 
-  for (const city of ["bekasi", "jakarta", "karawang", "depok"]) {
+  for (const city of ["cikarang", "bekasi", "jakarta", "karawang", "depok"]) {
     test(`local page for ${city}`, async ({ page }) => {
       const res = await page.goto(`/jasa-website-${city}`)
       expect(res?.status()).toBe(200)
-      await expect(page.locator("h1")).toContainText(city === "bekasi" ? "Bekasi" : city.replace(/^./, (c) => c.toUpperCase()))
+      await expect(page.locator("h1")).toContainText(city.replace(/^./, (c) => c.toUpperCase()))
       const ld = await page.locator('script[type="application/ld+json"]').allTextContents()
       expect(ld.some((s) => s.includes('"areaServed"') && s.toLowerCase().includes(city))).toBe(true)
     })
@@ -157,7 +157,7 @@ test.describe("SEO endpoints", () => {
 
   test("sitemap lists the local pages", async ({ request }) => {
     const body = await (await request.get("/sitemap.xml")).text()
-    for (const city of ["bekasi", "jakarta", "karawang", "depok"]) expect(body).toContain(`/jasa-website-${city}`)
+    for (const city of ["cikarang", "bekasi", "jakarta", "karawang", "depok"]) expect(body).toContain(`/jasa-website-${city}`)
   })
 
   test("RSS feeds and the generated article image", async ({ request }) => {

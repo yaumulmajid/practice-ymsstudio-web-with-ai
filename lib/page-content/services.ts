@@ -276,10 +276,10 @@ export const services: Service[] = [
 export const getService = (slug: string) => services.find((s) => s.slug === slug)
 
 /** Local SEO pages: /jasa-website-<city>. The studio is in Cikarang (Bekasi Regency). */
-export const LOCAL_CITIES = ["bekasi", "jakarta", "karawang", "depok"] as const
+export const LOCAL_CITIES = ["cikarang", "bekasi", "jakarta", "karawang", "depok"] as const
 export type LocalCity = (typeof LOCAL_CITIES)[number]
 /** Short city names for links between local pages (kept separate so client bundles stay small). */
-export const LOCAL_SHORT: Record<LocalCity, string> = { bekasi: "Bekasi", jakarta: "Jakarta", karawang: "Karawang", depok: "Depok" }
+export const LOCAL_SHORT: Record<LocalCity, string> = { cikarang: "Cikarang", bekasi: "Bekasi", jakarta: "Jakarta", karawang: "Karawang", depok: "Depok" }
 
 export type LocalCopy = ServiceCopy & { areas: string[]; areasTitle: string; remote: string }
 
@@ -292,22 +292,88 @@ export type LocalPage = {
   copy: Record<Lang, LocalCopy>
 }
 
+const cikarang: Record<Lang, LocalCopy> = {
+  id: {
+    name: "Jasa Website Cikarang",
+    title: "Jasa pembuatan website di",
+    em: "Cikarang",
+    description:
+      "Jasa pembuatan website di Cikarang untuk UMKM, vendor kawasan industri, dan perusahaan: company profile, landing page, toko online, dan web app. Studio di Cikarang Timur, mulai Rp 2 juta.",
+    intro:
+      "Studio YMS Studio ada di Cikarang Timur. Kami membuat website untuk UMKM, vendor pabrik, dan perusahaan di Cikarang dan kawasan industrinya, mulai dari Jababeka, Lippo Cikarang, sampai MM2100, supaya bisnis Anda terlihat meyakinkan dan mudah ditemukan lewat Google.",
+    areasTitle: "Area yang kami layani",
+    areas: ["Cikarang Timur", "Cikarang Utara", "Cikarang Selatan", "Cikarang Barat", "Cikarang Pusat", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "Seluruh Indonesia (online)"],
+    remote:
+      "Karena satu kota, pertemuan langsung di Cikarang mudah diatur. Konsultasi juga bisa lewat WhatsApp atau video call kalau lebih praktis.",
+    forWho: [
+      "Vendor dan supplier di kawasan industri Cikarang (Jababeka, MM2100, EJIP, Delta Silicon, GIIC) yang butuh company profile untuk tender dan calon klien.",
+      "UMKM, toko, dan kuliner di Cikarang yang ingin muncul saat dicari di Google Maps dan Google Search.",
+      "Jasa lokal (bengkel, klinik, kos dan kontrakan, katering, kontraktor) yang ingin pelanggan langsung menghubungi lewat WhatsApp.",
+      "Perusahaan yang lebih nyaman bekerja sama dengan tim yang bisa ditemui langsung.",
+    ],
+    benefits: [
+      { title: "Studio di Cikarang", text: "Kami berkantor di Jatireja, Cikarang Timur. Rapat, pengambilan foto lokasi, atau serah terima bisa dilakukan tatap muka." },
+      { title: "Paham bisnis industri", text: "Company profile yang menonjolkan sertifikasi, kapasitas produksi, dan daftar klien, yang biasa diminta oleh bagian purchasing pabrik." },
+      { title: "SEO lokal", text: "Halaman, data terstruktur, dan Google Business Profile disiapkan agar bisnis Anda muncul untuk pencarian seperti \"jasa ... Cikarang\"." },
+      { title: "Harga transparan", text: "Paket mulai Rp 2 juta dengan rincian jelas, tanpa biaya tersembunyi, plus dukungan via WhatsApp setelah website live." },
+    ],
+    faqs: [
+      { q: "Di mana lokasi YMS Studio?", a: "Kami berlokasi di Jatireja, Cikarang Timur, Kabupaten Bekasi, Jawa Barat. Lokasinya bisa dilihat di Google Maps melalui tautan di footer website." },
+      { q: "Berapa biaya pembuatan website di Cikarang?", a: "Paket kami mulai Rp 2 juta untuk landing page, Rp 3,5 juta untuk company profile, dan Rp 6 juta untuk toko online. Web app custom dihitung sesuai kebutuhan." },
+      { q: "Apakah bisa bertemu langsung?", a: "Bisa. Untuk klien di Cikarang dan sekitarnya, kami bisa datang ke kantor Anda atau bertemu di lokasi yang disepakati." },
+      { q: "Apakah bisa membuat company profile untuk vendor pabrik?", a: "Bisa. Kami menyusun halaman profil perusahaan, produk atau layanan, sertifikasi, galeri proyek, dan daftar klien, juga versi bahasa Inggris bila dibutuhkan untuk klien asing di kawasan industri." },
+      { q: "Apakah bisa membantu bisnis muncul di Google Maps?", a: "Bisa. Paket company profile dan toko online sudah termasuk setup Google Business Profile, yang menentukan tampilnya bisnis Anda di Google Maps." },
+    ],
+  },
+  en: {
+    name: "Web Design in Cikarang",
+    title: "Web design & development in",
+    em: "Cikarang",
+    description:
+      "Website design and development in Cikarang for small businesses, industrial-estate vendors, and companies: company profiles, landing pages, online stores, and web apps. Studio in East Cikarang, from IDR 2 million.",
+    intro:
+      "YMS Studio is based in East Cikarang. We build websites for small businesses, factory vendors, and companies in Cikarang and its industrial estates, from Jababeka and Lippo Cikarang to MM2100, so your business looks credible and is easy to find on Google.",
+    areasTitle: "Areas we serve",
+    areas: ["East Cikarang", "North Cikarang", "South Cikarang", "West Cikarang", "Central Cikarang", "Jababeka", "Lippo Cikarang", "Kota Deltamas", "MM2100", "All of Indonesia (online)"],
+    remote: "We're in the same town, so in-person meetings in Cikarang are easy to arrange. Consultations can also happen over WhatsApp or video call if that's easier.",
+    forWho: [
+      "Vendors and suppliers in Cikarang's industrial estates (Jababeka, MM2100, EJIP, Delta Silicon, GIIC) that need a company profile for tenders and prospects.",
+      "Small businesses, shops, and restaurants in Cikarang that want to show up on Google Maps and Google Search.",
+      "Local services (workshops, clinics, boarding houses, caterers, contractors) that want customers to reach out on WhatsApp.",
+      "Companies that prefer working with a team they can meet in person.",
+    ],
+    benefits: [
+      { title: "A studio in Cikarang", text: "Our office is in Jatireja, East Cikarang. Meetings, on-site photos, and handover can happen face to face." },
+      { title: "We know industrial buyers", text: "Company profiles that highlight certifications, production capacity, and client lists, the things factory purchasing teams ask for." },
+      { title: "Local SEO", text: "Pages, structured data, and Google Business Profile are set up so you appear for searches like \"... service Cikarang\"." },
+      { title: "Transparent pricing", text: "Packages from IDR 2 million with clear details and no hidden fees, plus WhatsApp support once your site is live." },
+    ],
+    faqs: [
+      { q: "Where is YMS Studio located?", a: "We're in Jatireja, East Cikarang, Bekasi Regency, West Java. You can find us on Google Maps via the link in the website footer." },
+      { q: "How much does a website cost in Cikarang?", a: "Our packages start at IDR 2 million for a landing page, IDR 3.5 million for a company profile, and IDR 6 million for an online store. Custom web apps are priced to your needs." },
+      { q: "Can we meet in person?", a: "Yes. For clients in and around Cikarang, we can come to your office or meet at a place that suits you." },
+      { q: "Can you build a company profile for a factory vendor?", a: "Yes. We put together the company profile, products or services, certifications, project gallery, and client list, with an English version if you work with foreign clients in the industrial estates." },
+      { q: "Can you help my business show up on Google Maps?", a: "Yes. The company profile and online store packages include Google Business Profile setup, which is what puts your business on Google Maps." },
+    ],
+  },
+}
+
 const bekasi: Record<Lang, LocalCopy> = {
   id: {
     name: "Jasa Website Bekasi",
     title: "Jasa pembuatan website di",
-    em: "Bekasi & Cikarang",
+    em: "Bekasi",
     description:
-      "Jasa pembuatan website di Bekasi dan Cikarang untuk UMKM dan perusahaan: landing page, company profile, toko online, dan web app. Desain custom, SEO lokal, mulai Rp 2 juta.",
+      "Jasa pembuatan website di Bekasi untuk UMKM dan perusahaan: landing page, company profile, toko online, dan web app. Desain custom, SEO lokal, mulai Rp 2 juta.",
     intro:
-      "YMS Studio berbasis di Cikarang Timur, Kabupaten Bekasi. Kami membantu UMKM, pabrik, dan perusahaan jasa di sekitar Bekasi dan Cikarang tampil profesional secara online dan mudah ditemukan pelanggan lewat Google.",
+      "YMS Studio berbasis di Kabupaten Bekasi. Kami membantu UMKM, toko, dan perusahaan jasa di Kota dan Kabupaten Bekasi tampil profesional secara online dan mudah ditemukan pelanggan lewat Google.",
     areasTitle: "Area yang kami layani",
-    areas: ["Cikarang", "Kota Bekasi", "Kabupaten Bekasi", "Tambun", "Cibitung", "Karawang", "Jabodetabek", "Seluruh Indonesia (online)"],
+    areas: ["Kota Bekasi", "Kabupaten Bekasi", "Bekasi Barat", "Bekasi Timur", "Bekasi Selatan", "Tambun", "Cibitung", "Cikarang", "Seluruh Indonesia (online)"],
     remote:
-      "Konsultasi bisa lewat WhatsApp atau video call. Untuk klien di area Bekasi dan Cikarang, pertemuan langsung bisa dijadwalkan bila dibutuhkan.",
+      "Konsultasi bisa lewat WhatsApp atau video call. Untuk klien di area Bekasi, pertemuan langsung bisa dijadwalkan bila dibutuhkan.",
     forWho: [
       "UMKM dan toko lokal di Bekasi yang ingin muncul saat dicari di Google Maps dan Google Search.",
-      "Perusahaan dan vendor di kawasan industri Cikarang yang butuh company profile untuk tender dan calon klien.",
+      "Perusahaan dan vendor di Bekasi yang butuh company profile untuk tender dan calon klien.",
       "Jasa lokal (bengkel, klinik, katering, kontraktor) yang ingin pelanggan langsung menghubungi lewat WhatsApp.",
       "Bisnis yang lebih nyaman bekerja sama dengan tim yang lokasinya dekat.",
     ],
@@ -327,17 +393,17 @@ const bekasi: Record<Lang, LocalCopy> = {
   en: {
     name: "Web Design in Bekasi",
     title: "Web design & development in",
-    em: "Bekasi & Cikarang",
+    em: "Bekasi",
     description:
-      "Website design and development in Bekasi and Cikarang for small businesses and companies: landing pages, company profiles, online stores, and web apps. Custom design, local SEO, from IDR 2 million.",
+      "Website design and development in Bekasi for small businesses and companies: landing pages, company profiles, online stores, and web apps. Custom design, local SEO, from IDR 2 million.",
     intro:
-      "YMS Studio is based in East Cikarang, Bekasi Regency. We help small businesses, factories, and service companies around Bekasi and Cikarang look professional online and get found by customers on Google.",
+      "YMS Studio is based in Bekasi Regency. We help small businesses, shops, and service companies across Bekasi City and Bekasi Regency look professional online and get found by customers on Google.",
     areasTitle: "Areas we serve",
-    areas: ["Cikarang", "Bekasi City", "Bekasi Regency", "Tambun", "Cibitung", "Karawang", "Greater Jakarta", "All of Indonesia (online)"],
-    remote: "Consultations can happen over WhatsApp or video call. For clients around Bekasi and Cikarang, in-person meetings can be arranged when needed.",
+    areas: ["Bekasi City", "Bekasi Regency", "West Bekasi", "East Bekasi", "South Bekasi", "Tambun", "Cibitung", "Cikarang", "All of Indonesia (online)"],
+    remote: "Consultations can happen over WhatsApp or video call. For clients around Bekasi, in-person meetings can be arranged when needed.",
     forWho: [
       "Small businesses and local shops in Bekasi that want to show up on Google Maps and Google Search.",
-      "Companies and vendors in Cikarang's industrial estates that need a company profile for tenders and prospects.",
+      "Companies and vendors in Bekasi that need a company profile for tenders and prospects.",
       "Local services (workshops, clinics, caterers, contractors) that want customers to reach out on WhatsApp.",
       "Businesses that prefer working with a team located nearby.",
     ],
@@ -548,7 +614,8 @@ const depok: Record<Lang, LocalCopy> = {
 }
 
 export const locals: Record<LocalCity, LocalPage> = {
-  bekasi: { city: "bekasi", label: "Bekasi · Cikarang", areaServed: ["Bekasi", "Cikarang"], copy: bekasi },
+  cikarang: { city: "cikarang", label: "Cikarang · Kabupaten Bekasi", areaServed: ["Cikarang"], copy: cikarang },
+  bekasi: { city: "bekasi", label: "Bekasi", areaServed: ["Bekasi"], copy: bekasi },
   jakarta: { city: "jakarta", label: "Jakarta", areaServed: ["Jakarta"], copy: jakarta },
   karawang: { city: "karawang", label: "Karawang", areaServed: ["Karawang"], copy: karawang },
   depok: { city: "depok", label: "Depok", areaServed: ["Depok"], copy: depok },
