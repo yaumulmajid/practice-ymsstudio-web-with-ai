@@ -155,6 +155,8 @@ export type Dict = {
     next: string
     page: string
     pages: string
+    loadMore: string
+    shown: string
     searchLabel: string
     searchPlaceholder: string
     /** {n} = number of results, {q} = query */
@@ -193,6 +195,8 @@ export const ui = {
       next: "Berikutnya",
       page: "Halaman",
       pages: "Halaman artikel",
+      loadMore: "Muat artikel lainnya",
+      shown: "{n} dari {total} artikel",
       searchLabel: "Cari artikel",
       searchPlaceholder: "Cari artikel, mis. SEO atau biaya…",
       results: "{n} artikel untuk “{q}”",
@@ -227,6 +231,8 @@ export const ui = {
       next: "Next",
       page: "Page",
       pages: "Article pages",
+      loadMore: "Load more articles",
+      shown: "{n} of {total} articles",
       searchLabel: "Search articles",
       searchPlaceholder: "Search articles, e.g. SEO or cost…",
       results: "{n} articles for “{q}”",

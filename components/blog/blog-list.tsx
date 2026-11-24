@@ -1,9 +1,11 @@
 "use client"
 
 // Interactive blog list: instant search + pagination (4 posts per page).
-// Pages switch on the client (no reload) but keep real URLs (/blog/page/2), so
-// sharing, refresh, the back button and crawlers all work. Search filters the
-// posts already on the page and is mirrored in ?q= for sharing.
+// Desktop: numbered pages that switch on the client (no reload) but keep real URLs
+// (/blog/page/2), so sharing, refresh, the back button and crawlers all work.
+// Phones: a "load more" button that appends the next page below, so the screen
+// never jumps; it is still a link to /blog/page/N for crawlers and no-JS.
+// Search filters the posts already on the page and is mirrored in ?q= for sharing.
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { ArrowLeft, ArrowRight, Search, X } from "lucide-react"
@@ -106,6 +108,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
   const [query, setQuery] = useState("") // input, debounced
   const [resultPage, setResultPage] = useState(1)
   const [cat, setCat] = useState("") // "" = all categories
+  const [loaded, setLoaded] = useState(1) // pages shown at once (phones: "load more")
   const categories = useMemo(() => [...new Set(posts.map((p) => p.category).filter(Boolean))], [posts])
   const filtering = Boolean(query || cat)
 
@@ -125,6 +128,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
       if (q === query) return
       setQuery(q)
       setResultPage(1)
+      setLoaded(1)
       const url = q ? `${blogPath(lang)}?q=${encodeURIComponent(q)}` : blogPath(lang)
       window.history.replaceState(null, "", url)
     }, 220)
@@ -143,16 +147,23 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
 
   const total = blogPageCount(results.length)
   const page = Math.min(filtering ? resultPage : pageFromPath(pathname), total)
-  const visible = results.slice((page - 1) * BLOG_PER_PAGE, page * BLOG_PER_PAGE)
-  const showFeatured = !filtering && page === 1 && visible.length > 0
-  const featured = showFeatured ? visible[0] : undefined
-  const cards = showFeatured ? visible.slice(1) : visible
+  const lastPage = Math.min(page + loaded - 1, total) // last page on screen ("load more" adds pages)
+  const firstPagePosts = results.slice((page - 1) * BLOG_PER_PAGE, page * BLOG_PER_PAGE)
+  const morePosts = results.slice(page * BLOG_PER_PAGE, lastPage * BLOG_PER_PAGE)
+  const shownCount = Math.min(lastPage * BLOG_PER_PAGE, results.length) - (page - 1) * BLOG_PER_PAGE
+  const showFeatured = !filtering && page === 1 && firstPagePosts.length > 0
+  const featured = showFeatured ? firstPagePosts[0] : undefined
+  const cards = showFeatured ? firstPagePosts.slice(1) : firstPagePosts
 
   function scrollToList() {
     const el = listRef.current
     if (!el) return
     const top = el.getBoundingClientRect().top + window.scrollY - 112
-    if (window.scrollY > top) window.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" })
+    if (window.scrollY <= top) return
+    // A long smooth scroll would glide past cards that are still fading in (a blank
+    // screen), so jump when the list top is far away and only glide short distances.
+    const far = window.scrollY - top > window.innerHeight
+    window.scrollTo({ top, behavior: far || prefersReducedMotion() ? "auto" : "smooth" })
   }
 
   function goTo(n: number, e?: MouseEvent) {
@@ -160,10 +171,18 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
       if (!isPlainClick(e)) return
       e.preventDefault()
     }
-    if (n === page) return
+    if (n === page && loaded === 1) return
+    setLoaded(1)
     if (filtering) setResultPage(n)
     else window.history.pushState(null, "", blogPagePath(lang, n))
     scrollToList()
+  }
+
+  /** Phones: append the next page below the current posts; the screen stays where it is. */
+  function loadMore(e: MouseEvent) {
+    if (!isPlainClick(e)) return
+    e.preventDefault()
+    setLoaded((l) => l + 1)
   }
 
   function clear() {
@@ -171,6 +190,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
     setQuery("")
     setCat("")
     setResultPage(1)
+    setLoaded(1)
     window.history.replaceState(null, "", blogPath(lang))
   }
 
@@ -209,7 +229,12 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
           )}
         </label>
         <p className="text-sm text-ink/45" aria-live="polite">
-          {query ? t.results.replace("{n}", String(results.length)).replace("{q}", query) : cat ? `${results.length} · ${cat}` : total > 1 ? `${t.page} ${page} / ${total}` : ""}
+          {query ? t.results.replace("{n}", String(results.length)).replace("{q}", query) : cat ? `${results.length} · ${cat}` : total > 1 ? (
+            <>
+              <span className="hidden md:inline">{`${t.page} ${page} / ${total}`}</span>
+              <span className="md:hidden">{t.shown.replace("{n}", String(shownCount)).replace("{total}", String(results.length - (page - 1) * BLOG_PER_PAGE))}</span>
+            </>
+          ) : ""}
         </p>
       </div>
 
@@ -224,6 +249,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
               onClick={() => {
                 setCat(c)
                 setResultPage(1)
+                setLoaded(1)
                 if (!query && pageFromPath(pathname) > 1) window.history.replaceState(null, "", blogPath(lang))
               }}
               className={`h-9 shrink-0 rounded-full px-4 text-sm font-medium transition-colors duration-300 ${
@@ -264,13 +290,38 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
                   ))}
                 </div>
               ))}
+            {/* Pages appended by "load more" (phones) */}
+            {morePosts.length > 0 && (
+              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                {morePosts.map((post, i) => (
+                  <PostCard key={post.slug} post={post} lang={lang} i={i + 1} className="blog-in" style={delay(i % BLOG_PER_PAGE)} />
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Phones: load more */}
+      {(lastPage < total || page > 1) && (
+        <div className="mt-10 flex flex-wrap justify-center gap-2 md:hidden">
+          {/* Landed on /blog/page/N (e.g. from Google): a way back to the newest posts. */}
+          {page > 1 && (
+            <a href={blogPagePath(lang, 1)} onClick={(e) => goTo(1, e)} rel="prev" className={pill}>
+              <ArrowLeft size={15} /> {t.page} 1
+            </a>
+          )}
+          {lastPage < total && (
+            <a href={blogPagePath(lang, lastPage + 1)} onClick={loadMore} className={`${pill} px-6`}>
+              {t.loadMore} <ArrowRight size={15} className="rotate-90" />
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Pagination (desktop) */}
       {total > 1 && (
-        <nav aria-label={t.pages} className="mt-12 flex flex-wrap items-center justify-center gap-2 md:mt-16">
+        <nav aria-label={t.pages} className="mt-12 hidden flex-wrap items-center justify-center gap-2 md:mt-16 md:flex">
           <a
             href={blogPagePath(lang, Math.max(1, page - 1))}
             onClick={(e) => goTo(page - 1, e)}
