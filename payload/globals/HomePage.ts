@@ -85,6 +85,15 @@ export const HomePage: GlobalConfig = {
               fields: [
                 ...t('name', 'Nama paket'),
                 ...t('price', 'Harga', 'mis. 2jt / 3,5jt (ID) dan 2M / 3.5M (EN)'),
+                {
+                  name: 'priceUsd',
+                  label: 'Harga USD (versi Inggris)',
+                  type: 'text',
+                  admin: {
+                    description:
+                      "Angka saja, mis. 149 → tampil 'US$149' sebagai harga utama di versi Inggris (harga Rupiah tetap tampil kecil untuk klien di Indonesia). Kosongkan untuk memakai perkiraan dari kurs.",
+                  },
+                },
                 ...ta('tagline', 'Tagline'),
                 ...t('timeline', 'Lama pengerjaan'),
                 ...t('renewal', 'Biaya perpanjangan'),

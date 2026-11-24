@@ -12,6 +12,7 @@ import * as migration_20261123_090000_project_woodnest from './20261123_090000_p
 import * as migration_20261123_100000_woodnest_mockup from './20261123_100000_woodnest_mockup';
 import * as migration_20261123_110000_post_instagram_marketplace from './20261123_110000_post_instagram_marketplace';
 import * as migration_20261123_120000_project_hidden from './20261123_120000_project_hidden';
+import * as migration_20261124_090000_tier_price_usd from './20261124_090000_tier_price_usd';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20261123_120000_project_hidden.up,
     down: migration_20261123_120000_project_hidden.down,
     name: '20261123_120000_project_hidden',
+  },
+  {
+    up: migration_20261124_090000_tier_price_usd.up,
+    down: migration_20261124_090000_tier_price_usd.down,
+    name: '20261124_090000_tier_price_usd',
   },
 ];

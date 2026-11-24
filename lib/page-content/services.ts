@@ -324,7 +324,7 @@ export const services: Service[] = [
           { title: "Fixed quotes", text: "Each project is quoted from its scope before work begins, in US dollars or Indonesian rupiah." },
         ],
         faqs: [
-          { q: "How much does it cost to outsource a website to Indonesia?", a: "Our standard packages start at IDR 2 million for a landing page (about US$120), IDR 3.5 million for a company profile (about US$210), and IDR 6 million for an online store (about US$365), at current exchange rates. White-label and custom web app projects are quoted per scope." },
+          { q: "How much does it cost to outsource a website to Indonesia?", a: "Each package has a fixed US-dollar price for clients abroad, listed in the pricing section: a landing page, a company profile, or an online store, with domain and first-year hosting included. White-label and custom web app projects are quoted per scope." },
           { q: "What does white label mean here?", a: "We build the website, and you deliver it to your client under your own brand. There's no YMS Studio credit on the site, and your client doesn't need to know we were involved." },
           { q: "Which time zone do you work in?", a: "We're in Indonesia (UTC+7). That overlaps fully with Singapore, Malaysia, and Australia, and with European mornings. Updates are shared on a live preview link, so you can review progress whenever suits you." },
           { q: "Will you sign an NDA?", a: "Yes. We sign an NDA before you share client or project details." },

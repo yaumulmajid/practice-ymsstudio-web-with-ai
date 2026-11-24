@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight, Calculator, Check, Clock } from "lucide-react"
 import { Reveal, SectionHead } from "@/components/motion"
-import { localePath, PATHS, tierMessage } from "@/lib/i18n"
+import { localePath, PATHS } from "@/lib/i18n"
 import { pui } from "@/lib/pages-ui"
-import { usdApprox } from "@/lib/price"
+import { tierPrice, tierWaText } from "@/lib/price"
 import { useLang, useT, useWa } from "@/components/lang"
 
 export default function Pricing() {
@@ -42,6 +42,7 @@ export default function Pricing() {
         <div className="mt-14 grid items-stretch gap-4 lg:grid-cols-3">
           {p.tiers.map((tier, i) => {
             const dark = tier.featured
+            const shown = tierPrice(tier, lang, p.currency)
             return (
               <Reveal key={tier.name} delay={i * 120} className="h-full">
                 <div
@@ -62,19 +63,17 @@ export default function Pricing() {
                   <div className="relative mt-8">
                     <span className={`text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{p.from}</span>
                     <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>{p.currency}</span>
-                      <span className="text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">{tier.price}</span>
+                      <span className={`text-base ${dark ? "text-white/50" : "text-ink/40"}`}>{shown.currency}</span>
+                      <span className="text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">{shown.amount}</span>
                     </div>
-                    {lang === "en" && usdApprox(tier.price) && (
-                      <p className={`mt-1 text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{usdApprox(tier.price)} at current rates</p>
-                    )}
+                    {shown.note && <p className={`mt-1 text-xs ${dark ? "text-white/45" : "text-ink/40"}`}>{shown.note}</p>}
                   </div>
                   <p className={`relative mt-3 inline-flex items-center gap-1.5 text-xs ${dark ? "text-white/55" : "text-ink/50"}`}>
                     <Clock size={12} /> {tier.timeline}
                   </p>
 
                   <a
-                    href={wa(tierMessage(t.wa.tier, tier.name, tier.price))}
+                    href={wa(tierWaText(t.wa.tier, tier, lang))}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`group/btn relative mt-8 flex items-center justify-center gap-2 rounded-full py-3.5 text-sm font-medium transition-all duration-500 ${

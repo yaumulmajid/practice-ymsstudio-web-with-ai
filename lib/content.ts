@@ -139,6 +139,7 @@ export const getSite = cache(async (lang: Lang): Promise<SiteData> => {
       tiers: (pricing.tiers ?? []).map((t: any) => ({
         name: s(t.name),
         price: s(t.price),
+        priceUsd: s(t.priceUsd).replace(/[^\d.,]/g, ""),
         tagline: s(t.tagline),
         timeline: s(t.timeline),
         renewal: s(t.renewal),

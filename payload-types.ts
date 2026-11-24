@@ -840,6 +840,10 @@ export interface HomePage {
            */
           price?: string | null;
           priceEn?: string | null;
+          /**
+           * Angka saja, mis. 149 → tampil 'US$149' sebagai harga utama di versi Inggris (harga Rupiah tetap tampil kecil untuk klien di Indonesia). Kosongkan untuk memakai perkiraan dari kurs.
+           */
+          priceUsd?: string | null;
           tagline?: string | null;
           taglineEn?: string | null;
           timeline?: string | null;
@@ -1100,6 +1104,7 @@ export interface HomePageSelect<T extends boolean = true> {
               nameEn?: T;
               price?: T;
               priceEn?: T;
+              priceUsd?: T;
               tagline?: T;
               taglineEn?: T;
               timeline?: T;

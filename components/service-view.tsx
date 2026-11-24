@@ -8,11 +8,11 @@ import CTA from "@/components/cta"
 import { Eyebrow, Reveal } from "@/components/motion"
 import { Breadcrumbs, JsonLd, PageHero, Shell } from "@/components/page-shell"
 import { getSite } from "@/lib/content"
-import { localePath, PATHS, tierMessage, waLink, type Lang, type Project, type Tier } from "@/lib/i18n"
+import { localePath, PATHS, waLink, type Lang, type Project, type Tier } from "@/lib/i18n"
 import { absUrl, breadcrumbLd, crumbs, faqLd } from "@/lib/page-meta"
 import { LOCAL_CITIES, LOCAL_SHORT, locals, services, type LocalCity, type LocalCopy, type Service, type ServiceCopy } from "@/lib/page-content/services"
 import { pui } from "@/lib/pages-ui"
-import { priceToNumber, usdApprox } from "@/lib/price"
+import { priceToNumber, tierPrice, tierWaText } from "@/lib/price"
 
 const btnDark =
   "group inline-flex items-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 text-sm font-medium text-white transition-all duration-500 hover:-translate-y-0.5 hover:bg-brand-deep"
@@ -82,10 +82,12 @@ export default async function ServiceView(props: Props) {
   // A listed project may be hidden in the CMS: top up with other projects so there are still three.
   const projects = [...picked, ...site.projects.filter((p) => !picked.includes(p))].slice(0, 3)
 
-  const waText = tier ? tierMessage(t.wa.tier, tier.name, tier.price) : isCustom ? t.wa.custom : t.wa.general
+  const waText = tier ? tierWaText(t.wa.tier, tier, lang) : isCustom ? t.wa.custom : t.wa.general
   const wa = waLink(site.settings.waNumber, waText)
   const trail = [{ name: copy.name, path }]
-  const price = tier ? priceToNumber(tier.price) : undefined
+  const shown = tier ? tierPrice(tier, lang, t.pricing.currency) : undefined
+  // Structured data: the US-dollar price on English pages when the CMS sets one, else rupiah.
+  const offer = shown?.usd ? { price: shown.usd.replace(/,/g, ""), currency: "USD" } : tier && priceToNumber(tier.price) ? { price: String(priceToNumber(tier.price)), currency: "IDR" } : undefined
 
   const serviceLd = {
     "@context": "https://schema.org",
@@ -96,7 +98,7 @@ export default async function ServiceView(props: Props) {
     url: absUrl(lang, path),
     provider: { "@type": "LocalBusiness", "@id": "https://ymsstudio.id/#services", name: "YMS Studio", url: "https://ymsstudio.id" },
     areaServed: props.kind === "local" ? locals[props.city].areaServed.map((name) => ({ "@type": "City", name })) : { "@type": "Country", name: "Indonesia" },
-    ...(price ? { offers: { "@type": "Offer", price: String(price), priceCurrency: "IDR", url: absUrl(lang, path), availability: "https://schema.org/InStock" } } : {}),
+    ...(offer ? { offers: { "@type": "Offer", price: offer.price, priceCurrency: offer.currency, url: absUrl(lang, path), availability: "https://schema.org/InStock" } } : {}),
   }
 
   return (
@@ -128,16 +130,16 @@ export default async function ServiceView(props: Props) {
             <Reveal delay={200} className="rounded-[28px] border border-ink/[0.07] bg-white p-7 shadow-[0_30px_60px_-40px_rgba(11,18,32,0.25)]">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-ink/40">{tier ? u.service.from : copy.name}</p>
               <p className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-ink">
-                {tier ? (
+                {shown ? (
                   <>
-                    <span className="mr-1 text-lg font-medium text-ink/45">{t.pricing.currency}</span>
-                    {tier.price}
+                    <span className="mr-1 text-lg font-medium text-ink/45">{shown.currency}</span>
+                    {shown.amount}
                   </>
                 ) : (
                   <span className="text-2xl">{u.service.custom}</span>
                 )}
               </p>
-              {tier && lang === "en" && usdApprox(tier.price) && <p className="mt-1 text-sm text-ink/45">{usdApprox(tier.price)} at current rates</p>}
+              {shown?.note && <p className="mt-1 text-sm text-ink/45">{shown.note}</p>}
               {tier?.timeline && (
                 <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink/55">
                   <Clock size={15} /> {u.service.timeline}: {tier.timeline}

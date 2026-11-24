@@ -1,4 +1,5 @@
 // Prices from the CMS tiers: "2jt", "3,5jt" (Indonesian) or "2M", "3.5M" (English), always in IDR.
+import { tierMessage, type Lang, type Tier } from "@/lib/i18n"
 
 /** IDR per US dollar for the approximate USD shown on English pages. Update when the rate drifts. */
 export const IDR_PER_USD = 16_500
@@ -20,4 +21,24 @@ export function usdApprox(price: string): string | undefined {
   const idr = priceToNumber(price)
   if (!idr) return undefined
   return `≈ US$${Math.round(idr / IDR_PER_USD / 5) * 5}`
+}
+
+/**
+ * How a tier's price shows in a language. English with a CMS USD price: US$ is the main price and
+ * the rupiah price stays as a note for clients in Indonesia. English without one: rupiah plus an
+ * estimate. Indonesian: rupiah only.
+ */
+export function tierPrice(tier: Tier, lang: Lang, idrLabel: string) {
+  const usd = lang === "en" && tier.priceUsd ? tier.priceUsd : ""
+  if (usd) return { currency: "US$", amount: usd, usd, note: `${idrLabel} ${tier.price} for clients in Indonesia` }
+  const approx = lang === "en" ? usdApprox(tier.price) : undefined
+  return { currency: idrLabel, amount: tier.price, usd: "", note: approx ? `${approx} at current rates` : "" }
+}
+
+/** WhatsApp text for a tier; with a USD price the CMS template's "IDR {harga}" becomes "US${harga}". */
+export function tierWaText(template: string, tier: Tier, lang: Lang) {
+  const { usd } = tierPrice(tier, lang, "")
+  if (!usd) return tierMessage(template, tier.name, tier.price)
+  const t = /(IDR|Rp)\s*\{harga\}/.test(template) ? template.replace(/(IDR|Rp)\s*\{harga\}/, () => "US${harga}") : template
+  return tierMessage(t, tier.name, usd)
 }

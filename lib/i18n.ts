@@ -39,6 +39,8 @@ export type Review = {
 export type Tier = {
   name: string
   price: string
+  /** Fixed US-dollar price for the English site ("149"), set in the CMS; empty = estimate from IDR. */
+  priceUsd?: string
   tagline: string
   timeline: string
   renewal: string
