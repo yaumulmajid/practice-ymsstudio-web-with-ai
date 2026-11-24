@@ -3,10 +3,10 @@
 // Interactive blog list: instant search + pagination (4 posts per page).
 // Desktop: numbered pages that switch on the client (no reload) but keep real URLs
 // (/blog/page/2), so sharing, refresh, the back button and crawlers all work.
-// Phones: a "load more" button that appends the next page below, so the screen
-// never jumps; it is still a link to /blog/page/N for crawlers and no-JS.
+// Phones: one vertical list of compact rows (no slider) with a "load more" button that
+// appends the next page below, so the screen never jumps; it is still a link to /blog/page/N for crawlers and no-JS.
 // Search filters the posts already on the page and is mirrored in ?q= for sharing.
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react"
 import { usePathname } from "next/navigation"
 import { ArrowLeft, ArrowRight, Search, X } from "lucide-react"
 import { FeaturedCard, PostCard } from "@/components/blog/blog-cards"
@@ -39,70 +39,32 @@ const pageFromPath = (path: string) => {
 
 const prefersReducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
+/** sessionStorage key for "where was I" when a post is opened from the list. */
+const RESTORE_KEY = "blog-list-spot"
+
+// Time of the last Back/Forward navigation; set before the list re-mounts after Back.
+let lastPopstate = 0
+if (typeof window !== "undefined") window.addEventListener("popstate", () => (lastPopstate = Date.now()))
+let mountedBefore = false // false until the first list mount in this document
+
+/** Did the reader just come Back? Client-side (popstate) or a full reload of the page via Back. */
+function cameBack() {
+  const firstMount = !mountedBefore
+  mountedBefore = true
+  if (Date.now() - lastPopstate < 3000) return true
+  const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined
+  return firstMount && nav?.type === "back_forward"
+}
+
 /** Plain left click (no new tab / modifier keys): handle it on the client. */
 const isPlainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey
-
-/**
- * Cards under the featured post: a swipeable row on phones (manual, snaps per card,
- * with dots), the usual 3-column grid from md up.
- */
-function CardSlider({ children, label }: { children: ReactNode[]; label: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [active, setActive] = useState(0)
-
-  function onScroll() {
-    const el = ref.current
-    if (!el || el.children.length < 2) return
-    const step = (el.children[1] as HTMLElement).offsetLeft - (el.children[0] as HTMLElement).offsetLeft
-    const max = el.scrollWidth - el.clientWidth
-    // At the far right the last card can't snap to the start, so treat "end of scroll" as the last card.
-    setActive(el.scrollLeft >= max - 4 ? el.children.length - 1 : Math.round(el.scrollLeft / step))
-  }
-
-  function goTo(i: number) {
-    const el = ref.current
-    const card = el?.children[i] as HTMLElement | undefined
-    if (!el || !card) return
-    el.scrollTo({ left: card.offsetLeft - (el.children[0] as HTMLElement).offsetLeft, behavior: prefersReducedMotion() ? "auto" : "smooth" })
-  }
-
-  return (
-    <div className="mt-6">
-      <div
-        ref={ref}
-        onScroll={onScroll}
-        className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 pb-1 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:px-8 md:mx-0 md:grid md:snap-none md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden"
-      >
-        {children.map((child, i) => (
-          <div key={i} className="w-[84%] shrink-0 snap-start sm:w-[60%] md:w-auto">
-            {child}
-          </div>
-        ))}
-      </div>
-      {children.length > 1 && (
-        <div className="mt-5 flex justify-center gap-2 md:hidden" role="group" aria-label={label}>
-          {children.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => goTo(i)}
-              aria-label={`${i + 1} / ${children.length}`}
-              aria-current={i === active ? "true" : undefined}
-              className="grid h-6 place-items-center px-0.5"
-            >
-              <span className={`block h-2 rounded-full transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] ${i === active ? "w-6 bg-ink" : "w-2 bg-ink/20"}`} />
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
 
 export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lang }) {
   const t = ui[lang].blog
   const pathname = usePathname()
   const listRef = useRef<HTMLDivElement>(null)
+  const focusHref = useRef<string | null>(null)
+  const restore = useRef<{ loaded: number; y: number } | null>(null)
 
   const [input, setInput] = useState("")
   const [query, setQuery] = useState("") // input, debounced
@@ -182,8 +144,53 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
   function loadMore(e: MouseEvent) {
     if (!isPlainClick(e)) return
     e.preventDefault()
+    // Move focus to the first new post (keyboard / screen readers), without scrolling.
+    const next = results[lastPage * BLOG_PER_PAGE]
+    focusHref.current = next ? blogPath(lang, next.slug) : null
     setLoaded((l) => l + 1)
   }
+
+  // Opening a post: remember how much was loaded and where the reader was, for the Back button.
+  function rememberSpot(e: MouseEvent) {
+    const a = (e.target as HTMLElement).closest("a")
+    const href = a?.getAttribute("href") ?? ""
+    if (filtering || !href.startsWith(`${blogPath(lang)}/`) || href.includes("/page/")) return
+    sessionStorage.setItem(RESTORE_KEY, JSON.stringify({ path: window.location.pathname, loaded, y: Math.round(window.scrollY) }))
+  }
+
+  // Back from a post (popstate just before this mount): reload the same pages and scroll back.
+  useEffect(() => {
+    const back = cameBack()
+    const raw = sessionStorage.getItem(RESTORE_KEY)
+    if (!raw) return
+    sessionStorage.removeItem(RESTORE_KEY)
+    if (!back || window.location.search) return
+    try {
+      const saved = JSON.parse(raw) as { path: string; loaded: number; y: number }
+      if (saved.path !== window.location.pathname) return
+      restore.current = saved
+      if (saved.loaded > 1) setLoaded(saved.loaded)
+      else scrollBack()
+    } catch {
+      /* ignore a malformed entry */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on mount
+  }, [])
+
+  function scrollBack() {
+    const r = restore.current
+    if (!r) return
+    restore.current = null
+    requestAnimationFrame(() => window.scrollTo({ top: r.y, behavior: "auto" }))
+  }
+
+  useEffect(() => {
+    if (restore.current && loaded >= restore.current.loaded) scrollBack()
+    const href = focusHref.current
+    if (!href) return
+    focusHref.current = null
+    listRef.current?.querySelector<HTMLAnchorElement>(`a[href="${href}"]`)?.focus({ preventScroll: true })
+  }, [loaded])
 
   function clear() {
     setInput("")
@@ -201,7 +208,7 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
     "inline-flex h-11 items-center gap-2 rounded-full border border-ink/[0.08] bg-white px-4 text-sm font-medium text-ink transition-[border-color,opacity] duration-300 hover:border-ink/20"
 
   return (
-    <div ref={listRef} className="mt-10 scroll-mt-28 md:mt-14">
+    <div ref={listRef} onClickCapture={rememberSpot} className="mt-10 scroll-mt-28 md:mt-14">
       {/* Search */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <label className="group relative block w-full sm:max-w-sm">
@@ -276,23 +283,12 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
         ) : (
           <>
             {featured && <FeaturedCard post={featured} lang={lang} className="blog-in" style={delay(0)} />}
-            {cards.length > 0 &&
-              (featured ? (
-                <CardSlider label={t.pages}>
-                  {cards.map((post, i) => (
-                    <PostCard key={post.slug} post={post} lang={lang} i={i} className="blog-in" style={delay(i + 1)} />
-                  ))}
-                </CardSlider>
-              ) : (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  {cards.map((post, i) => (
-                    <PostCard key={post.slug} post={post} lang={lang} i={i + 1} className="blog-in" style={delay(i)} />
-                  ))}
-                </div>
-              ))}
-            {/* Pages appended by "load more" (phones) */}
-            {morePosts.length > 0 && (
-              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* One vertical list on phones (compact rows, grows with "load more"); a card grid from md. */}
+            {cards.length + morePosts.length > 0 && (
+              <div className={`grid grid-cols-1 gap-3 md:gap-6 ${featured ? "mt-4 md:mt-6 md:grid-cols-3" : "md:grid-cols-2"}`}>
+                {cards.map((post, i) => (
+                  <PostCard key={post.slug} post={post} lang={lang} i={i} className="blog-in" style={delay(featured ? i + 1 : i)} />
+                ))}
                 {morePosts.map((post, i) => (
                   <PostCard key={post.slug} post={post} lang={lang} i={i + 1} className="blog-in" style={delay(i % BLOG_PER_PAGE)} />
                 ))}
@@ -313,7 +309,8 @@ export default function BlogList({ posts, lang }: { posts: PostMeta[]; lang: Lan
           )}
           {lastPage < total && (
             <a href={blogPagePath(lang, lastPage + 1)} onClick={loadMore} className={`${pill} px-6`}>
-              {t.loadMore} <ArrowRight size={15} className="rotate-90" />
+              {t.loadMore.replace("{n}", String(Math.min(BLOG_PER_PAGE, results.length - lastPage * BLOG_PER_PAGE)))}{" "}
+              <ArrowRight size={15} className="rotate-90" />
             </a>
           )}
         </div>
