@@ -14,6 +14,7 @@ import * as migration_20261123_110000_post_instagram_marketplace from './2026112
 import * as migration_20261123_120000_project_hidden from './20261123_120000_project_hidden';
 import * as migration_20261124_090000_tier_price_usd from './20261124_090000_tier_price_usd';
 import * as migration_20261124_100000_post_php2shell from './20261124_100000_post_php2shell';
+import * as migration_20261126_090000_post_mekari_talenta from './20261126_090000_post_mekari_talenta';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20261124_100000_post_php2shell.up,
     down: migration_20261124_100000_post_php2shell.down,
     name: '20261124_100000_post_php2shell',
+  },
+  {
+    up: migration_20261126_090000_post_mekari_talenta.up,
+    down: migration_20261126_090000_post_mekari_talenta.down,
+    name: '20261126_090000_post_mekari_talenta',
   },
 ];
