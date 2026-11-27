@@ -7,6 +7,10 @@ import { localePath, PATHS } from "@/lib/i18n"
 import { pui } from "@/lib/pages-ui"
 import { tierPrice, tierWaText } from "@/lib/price"
 import { useLang, useT, useWa } from "@/components/lang"
+import { services } from "@/lib/page-content/services"
+
+// The custom box under the tiers links to the custom web app page.
+const webApp = services.find((s) => s.slug === "jasa-web-app")
 
 export default function Pricing() {
   const t = useT()
@@ -110,15 +114,26 @@ export default function Pricing() {
               <h3 className="text-lg font-semibold tracking-tight text-ink">{p.customTitle}</h3>
               <p className="mt-1 text-sm text-ink/55">{p.customText}</p>
             </div>
-            <a
-              href={wa(t.wa.custom)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm font-medium text-ink transition-colors duration-500 hover:border-ink hover:bg-ink hover:text-white"
-            >
-              {p.customCta}
-              <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
-            </a>
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
+              {webApp && (
+                <Link
+                  href={localePath(lang, PATHS.service(webApp.slug))}
+                  className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-medium text-white transition-colors duration-500 hover:bg-brand-deep"
+                >
+                  {pui[lang].service.seeDetails} {webApp.copy[lang].name}
+                  <ArrowRight size={15} className="transition-transform duration-500 group-hover:translate-x-1" />
+                </Link>
+              )}
+              <a
+                href={wa(t.wa.custom)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm font-medium text-ink transition-colors duration-500 hover:border-ink hover:bg-ink hover:text-white"
+              >
+                {p.customCta}
+                <ArrowUpRight size={15} className="transition-transform duration-500 group-hover:rotate-45" />
+              </a>
+            </div>
           </div>
         </Reveal>
 
