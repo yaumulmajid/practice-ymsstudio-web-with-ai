@@ -14,6 +14,15 @@ type Row = { text?: string | null }
 const texts = (rows: Row[] | null | undefined) => (rows ?? []).map((r) => r.text ?? "").filter(Boolean)
 const items = (rows: any[] | null | undefined) => (rows ?? []).map((r) => ({ title: r.title ?? "", text: r.text ?? "" }))
 const s = (v: unknown) => (typeof v === "string" ? v : "")
+/** A social profile URL, or "" when it is only the site's home page (e.g. "https://www.instagram.com/"), a placeholder. */
+const profileUrl = (v: unknown) => {
+  const url = s(v).trim()
+  try {
+    return new URL(url).pathname.replace(/\/+$/, "") ? url : ""
+  } catch {
+    return ""
+  }
+}
 
 /** Payload returns absolute media URLs; make ours relative so next/image optimizes them locally. */
 function relative(url: string) {
@@ -178,8 +187,8 @@ export const getSite = cache(async (lang: Lang): Promise<SiteData> => {
     phoneDisplay: s(c.phoneDisplay),
     email: s(c.email),
     mapsUrl: s(c.mapsUrl),
-    instagram: s(c.instagram),
-    facebook: s(c.facebook),
+    instagram: profileUrl(c.instagram),
+    facebook: profileUrl(c.facebook),
   }
 
   const blogSlugs = Object.fromEntries(LANGS.map((l, i) => [l, slugLists[i].map((p) => p.slug)])) as Record<Lang, string[]>

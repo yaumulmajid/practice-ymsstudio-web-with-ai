@@ -37,7 +37,9 @@ export function buildStructuredData(site: SiteData) {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://ymsstudio.id/#services",
-    name: en ? "YMS Studio - Web Design & Development Company in Indonesia" : "YMS Studio - Jasa Pembuatan Website UMKM",
+    // Must match the Google Business Profile name exactly (same in every language: one business).
+    name: "YMS Studio - Jasa Pembuatan Website",
+    alternateName: "YMS Studio",
     url: "https://ymsstudio.id",
     image: "https://ymsstudio.id/logo.webp",
     logo: "https://ymsstudio.id/logo.webp",
